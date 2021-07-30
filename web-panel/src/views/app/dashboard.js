@@ -14,9 +14,7 @@ import Http from "../../helpers/Http";
 import ApiRoutes from "../../helpers/ApiRoutes";
 
 import { connect } from "react-redux";
-import {
-  updateNotificationCounter
-} from "../../redux/actions";
+import { updateNotificationCounter } from "../../redux/actions";
 
 import ticketsData from "../../data/tickets";
 
@@ -26,7 +24,6 @@ class Dashboard extends Component {
     var userData = JSON.parse(localStorage.getItem("userData")) || {};
 
     this.state = {
-
       userPermissions: userData.user_permissions ? JSON.parse(userData.user_permissions) : {},
       userRole: userData ? userData.user_role : "",
 
@@ -136,17 +133,14 @@ class Dashboard extends Component {
     var iconCardsData = this.state.iconCardsData;
     var permittedModules = Object.keys(this.state.userPermissions);
 
-    iconCardsData = iconCardsData.map(item => {
-
+    iconCardsData = iconCardsData.map((item) => {
       item.showItem = true;
 
-      if (this.state.userRole == 2 &&
+      if (
+        this.state.userRole == 2 &&
         item.check_permission &&
-        (!this.state.userPermissions[item.module_slug] ||
-          (this.state.userPermissions[item.module_slug] &&
-            this.state.userPermissions[
-              item.module_slug
-            ].indexOf(item.permission_type) == -1))) {
+        (!this.state.userPermissions[item.module_slug] || (this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1))
+      ) {
         item.showItem = false;
       }
 
@@ -199,39 +193,34 @@ class Dashboard extends Component {
       ApiRoutes.ADMIN_GET_DASHBOARD +
       "?page_no=1" +
       "&start_date=" +
-      `${
-      this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${
-      this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }`;
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}`;
 
     const res = await Http("GET", path);
+    if (res) {
+      if (res.status == 200) {
+        var iconCardsData = this.state.iconCardsData;
+        iconCardsData[0]["value"] = res.data.subadminCount || 0;
+        iconCardsData[1]["value"] = res.data.customersCount || 0;
+        iconCardsData[2]["value"] = res.data.driversCount || 0;
+        iconCardsData[3]["value"] = res.data.businessCategoryCount || 0;
+        iconCardsData[4]["value"] = res.data.productCategoryCount || 0;
+        iconCardsData[5]["value"] = res.data.productCount || 0;
+        iconCardsData[6]["value"] = res.data.brandsCount || 0;
+        iconCardsData[7]["value"] = res.data.warehouseCount || 0;
+        iconCardsData[8]["value"] = res.data.bannersCount || 0;
 
-    if (res.status == 200) {
-      var iconCardsData = this.state.iconCardsData;
-      iconCardsData[0]["value"] = res.data.subadminCount || 0;
-      iconCardsData[1]["value"] = res.data.customersCount || 0;
-      iconCardsData[2]["value"] = res.data.driversCount || 0;
-      iconCardsData[3]["value"] = res.data.businessCategoryCount || 0;
-      iconCardsData[4]["value"] = res.data.productCategoryCount || 0;
-      iconCardsData[5]["value"] = res.data.productCount || 0;
-      iconCardsData[6]["value"] = res.data.brandsCount || 0;
-      iconCardsData[7]["value"] = res.data.warehouseCount || 0;
-      iconCardsData[8]["value"] = res.data.bannersCount || 0;
+        this.props.updateNotificationCounter(res.data.NotificationCount);
 
-      this.props.updateNotificationCounter(res.data.NotificationCount)
-
-      this.setState({
-        iconCardsData: iconCardsData,
-      });
+        this.setState({
+          iconCardsData: iconCardsData,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      //NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -244,27 +233,22 @@ class Dashboard extends Component {
       ApiRoutes.GET_CUSTOMERS +
       "?page_no=1&limit=5" +
       "&start_date=" +
-      `${
-      this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${
-      this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }`;
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}`;
 
     const res = await Http("GET", path);
-
-    if (res && res.status == 200) {
-      this.setState({
-        recentCustomers: res.data.docs,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          recentCustomers: res.data.docs,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      //NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -275,27 +259,22 @@ class Dashboard extends Component {
       ApiRoutes.GET_DRIVERS +
       "?page_no=1&limit=5" +
       "&start_date=" +
-      `${
-      this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${
-      this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }`;
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}`;
 
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        recentDrivers: res.data.docs,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          recentDrivers: res.data.docs,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      // NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -319,12 +298,14 @@ class Dashboard extends Component {
 
           <Row className="icon-cards-row mb-2">
             {this.state.iconCardsData.map((item, index) => {
-              return (item.showItem &&
-                <Colxx xxs="6" sm="4" md="3" lg="2" key={`icon_card_${index}`}>
-                  <NavLink to={item.link}>
-                    <IconCard {...item} className="mb-4" />
-                  </NavLink>
-                </Colxx>
+              return (
+                item.showItem && (
+                  <Colxx xxs="6" sm="4" md="3" lg="2" key={`icon_card_${index}`}>
+                    <NavLink to={item.link}>
+                      <IconCard {...item} className="mb-4" />
+                    </NavLink>
+                  </Colxx>
+                )
               );
             })}
           </Row>
@@ -346,23 +327,12 @@ class Dashboard extends Component {
                       >
                         {this.state.recentCustomers.map((item, index) => {
                           return (
-                            <div
-                              key={index}
-                              className="d-flex flex-row mb-3 pb-3 border-bottom"
-                            >
-                              <img
-                                src={item.user_image_thumb_url}
-                                alt={item.username}
-                                className="img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall"
-                              />
+                            <div key={index} className="d-flex flex-row mb-3 pb-3 border-bottom">
+                              <img src={item.user_image_thumb_url} alt={item.username} className="img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall" />
 
                               <div className="pl-3 pr-2">
-                                <p className="font-weight-medium mb-0 ">
-                                  {item.username}
-                                </p>
-                                <p className="text-muted mb-0 text-small">
-                                  {moment(item.createdAt).format("lll")}
-                                </p>
+                                <p className="font-weight-medium mb-0 ">{item.username}</p>
+                                <p className="text-muted mb-0 text-small">{moment(item.createdAt).format("lll")}</p>
                               </div>
                             </div>
                           );
@@ -388,23 +358,12 @@ class Dashboard extends Component {
                       >
                         {this.state.recentDrivers.map((item, index) => {
                           return (
-                            <div
-                              key={index}
-                              className="d-flex flex-row mb-3 pb-3 border-bottom"
-                            >
-                              <img
-                                src={item.user_image_thumb_url}
-                                alt={item.username}
-                                className="img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall"
-                              />
+                            <div key={index} className="d-flex flex-row mb-3 pb-3 border-bottom">
+                              <img src={item.user_image_thumb_url} alt={item.username} className="img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall" />
 
                               <div className="pl-3 pr-2">
-                                <p className="font-weight-medium mb-0 ">
-                                  {item.username}
-                                </p>
-                                <p className="text-muted mb-0 text-small">
-                                  {moment(item.createdAt).format("lll")}
-                                </p>
+                                <p className="font-weight-medium mb-0 ">{item.username}</p>
+                                <p className="text-muted mb-0 text-small">{moment(item.createdAt).format("lll")}</p>
                               </div>
                             </div>
                           );
@@ -416,22 +375,20 @@ class Dashboard extends Component {
               </Colxx>
             </Row>
           )}
-
         </div>
       </Fragment>
     );
   }
 }
 
-
-const mapStateToProps = ({globalstate }) => {
+const mapStateToProps = ({ globalstate }) => {
   const { notification_count } = globalstate;
   return {
-    notification_count
+    notification_count,
   };
 };
 export default injectIntl(
   connect(mapStateToProps, {
-    updateNotificationCounter
+    updateNotificationCounter,
   })(Dashboard)
 );

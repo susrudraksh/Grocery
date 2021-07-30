@@ -12,10 +12,7 @@ import Http from "../../helpers/Http";
 import ApiRoutes from "../../helpers/ApiRoutes";
 
 const FormSchema = Yup.object().shape({
-  email: Yup.string()
-    .required("Please enter your email address")
-    .email("Invalid email format")
-    .max(50, "Too Long! Atmost 50 letters."),
+  email: Yup.string().required("Please enter your email address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
 });
 
 class ForgotPassword extends Component {
@@ -35,21 +32,24 @@ class ForgotPassword extends Component {
 
     let path = ApiRoutes.ADMIN_RESEND_OTP;
     const res = await Http("POST", path, formData);
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
 
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-
-      // redirect to reset password page
-      this.props.history.push({
-        pathname: "/user/reset-password",
-        state: {
-          user_id: res.data._id,
-          email: res.data.email,
-          otp_number: res.data.otp_number,
-        },
-      });
+        // redirect to reset password page
+        this.props.history.push({
+          pathname: "/user/reset-password",
+          state: {
+            user_id: res.data._id,
+            email: res.data.email,
+            otp_number: res.data.otp_number,
+          },
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -84,56 +84,33 @@ class ForgotPassword extends Component {
                 validationSchema={FormSchema}
                 onSubmit={this.handleSubmit}
               >
-                {({
-                  handleSubmit,
-                  setFieldValue,
-                  setFieldTouched,
-                  values,
-                  errors,
-                  touched,
-                  isSubmitting,
-                }) => (
-                    <Form className="av-tooltip tooltip-label-bottom">
-                      <FormGroup className="form-group has-float-label">
-                        <Label>
-                          <IntlMessages id="user.email" />
-                        </Label>
-                        <Field
-                          className="form-control"
-                          name="email"
-                          type="text"
-                        />
-                        {errors.email && touched.email && (
-                          <div className="invalid-feedback d-block">
-                            {errors.email}
-                          </div>
-                        )}
-                      </FormGroup>
+                {({ handleSubmit, setFieldValue, setFieldTouched, values, errors, touched, isSubmitting }) => (
+                  <Form className="av-tooltip tooltip-label-bottom">
+                    <FormGroup className="form-group has-float-label">
+                      <Label>
+                        <IntlMessages id="user.email" />
+                      </Label>
+                      <Field className="form-control" name="email" type="text" />
+                      {errors.email && touched.email && <div className="invalid-feedback d-block">{errors.email}</div>}
+                    </FormGroup>
 
-                      <div className="d-flex justify-content-between align-items-center">
-                        <NavLink to={`/user/login`}>
-                          <IntlMessages id="user.back-to-login" />
-                        </NavLink>
-                        <Button
-                          color="primary"
-                          type="submit"
-                          className={`btn-shadow btn-multiple-state ${
-                            this.props.loading ? "show-spinner" : ""
-                            }`}
-                          size="lg"
-                        >
-                          <span className="spinner d-inline-block">
-                            <span className="bounce1" />
-                            <span className="bounce2" />
-                            <span className="bounce3" />
-                          </span>
-                          <span className="label">
-                            <IntlMessages id="button.submit" />
-                          </span>
-                        </Button>
-                      </div>
-                    </Form>
-                  )}
+                    <div className="d-flex justify-content-between align-items-center">
+                      <NavLink to={`/user/login`}>
+                        <IntlMessages id="user.back-to-login" />
+                      </NavLink>
+                      <Button color="primary" type="submit" className={`btn-shadow btn-multiple-state ${this.props.loading ? "show-spinner" : ""}`} size="lg">
+                        <span className="spinner d-inline-block">
+                          <span className="bounce1" />
+                          <span className="bounce2" />
+                          <span className="bounce3" />
+                        </span>
+                        <span className="label">
+                          <IntlMessages id="button.submit" />
+                        </span>
+                      </Button>
+                    </div>
+                  </Form>
+                )}
               </Formik>
             </div>
           </Card>
