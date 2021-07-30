@@ -53,7 +53,7 @@ class TransactionList extends Component {
 
   // LifeCycle Methods
   async componentDidMount() {
-    await this.props.history.location.state ? this.setState({currentPage:this.props.history.location.state.pageIndex}) : this.setState({currentPage:1})
+    (await this.props.history.location.state) ? this.setState({ currentPage: this.props.history.location.state.pageIndex }) : this.setState({ currentPage: 1 });
 
     this.dataListRender();
   }
@@ -76,28 +76,26 @@ class TransactionList extends Component {
       "&limit=" +
       `${this.state.selectedPageSize}` +
       "&start_date=" +
-      `${this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}` +
       "&keyword=" +
       `${this.state.searchKeyword}`;
 
     const res = await Http("GET", path);
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -121,8 +119,7 @@ class TransactionList extends Component {
       },
       () => this.dataListRender()
     );
-    this.props.history.push({pathname:this.props.location.pathname, state:{pageIndex:page}})
-
+    this.props.history.push({ pathname: this.props.location.pathname, state: { pageIndex: page } });
   };
 
   onSearchKey = (e) => {
@@ -155,10 +152,12 @@ class TransactionList extends Component {
   };
 
   onSearchFilters = () => {
-    this.setState({
-      currentPage: 1,
-    }, () => this.dataListRender()
-    )
+    this.setState(
+      {
+        currentPage: 1,
+      },
+      () => this.dataListRender()
+    );
   };
 
   onResetFilters = () => {
@@ -177,94 +176,87 @@ class TransactionList extends Component {
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.transactions"
-              match={match}
-              displayOpts={this.state.displayOpts}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              searchPlaceholder={this.state.searchPlaceholder}
-              searchKeyword={this.state.searchKeyword}
-              filterStatus={this.state.filterStatus}
-              filterFromDate={this.state.filterFromDate}
-              filterToDate={this.state.filterToDate}
-              onSearchKey={this.onSearchKey}
-              changePageSize={this.changePageSize}
-              onSearchFilters={this.onSearchFilters}
-              onResetFilters={this.onResetFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+      <Fragment>
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.transactions"
+            match={match}
+            displayOpts={this.state.displayOpts}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            searchPlaceholder={this.state.searchPlaceholder}
+            searchKeyword={this.state.searchKeyword}
+            filterStatus={this.state.filterStatus}
+            filterFromDate={this.state.filterFromDate}
+            filterToDate={this.state.filterToDate}
+            onSearchKey={this.onSearchKey}
+            changePageSize={this.changePageSize}
+            onSearchFilters={this.onSearchFilters}
+            onResetFilters={this.onResetFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Transaction#</th>
-                          <th>Customer Name</th>
-                          <th>Transaction Date</th>
-                          <th>Reason</th>
-                          <th>Amount</th>
-                          <th>Payment Type</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{(this.state.selectedPageSize * (this.state.currentPage -1)) + index +1}</td>
-                              <td>{item.transition_id} </td>
-                              <td>{item.userData.username} </td>
-                              <td>{moment(item.createdAt).format("ll")} </td>
-                              <td>{item.reason}</td>
-                              <td>{item.amount}</td>
-                              <td>{item.payment_type}</td>
-                              {/* <td> <Badge color={item.statusColor} pill>
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Transaction#</th>
+                        <th>Customer Name</th>
+                        <th>Transaction Date</th>
+                        <th>Reason</th>
+                        <th>Amount</th>
+                        <th>Payment Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
+                            <td>{item.transition_id} </td>
+                            <td>{item.userData.username} </td>
+                            <td>{moment(item.createdAt).format("ll")} </td>
+                            <td>{item.reason}</td>
+                            <td>{item.amount}</td>
+                            <td>{item.payment_type}</td>
+                            {/* <td> <Badge color={item.statusColor} pill>
                                 {item.status}
                               </Badge>
                               </td> */}
-
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="5" className="text-center">
-                              No data available.
-                          </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 export default TransactionList;

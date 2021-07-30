@@ -14,10 +14,7 @@ import ListPageHeading from "../../../containers/pages/ListPageHeading";
 import Http from "../../../helpers/Http";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 import { connect } from "react-redux";
-import {
-  updateNotificationCounter
-} from "../../../redux/actions";
-
+import { updateNotificationCounter } from "../../../redux/actions";
 
 class CustomersList extends Component {
   constructor(props) {
@@ -68,7 +65,7 @@ class CustomersList extends Component {
   // LifeCycle Methods
   componentDidMount() {
     this.dataListRender();
-    this.props.updateNotificationCounter(0)
+    this.props.updateNotificationCounter(0);
   }
 
   componentWillUnmount() {
@@ -91,15 +88,9 @@ class CustomersList extends Component {
       "&order_by=" +
       `${this.state.selectedOrderOption.column}` +
       "&start_date=" +
-      `${this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}` +
       "&status=" +
       `${this.state.filterStatus}` +
       "&keyword=" +
@@ -107,14 +98,18 @@ class CustomersList extends Component {
 
     const res = await Http("GET", path);
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
     this.setState({ isLoading: true });
   };
@@ -123,9 +118,7 @@ class CustomersList extends Component {
   changeOrderBy = (column) => {
     this.setState(
       {
-        selectedOrderOption: this.state.orderOptions.find(
-          (x) => x.column === column
-        ),
+        selectedOrderOption: this.state.orderOptions.find((x) => x.column === column),
       },
       () => this.dataListRender()
     );
@@ -204,103 +197,97 @@ class CustomersList extends Component {
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.notifications"
-              match={match}
-              displayOpts={this.state.displayOpts}
-              addNewItemRoute={this.state.addNewItemRoute}
-              orderOptions={this.state.orderOptions}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              selectedOrderOption={this.state.selectedOrderOption}
-              searchKeyword={this.state.searchKeyword}
-              searchPlaceholder={this.state.searchPlaceholder}
-              filterFromDate={this.state.filterFromDate}
-              filterToDate={this.state.filterToDate}
-              filterStatus={this.state.filterStatus}
-              onSearchKey={this.onSearchKey}
-              onChangeFromDate={this.onChangeFromDate}
-              onChangeToDate={this.onChangeToDate}
-              changeOrderBy={this.changeOrderBy}
-              changeStatus={this.changeStatus}
-              changePageSize={this.changePageSize}
-              onResetFilters={this.onResetFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+      <Fragment>
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.notifications"
+            match={match}
+            displayOpts={this.state.displayOpts}
+            addNewItemRoute={this.state.addNewItemRoute}
+            orderOptions={this.state.orderOptions}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            selectedOrderOption={this.state.selectedOrderOption}
+            searchKeyword={this.state.searchKeyword}
+            searchPlaceholder={this.state.searchPlaceholder}
+            filterFromDate={this.state.filterFromDate}
+            filterToDate={this.state.filterToDate}
+            filterStatus={this.state.filterStatus}
+            onSearchKey={this.onSearchKey}
+            onChangeFromDate={this.onChangeFromDate}
+            onChangeToDate={this.onChangeToDate}
+            changeOrderBy={this.changeOrderBy}
+            changeStatus={this.changeStatus}
+            changePageSize={this.changePageSize}
+            onResetFilters={this.onResetFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Message</th>
-                          <th>Customer Name</th>
-                          <th>Created On</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{item.title}</td>
-                              <td>{item.message}</td>
-                              <td>{item.userData && item.userData.length>0 && item.userData[0].username}</td>
-                              <td>{moment(item.createdAt).format("lll")}</td>
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="8" className="text-center">
-                              No data available.
-                          </td>
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>Customer Name</th>
+                        <th>Created On</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>{item.title}</td>
+                            <td>{item.message}</td>
+                            <td>{item.userData && item.userData.length > 0 && item.userData[0].username}</td>
+                            <td>{moment(item.createdAt).format("lll")}</td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 //export default CustomersList;
 
-
-const mapStateToProps = ({globalstate }) => {
+const mapStateToProps = ({ globalstate }) => {
   const { notification_count } = globalstate;
   return {
-    notification_count
+    notification_count,
   };
 };
 export default injectIntl(
   connect(mapStateToProps, {
-    updateNotificationCounter
+    updateNotificationCounter,
   })(CustomersList)
 );

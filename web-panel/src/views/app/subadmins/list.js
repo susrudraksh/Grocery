@@ -18,19 +18,19 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const swalWithBootstrapButtonsStatus = Swal.mixin({
   customClass: {
-    confirmButton: 'btn-pill mx-1 btn btn-success',
-    cancelButton: 'btn-pill mx-1 btn btn-neutral-secondary'
+    confirmButton: "btn-pill mx-1 btn btn-success",
+    cancelButton: "btn-pill mx-1 btn btn-neutral-secondary",
   },
-  buttonsStyling: false
-})
+  buttonsStyling: false,
+});
 
 const swalWithBootstrapButtonsDelete = Swal.mixin({
   customClass: {
-    confirmButton: 'btn-pill mx-1 btn btn-danger',
-    cancelButton: 'btn-pill mx-1 btn btn-neutral-secondary'
+    confirmButton: "btn-pill mx-1 btn btn-danger",
+    cancelButton: "btn-pill mx-1 btn btn-neutral-secondary",
   },
-  buttonsStyling: false
-})
+  buttonsStyling: false,
+});
 
 class SubadminList extends Component {
   constructor(props) {
@@ -103,15 +103,9 @@ class SubadminList extends Component {
       "&order_by=" +
       `${this.state.selectedOrderOption.column}` +
       "&start_date=" +
-      `${this.state.filterFromDate == ""
-        ? ""
-        : moment(this.state.filterFromDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterFromDate == "" ? "" : moment(this.state.filterFromDate).format("YYYY-MM-DD")}` +
       "&end_date=" +
-      `${this.state.filterToDate == ""
-        ? ""
-        : moment(this.state.filterToDate).format("YYYY-MM-DD")
-      }` +
+      `${this.state.filterToDate == "" ? "" : moment(this.state.filterToDate).format("YYYY-MM-DD")}` +
       "&status=" +
       `${this.state.filterStatus}` +
       "&keyword=" +
@@ -119,14 +113,18 @@ class SubadminList extends Component {
 
     const res = await Http("GET", path);
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -136,9 +134,7 @@ class SubadminList extends Component {
   changeOrderBy = (column) => {
     this.setState(
       {
-        selectedOrderOption: this.state.orderOptions.find(
-          (x) => x.column === column
-        ),
+        selectedOrderOption: this.state.orderOptions.find((x) => x.column === column),
       },
       () => this.dataListRender()
     );
@@ -204,9 +200,7 @@ class SubadminList extends Component {
   };
 
   onSearchFilters = () => {
-    this.setState({
-
-    }, () => this.dataListRender());
+    this.setState({}, () => this.dataListRender());
   };
 
   onResetFilters = () => {
@@ -226,216 +220,184 @@ class SubadminList extends Component {
 
   // Methods for Actions
   onChangeItemStatus = async (itemId, index, currentStatus) => {
-    swalWithBootstrapButtonsStatus.fire({
-      title: '<h5><b>Are you sure?</b></h5>',
-      text: "You want change status !",
-      type: "success",
-      width: 315,
-      heightAuto: true,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '<span class="btn-wrapper--label">Yes</span>',
-      cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
-      reverseButtons: true,
-    }).then(async (result) => {
-      if (result.value) {
-        var newStatus = currentStatus == 1 ? 0 : 1;
+    swalWithBootstrapButtonsStatus
+      .fire({
+        title: "<h5><b>Are you sure?</b></h5>",
+        text: "You want change status !",
+        type: "success",
+        width: 315,
+        heightAuto: true,
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: '<span class="btn-wrapper--label">Yes</span>',
+        cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.value) {
+          var newStatus = currentStatus == 1 ? 0 : 1;
 
-        let formData = new FormData();
-        formData.append("status", newStatus);
+          let formData = new FormData();
+          formData.append("status", newStatus);
 
-        let path = ApiRoutes.UPDATE_SUBADMIN_STATUS + "/" + itemId;
-        const res = await Http("PUT", path, formData);
+          let path = ApiRoutes.UPDATE_SUBADMIN_STATUS + "/" + itemId;
+          const res = await Http("PUT", path, formData);
+          if (res) {
+            if (res.status == 200) {
+              this.dataListRender();
 
-        if (res.status == 200) {
-          this.dataListRender();
-
-          NotificationManager.success(res.message, "Success!", 3000);
-        } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+              NotificationManager.success(res.message, "Success!", 3000);
+            } else {
+              NotificationManager.error(res.message, "Error!", 3000);
+            }
+          } else {
+            NotificationManager.error("Server Error", "Error!", 3000);
+          }
         }
-      }
-    });
+      });
   };
 
   onDeleteItem = async (itemId, index) => {
-    swalWithBootstrapButtonsDelete.fire({
-      title: '<h5><b>Are you sure you want to delete this entry?</b></h5>',
-      text: "You cannot undo this operation.",
-      type: "error",
-      width: 315,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '<span class="btn-wrapper--label">Delete</span>',
-      cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
-      reverseButtons: true,
-    }).then(async (result) => {
-      if (result.value) {
-        let path = ApiRoutes.DELETE_SUBADMIN + "/" + itemId;
-        const res = await Http("DELETE", path);
+    swalWithBootstrapButtonsDelete
+      .fire({
+        title: "<h5><b>Are you sure you want to delete this entry?</b></h5>",
+        text: "You cannot undo this operation.",
+        type: "error",
+        width: 315,
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: '<span class="btn-wrapper--label">Delete</span>',
+        cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.value) {
+          let path = ApiRoutes.DELETE_SUBADMIN + "/" + itemId;
+          const res = await Http("DELETE", path);
+          if (res) {
+            if (res.status == 200) {
+              this.dataListRender();
 
-        if (res.status == 200) {
-          this.dataListRender();
-
-          NotificationManager.success(res.message, "Success!", 3000);
-        } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+              NotificationManager.success(res.message, "Success!", 3000);
+            } else {
+              NotificationManager.error(res.message, "Error!", 3000);
+            }
+          } else {
+            NotificationManager.error("Server Error", "Error!", 3000);
+          }
         }
-      };
-    })
+      });
   };
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.subadmins"
-              match={match}
-              displayOpts={this.state.displayOpts}
-              addNewItemRoute={this.state.addNewItemRoute}
-              orderOptions={this.state.orderOptions}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              selectedOrderOption={this.state.selectedOrderOption}
-              searchPlaceholder={this.state.searchPlaceholder}
-              searchKeyword={this.state.searchKeyword}
-              filterFromDate={this.state.filterFromDate}
-              filterToDate={this.state.filterToDate}
-              filterStatus={this.state.filterStatus}
-              onSearchKey={this.onSearchKey}
-              onChangeFromDate={this.onChangeFromDate}
-              onChangeToDate={this.onChangeToDate}
-              changeOrderBy={this.changeOrderBy}
-              changeStatus={this.changeStatus}
-              changePageSize={this.changePageSize}
-              onResetFilters={this.onResetFilters}
-              onSearchFilters={this.onSearchFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+      <Fragment>
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.subadmins"
+            match={match}
+            displayOpts={this.state.displayOpts}
+            addNewItemRoute={this.state.addNewItemRoute}
+            orderOptions={this.state.orderOptions}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            selectedOrderOption={this.state.selectedOrderOption}
+            searchPlaceholder={this.state.searchPlaceholder}
+            searchKeyword={this.state.searchKeyword}
+            filterFromDate={this.state.filterFromDate}
+            filterToDate={this.state.filterToDate}
+            filterStatus={this.state.filterStatus}
+            onSearchKey={this.onSearchKey}
+            onChangeFromDate={this.onChangeFromDate}
+            onChangeToDate={this.onChangeToDate}
+            changeOrderBy={this.changeOrderBy}
+            changeStatus={this.changeStatus}
+            changePageSize={this.changePageSize}
+            onResetFilters={this.onResetFilters}
+            onSearchFilters={this.onSearchFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Image</th>
-                          <th>User Name</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Status</th>
-                          <th>Created On</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>
-                                <img
-                                  alt={item.username}
-                                  src={item.user_image_thumb_url}
-                                  className="img-thumbnail border-0 list-thumbnail align-self-center xsmall"
-                                />
-                              </td>
-                              <td>{item.username}</td>
-                              <td>{item.email}</td>
-                              <td>{item.phone_no}</td>
-                              <td>
-                                <Badge
-                                  color={
-                                    item.is_active
-                                      ? "outline-success"
-                                      : "outline-danger"
-                                  }
-                                  pill
-                                >
-                                  {item.is_active ? (
-                                    <IntlMessages id="label.active" />
-                                  ) : (
-                                      <IntlMessages id="label.inactive" />
-                                    )}
-                                </Badge>
-                              </td>
-                              <td>{moment(item.createdAt).format("lll")}</td>
-                              <td>
-                                <Switch
-                                  className="custom-switch custom-switch-small custom-switch-primary-inverse"
-                                  checked={item.is_active == 1 ? true : false}
-                                  title={
-                                    item.is_active ? "Deactivate" : "Activate"
-                                  }
-                                  onChange={(e) =>
-                                    this.onChangeItemStatus(
-                                      item._id,
-                                      index,
-                                      item.is_active
-                                    )
-                                  }
-                                />{" "}
-                                <NavLink to={`edit-subadmin/${item._id}`}>
-                                  <Button
-                                    outline
-                                    color="info"
-                                    size="xs"
-                                    className="mb-2"
-                                    title="Edit"
-                                  >
-                                    <div className="glyph-icon simple-icon-note"></div>
-                                  </Button>
-                                </NavLink>{" "}
-                                <Button
-                                  outline
-                                  color="danger"
-                                  size="xs"
-                                  className="mb-2"
-                                  title="Delete"
-                                  onClick={(e) => this.onDeleteItem(item._id, index)
-                                  }
-                                >
-                                  <div className="glyph-icon simple-icon-trash"></div>
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>
+                              <img alt={item.username} src={item.user_image_thumb_url} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
+                            </td>
+                            <td>{item.username}</td>
+                            <td>{item.email}</td>
+                            <td>{item.phone_no}</td>
+                            <td>
+                              <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
+                                {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
+                              </Badge>
+                            </td>
+                            <td>{moment(item.createdAt).format("lll")}</td>
+                            <td>
+                              <Switch
+                                className="custom-switch custom-switch-small custom-switch-primary-inverse"
+                                checked={item.is_active == 1 ? true : false}
+                                title={item.is_active ? "Deactivate" : "Activate"}
+                                onChange={(e) => this.onChangeItemStatus(item._id, index, item.is_active)}
+                              />{" "}
+                              <NavLink to={`edit-subadmin/${item._id}`}>
+                                <Button outline color="info" size="xs" className="mb-2" title="Edit">
+                                  <div className="glyph-icon simple-icon-note"></div>
                                 </Button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="8" className="text-center">
-                              No data available.
-                          </td>
+                              </NavLink>{" "}
+                              <Button outline color="danger" size="xs" className="mb-2" title="Delete" onClick={(e) => this.onDeleteItem(item._id, index)}>
+                                <div className="glyph-icon simple-icon-trash"></div>
+                              </Button>
+                            </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 export default SubadminList;

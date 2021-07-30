@@ -18,11 +18,11 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const swalWithBootstrapButtonsStatus = Swal.mixin({
   customClass: {
-    confirmButton: 'btn-pill mx-1 btn btn-success',
-    cancelButton: 'btn-pill mx-1 btn btn-neutral-secondary'
+    confirmButton: "btn-pill mx-1 btn btn-success",
+    cancelButton: "btn-pill mx-1 btn btn-neutral-secondary",
   },
-  buttonsStyling: false
-})
+  buttonsStyling: false,
+});
 
 class ProductList extends Component {
   constructor(props) {
@@ -76,7 +76,8 @@ class ProductList extends Component {
 
     let path =
       ApiRoutes.GET_RATING_LIST +
-      "/" + this.state.itemId +
+      "/" +
+      this.state.itemId +
       "?page_no=" +
       `${this.state.currentPage}` +
       "&limit=" +
@@ -88,14 +89,18 @@ class ProductList extends Component {
 
     const res = await Http("GET", path);
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
     this.setState({ isLoading: true });
   };
@@ -153,106 +158,106 @@ class ProductList extends Component {
 
   // Methods for Actions
   onChangeItemStatus = async (itemId, index, currentStatus, ratingId, ratingStatus) => {
+    swalWithBootstrapButtonsStatus
+      .fire({
+        title: "<h5><b>Are you sure?</b></h5>",
+        text: "You want change status !",
+        type: "success",
+        width: 315,
+        heightAuto: true,
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: '<span class="btn-wrapper--label">Yes</span>',
+        cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.value) {
+          if (ratingStatus == "accept") {
+            var newStatus = 1;
+          } else if (ratingStatus == "reject") {
+            var newStatus = 2;
+          } else {
+            var newStatus = 0;
+          }
+          //var newStatus = currentStatus == 1 ? 0 : 1;
 
-    swalWithBootstrapButtonsStatus.fire({
-      title: '<h5><b>Are you sure?</b></h5>',
-      text: "You want change status !",
-      type: "success",
-      width: 315,
-      heightAuto: true,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '<span class="btn-wrapper--label">Yes</span>',
-      cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
-      reverseButtons: true,
-    }).then(async (result) => {
-      if (result.value) {
+          let formData = new FormData();
+          formData.append("status", newStatus);
 
-        if (ratingStatus == "accept") {
-          var newStatus = 1;
-        } else if (ratingStatus == "reject") {
-          var newStatus = 2;
-        } else {
-          var newStatus = 0;
+          let path = ApiRoutes.UPDATE_RATING_STATUS + "/" + itemId + "/" + ratingId;
+          const res = await Http("PUT", path, formData);
+          if (res) {
+            if (res.status == 200) {
+              this.dataListRender();
+
+              NotificationManager.success(res.message, "Success!", 3000);
+            } else {
+              NotificationManager.error(res.message, "Error!", 3000);
+            }
+          } else {
+            NotificationManager.error("Server Error", "Error!", 3000);
+          }
         }
-        //var newStatus = currentStatus == 1 ? 0 : 1;
-
-        let formData = new FormData();
-        formData.append("status", newStatus);
-
-        let path = ApiRoutes.UPDATE_RATING_STATUS + "/" + itemId + "/" + ratingId;
-        const res = await Http("PUT", path, formData);
-
-        if (res.status == 200) {
-
-          this.dataListRender();
-
-          NotificationManager.success(res.message, "Success!", 3000);
-        } else {
-          NotificationManager.error(res.message, "Error!", 3000);
-        }
-      }
-    })
+      });
   };
-
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.ratings"
-              match={match}
-              addNewItemRoute={this.state.addNewItemRoute}
-              displayOpts={this.state.displayOpts}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              searchPlaceholder={this.state.searchPlaceholder}
-              searchKeyword={this.state.searchKeyword}
-              filterStatus={this.state.filterStatus}
-              onSearchKey={this.onSearchKey}
-              changePageSize={this.changePageSize}
-              changeStatus={this.changeStatus}
-              onResetFilters={this.onResetFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+      <Fragment>
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.ratings"
+            match={match}
+            addNewItemRoute={this.state.addNewItemRoute}
+            displayOpts={this.state.displayOpts}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            searchPlaceholder={this.state.searchPlaceholder}
+            searchKeyword={this.state.searchKeyword}
+            filterStatus={this.state.filterStatus}
+            onSearchKey={this.onSearchKey}
+            changePageSize={this.changePageSize}
+            changeStatus={this.changeStatus}
+            onResetFilters={this.onResetFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Product Inventory Name</th>
-                          <th>Customer Name</th>
-                          <th>Rating</th>
-                          <th>Review</th>
-                          {/* <th>Status</th> */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Inventory Name</th>
+                        <th>Customer Name</th>
+                        <th>Rating</th>
+                        <th>Review</th>
+                        {/* <th>Status</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
 
-                              <td>{item.inventory_name}</td>
-                              <td>{item ? item.UserData.username : ""}</td>
-                              <td>{item ? item.ratings.rating : ""}</td>
-                              <td>{item ? item.ratings.review : ""}</td>
+                            <td>{item.inventory_name}</td>
+                            <td>{item ? item.UserData.username : ""}</td>
+                            <td>{item ? item.ratings.rating : ""}</td>
+                            <td>{item ? item.ratings.review : ""}</td>
 
-                              {/* <td>
+                            {/* <td>
 
                               {item &&  (item.ratings.status==0) ? (
                                 <>
@@ -297,32 +302,28 @@ class ProductList extends Component {
                                   </Badge>)
                                 }
                               </td> */}
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="8" className="text-center">
-                              No data available.
-                          </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 export default ProductList;

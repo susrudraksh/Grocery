@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { injectIntl } from "react-intl";
-import Select, { components } from 'react-select';
+import Select, { components } from "react-select";
 import { Row, Card, CardBody, FormGroup, Label, Button } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -13,12 +13,8 @@ import IntlMessages from "../../../helpers/IntlMessages";
 import Http from "../../../helpers/Http";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 
-
 const FormSchema = Yup.object().shape({
-  notification_text: Yup.string()
-    .required("Please enter notfication text")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(100, "Too Long! Atmost 100 letters."),
+  notification_text: Yup.string().required("Please enter notfication text").min(2, "Too Short! Atleast 2 letters.").max(100, "Too Long! Atmost 100 letters."),
   sent_to: Yup.string().required("Please select an option"),
   user_type: Yup.mixed().required("Please select an option"),
   sent_to_users: Yup.string(),
@@ -69,12 +65,12 @@ class Notifications extends Component {
       usersStatus: 1,
       user_type: "",
       daysCount: 1,
-      orderAmount: 20
+      orderAmount: 20,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() { }
+  componentDidMount() {}
 
   onChangeSendTo = (value) => {
     if (value == "all_users") {
@@ -90,52 +86,58 @@ class Notifications extends Component {
 
   onChangeDays = (value) => {
     this.setState({
-      daysCount: value
-    })
+      daysCount: value,
+    });
   };
   onChangeAmount = (value) => {
     this.setState({
-      orderAmount: value
-    })
+      orderAmount: value,
+    });
   };
   onChangeStatus = (value) => {
     this.setState({
-      usersStatus: value
-    })
-  }
+      usersStatus: value,
+    });
+  };
 
   onChangeUserType = (value) => {
     this.setState({
-      user_type: value
-    })
-  }
+      user_type: value,
+    });
+  };
 
   getUsersList = async () => {
-    let path = ApiRoutes.GET_CUSTOMER_LIST
-
-      + "?status=" + `${this.state.usersStatus}`
-      + "&days_limit=" + `${this.state.daysCount}`
-      + "&amount_limit=" + `${this.state.orderAmount}`
-      + "&user_type=" + `${this.state.user_type}`;
+    let path =
+      ApiRoutes.GET_CUSTOMER_LIST +
+      "?status=" +
+      `${this.state.usersStatus}` +
+      "&days_limit=" +
+      `${this.state.daysCount}` +
+      "&amount_limit=" +
+      `${this.state.orderAmount}` +
+      "&user_type=" +
+      `${this.state.user_type}`;
 
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      var usersList = res.data.map((user, index) => {
-        return {
-          label: user.username,
-          value: user._id,
-          key: index,
-        };
-      });
-      this.setState({ usersList: usersList });
+    if (res) {
+      if (res.status == 200) {
+        var usersList = res.data.map((user, index) => {
+          return {
+            label: user.username,
+            value: user._id,
+            key: index,
+          };
+        });
+        this.setState({ usersList: usersList });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   handleSubmit = async (inputValues, formOptions) => {
-
     var userIdsArr = this.state.selectedUsers.map(function (el) {
       return el.value;
     });
@@ -149,20 +151,23 @@ class Notifications extends Component {
       formData.append("notification_text", inputValues.notification_text);
       formData.append("sent_to", inputValues.sent_to);
       formData.append("sent_to_users", JSON.stringify(userIdsArr));
-      formData.append("sender_id", this.state.login_id)
-      formData.append("user_type", this.state.user_type)
-      formData.append("status", this.state.usersStatus)
-      formData.append("days_limit", this.state.daysCount)
-      formData.append("amount_limit", this.state.orderAmount)
+      formData.append("sender_id", this.state.login_id);
+      formData.append("user_type", this.state.user_type);
+      formData.append("status", this.state.usersStatus);
+      formData.append("days_limit", this.state.daysCount);
+      formData.append("amount_limit", this.state.orderAmount);
 
       let path = ApiRoutes.ADD_NOTIFICATION;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        NotificationManager.success(res.message, "Success!", 3000);
-        window.location.reload();
+      if (res) {
+        if (res.status == 200) {
+          NotificationManager.success(res.message, "Success!", 3000);
+          window.location.reload();
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     }
   };
@@ -180,28 +185,19 @@ class Notifications extends Component {
       return (
         <div>
           <components.Option {...this.props}>
-            <input
-              type="checkbox"
-              checked={this.props.isSelected}
-              onChange={e => null}
-            />{" "}
-            <label>{this.props.label} </label>
+            <input type="checkbox" checked={this.props.isSelected} onChange={(e) => null} /> <label>{this.props.label} </label>
           </components.Option>
         </div>
       );
-    }
+    },
   });
 
   render() {
-
     return (
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.notifications"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.notifications" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -219,16 +215,7 @@ class Notifications extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
@@ -239,91 +226,74 @@ class Notifications extends Component {
                               className="form-control"
                               value={values.user_type}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "user_type",
-                                  event.target.value
-                                );
+                                setFieldValue("user_type", event.target.value);
                                 this.setState({ user_type: event.target.value }, () => this.getUsersList());
-                              
                               }}
                             >
-                              <option value="">Select</option>,
-                                  <option value="3">Customer</option>,
-                                  <option value="4">Driver</option>
+                              <option value="">Select</option>,<option value="3">Customer</option>,<option value="4">Driver</option>
                             </select>
-                            {errors.user_type &&
-                              touched.user_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.user_type}
-                                </div>
-                              ) : null}
+                            {errors.user_type && touched.user_type ? <div className="invalid-feedback d-block">{errors.user_type}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
-                      {this.state.user_type == 3 ?
-                      (<>
-                        <Row>
-                        <Colxx xxs="12" sm="6">
-                          <FormGroup className="form-group has-float-label">
-                            <Label>Select Days Filter</Label>
-                            <select
-                              name="daysCount"
-                              className="form-control"
-                              value={values.daysCount}
-                              onChange={(e) => {
-                                setFieldValue("daysCount", e.target.value);
-                                this.onChangeDays(e.target.value);
-                                this.getUsersList();
-                              }}
-                            >
-                              {this.state.daysFilter.map((item, index) => {
-                                return (
-                                  <option key={index} value={item.value}>
-                                    {item.label}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            {errors.daysCount && touched.daysCount ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.daysCount}
-                              </div>
-                            ) : null}
-                          </FormGroup>
-                        </Colxx>
-                      </Row>
-
-                     <Row>
-                        <Colxx xxs="12" sm="6">
-                          <FormGroup className="form-group has-float-label">
-                            <Label>Select Order Filter</Label>
-                            <select
-                              name="orderAmount"
-                              className="form-control"
-                              value={values.orderAmount}
-                              onChange={(e) => {
-                                setFieldValue("orderAmount", e.target.value);
-                                this.onChangeAmount(e.target.value);
-                                this.getUsersList();
-                              }}
-                            >
-                              {this.state.orderFilter.map((item, index) => {
-                                return (
-                                  <option key={index} value={item.value}>
-                                    {item.label}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            {errors.orderAmount && touched.orderAmount ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.orderAmount}
-                              </div>
-                            ) : null}
-                          </FormGroup>
-                        </Colxx>
-                      </Row> </>):""
-                    }
+                      {this.state.user_type == 3 ? (
+                        <>
+                          <Row>
+                            <Colxx xxs="12" sm="6">
+                              <FormGroup className="form-group has-float-label">
+                                <Label>Select Days Filter</Label>
+                                <select
+                                  name="daysCount"
+                                  className="form-control"
+                                  value={values.daysCount}
+                                  onChange={(e) => {
+                                    setFieldValue("daysCount", e.target.value);
+                                    this.onChangeDays(e.target.value);
+                                    this.getUsersList();
+                                  }}
+                                >
+                                  {this.state.daysFilter.map((item, index) => {
+                                    return (
+                                      <option key={index} value={item.value}>
+                                        {item.label}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                                {errors.daysCount && touched.daysCount ? <div className="invalid-feedback d-block">{errors.daysCount}</div> : null}
+                              </FormGroup>
+                            </Colxx>
+                          </Row>
+                          <Row>
+                            <Colxx xxs="12" sm="6">
+                              <FormGroup className="form-group has-float-label">
+                                <Label>Select Order Filter</Label>
+                                <select
+                                  name="orderAmount"
+                                  className="form-control"
+                                  value={values.orderAmount}
+                                  onChange={(e) => {
+                                    setFieldValue("orderAmount", e.target.value);
+                                    this.onChangeAmount(e.target.value);
+                                    this.getUsersList();
+                                  }}
+                                >
+                                  {this.state.orderFilter.map((item, index) => {
+                                    return (
+                                      <option key={index} value={item.value}>
+                                        {item.label}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                                {errors.orderAmount && touched.orderAmount ? <div className="invalid-feedback d-block">{errors.orderAmount}</div> : null}
+                              </FormGroup>
+                            </Colxx>
+                          </Row>{" "}
+                        </>
+                      ) : (
+                        ""
+                      )}
 
                       {/* <Row>
                         <Colxx xxs="12" sm="6">
@@ -361,17 +331,8 @@ class Notifications extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Notification Text</Label>
-                            <Field
-                              className="form-control"
-                              name="notification_text"
-                              component="textarea"
-                            />
-                            {errors.notification_text &&
-                              touched.notification_text ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.notification_text}
-                                </div>
-                              ) : null}
+                            <Field className="form-control" name="notification_text" component="textarea" />
+                            {errors.notification_text && touched.notification_text ? <div className="invalid-feedback d-block">{errors.notification_text}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -397,11 +358,7 @@ class Notifications extends Component {
                                 );
                               })}
                             </select>
-                            {errors.sent_to && touched.sent_to ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.sent_to}
-                              </div>
-                            ) : null}
+                            {errors.sent_to && touched.sent_to ? <div className="invalid-feedback d-block">{errors.sent_to}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -442,11 +399,7 @@ class Notifications extends Component {
                                   });
                                 }}
                               />
-                              {errors.sent_to_users && touched.sent_to_users ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.sent_to_users}
-                                </div>
-                              ) : null}
+                              {errors.sent_to_users && touched.sent_to_users ? <div className="invalid-feedback d-block">{errors.sent_to_users}</div> : null}
                             </FormGroup>
                           </Colxx>
                         </Row>

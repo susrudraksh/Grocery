@@ -3,7 +3,7 @@ import { injectIntl } from "react-intl";
 import { Row, Card, CardBody, FormGroup, Label, Button } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import moment from 'moment';
+import moment from "moment";
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -18,17 +18,9 @@ var digitRegExp = /^\d+(?:[.]\d+)*$/;
 
 const FormSchema = Yup.object().shape({
   offer_type: Yup.string().required("Please select offer type"),
-  title: Yup.string()
-    .required("Please enter title")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(30, "Too Long! Atmost 30 letters."),
-  description: Yup.string()
-    .required("Please enter title")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(200, "Too Long! Atmost 200 letters."),
-  coupon_code: Yup.string()
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(10, "Too Long! Atmost 10 letters."),
+  title: Yup.string().required("Please enter title").min(2, "Too Short! Atleast 2 letters.").max(30, "Too Long! Atmost 30 letters."),
+  description: Yup.string().required("Please enter title").min(2, "Too Short! Atleast 2 letters.").max(200, "Too Long! Atmost 200 letters."),
+  coupon_code: Yup.string().min(2, "Too Short! Atleast 2 letters.").max(10, "Too Long! Atmost 10 letters."),
 });
 
 var options = [];
@@ -76,49 +68,43 @@ class EditOffer extends Component {
   }
 
   dataRender = async () => {
-
     let path = ApiRoutes.GET_OFFER + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        offer_type: res.data.offer_type,
-        title: res.data.title,
-        description: res.data.description,
-        offer_amount_type: res.data.offer_amount_type,
-        offer_price: res.data.offer_price,
-        offer_amount: res.data.offer_amount,
-        offer_product: res.data.offer_product,
-        quantity: res.data.quantity,
-        offer_quantity: res.data.offer_quantity,
-        coupon_code: res.data.coupon_code,
-        card_type: res.data.card_type,
-        bank_type: res.data.card_type,
-        startDate: moment(res.data.startDate).format("MM-DD-YYYY"),
-        endDate: moment(res.data.endDate).format("MM-DD-YYYY"),
-        business_category: res.data.business_category_id[0] ? res.data.business_category_id[0]._id : res.data.business_category_id,
-        product_category: res.data.category[0] ? res.data.category[0]._id : res.data.categor,
-        product_subcategory: res.data.subcategory[0] ? res.data.subcategory[0]._id : res.data.subcategory,
-        product_inv_id: res.data.product_id ? res.data.product_id : res.data.product_id,
-        image_preview: res.data.image_path_url,
-        isLoading: true,
-      });
-      if (res.data.business_category_id[0] != null) {
-        this.getBusinessCategories();
-        this.getPerentCategories(res.data.business_category_id[0]._id);
-        this.getSubCategories(
-          res.data.business_category_id[0]._id,
-          res.data.category[0]._id
-        );
-        this.getProducts(
-          res.data.business_category_id[0]._id,
-          res.data.category[0]._id,
-          res.data.subcategory[0]._id
-        );
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          offer_type: res.data.offer_type,
+          title: res.data.title,
+          description: res.data.description,
+          offer_amount_type: res.data.offer_amount_type,
+          offer_price: res.data.offer_price,
+          offer_amount: res.data.offer_amount,
+          offer_product: res.data.offer_product,
+          quantity: res.data.quantity,
+          offer_quantity: res.data.offer_quantity,
+          coupon_code: res.data.coupon_code,
+          card_type: res.data.card_type,
+          bank_type: res.data.card_type,
+          startDate: moment(res.data.startDate).format("MM-DD-YYYY"),
+          endDate: moment(res.data.endDate).format("MM-DD-YYYY"),
+          business_category: res.data.business_category_id[0] ? res.data.business_category_id[0]._id : res.data.business_category_id,
+          product_category: res.data.category[0] ? res.data.category[0]._id : res.data.categor,
+          product_subcategory: res.data.subcategory[0] ? res.data.subcategory[0]._id : res.data.subcategory,
+          product_inv_id: res.data.product_id ? res.data.product_id : res.data.product_id,
+          image_preview: res.data.image_path_url,
+          isLoading: true,
+        });
+        if (res.data.business_category_id[0] != null) {
+          this.getBusinessCategories();
+          this.getPerentCategories(res.data.business_category_id[0]._id);
+          this.getSubCategories(res.data.business_category_id[0]._id, res.data.category[0]._id);
+          this.getProducts(res.data.business_category_id[0]._id, res.data.category[0]._id, res.data.subcategory[0]._id);
+        }
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
       }
-
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -127,13 +113,16 @@ class EditOffer extends Component {
 
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -143,14 +132,17 @@ class EditOffer extends Component {
 
     let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-      var parentCatList = [{ _id: "", name: "Select" }];
-      this.setState({
-        parentCatList: [...parentCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        var parentCatList = [{ _id: "", name: "Select" }];
+        this.setState({
+          parentCatList: [...parentCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -165,13 +157,16 @@ class EditOffer extends Component {
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          subCatList: [...subCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            subCatList: [...subCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -180,11 +175,7 @@ class EditOffer extends Component {
     }
   };
 
-  getProducts = async (
-    business_category,
-    product_category,
-    product_subcategory
-  ) => {
+  getProducts = async (business_category, product_category, product_subcategory) => {
     this.state.isLoading = true;
     var productList = [{ id: "", name: "Select" }];
     options = [];
@@ -197,34 +188,37 @@ class EditOffer extends Component {
 
       let path = ApiRoutes.GET_BANNER_PRODUCTS;
       const res = await Http("POST", path, formData);
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            productList: [...productList, ...res.data],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
+        if (res.status == 200) {
+          this.setState({
+            productList: [...this.state.productList, ...res.data],
+          });
+          res.data.map((item, index) => {
+            options.push({ key: index, value: item.id, label: item.inventory_name });
 
-      if (res.status == 200) {
-        this.setState({
-          productList: [...productList, ...res.data],
-        });
-      } else {
-        NotificationManager.error(res.message, "Error!", 3000);
-      }
-      if (res.status == 200) {
-        this.setState({
-          productList: [...this.state.productList, ...res.data],
-        });
-        res.data.map((item, index) => {
-          options.push({ key: index, "value": item.id, "label": item.inventory_name })
-
-          if (Array.isArray(this.state.product_inv_id)) {
-            if (this.state.product_inv_id.indexOf(item.id) !== -1) {
-              reactSelect.push({ key: index, value: item.id, label: item.inventory_name });
+            if (Array.isArray(this.state.product_inv_id)) {
+              if (this.state.product_inv_id.indexOf(item.id) !== -1) {
+                reactSelect.push({ key: index, value: item.id, label: item.inventory_name });
+              }
             }
-          }
-        })
-        console.log(options)
-        debugger
-        this.setState({
-          product_inv_id: reactSelect,
-        })
+          });
+          console.log(options);
+
+          this.setState({
+            product_inv_id: reactSelect,
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -264,9 +258,7 @@ class EditOffer extends Component {
   //   }
   // };
 
-
   handleSubmit = async (inputValues) => {
-    debugger
     var error = "";
     if (inputValues.offer_type == 2 || inputValues.offer_type == 3 || inputValues.offer_type == 4) {
       if (inputValues.business_category == "") {
@@ -340,13 +332,15 @@ class EditOffer extends Component {
 
     let path = ApiRoutes.UPDATE_OFFER + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/offers`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/offers`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -356,10 +350,7 @@ class EditOffer extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-offer"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-offer" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -381,7 +372,6 @@ class EditOffer extends Component {
                     offer_product: this.state.offer_product,
                     offer_quantity: this.state.offer_quantity,
 
-
                     offer_type: this.state.offer_type,
                     coupon_code: this.state.coupon_code,
                     title: this.state.title,
@@ -396,16 +386,7 @@ class EditOffer extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
@@ -416,83 +397,47 @@ class EditOffer extends Component {
                               className="form-control"
                               value={values.offer_type}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "offer_type",
-                                  event.target.value
-                                );
+                                setFieldValue("offer_type", event.target.value);
                                 this.setState({ offer_type: event.target.value });
                               }}
                             >
-                              <option value="">Select</option>,
-                              <option value="1">Promocode Offer</option>,
-                              <option value="2">Bundle Offer</option>,
-                              <option value="3">Promotional Offer</option>,
+                              <option value="">Select</option>,<option value="1">Promocode Offer</option>,<option value="2">Bundle Offer</option>,<option value="3">Promotional Offer</option>,
                               <option value="4">Bank Offer</option>
-
                             </select>
-                            {errors.offer_type &&
-                              touched.offer_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_type}
-                                </div>
-                              ) : null}
+                            {errors.offer_type && touched.offer_type ? <div className="invalid-feedback d-block">{errors.offer_type}</div> : null}
                           </FormGroup>
                         </Colxx>
-                        {this.state.offer_type != 4 ?
-                          (<Colxx xxs="12" sm="6">
+                        {this.state.offer_type != 4 ? (
+                          <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Coupon Code</Label>
-                              <Field
-                                className="form-control"
-                                name="coupon_code"
-                                type="text"
-                              />
-                              {errors.coupon_code && touched.coupon_code ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.coupon_code}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="coupon_code" type="text" />
+                              {errors.coupon_code && touched.coupon_code ? <div className="invalid-feedback d-block">{errors.coupon_code}</div> : null}
                             </FormGroup>
-                          </Colxx>) : null}
+                          </Colxx>
+                        ) : null}
                       </Row>
-
 
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Title</Label>
-                            <Field
-                              className="form-control"
-                              name="title"
-                              type="text"
-                            />
-                            {errors.title && touched.title ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.title}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="title" type="text" />
+                            {errors.title && touched.title ? <div className="invalid-feedback d-block">{errors.title}</div> : null}
                           </FormGroup>
                         </Colxx>
 
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Description</Label>
-                            <Field
-                              className="form-control"
-                              name="description"
-                              type="text"
-                            />
-                            {errors.description && touched.description ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.description}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="description" type="text" />
+                            {errors.description && touched.description ? <div className="invalid-feedback d-block">{errors.description}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
 
-                      {this.state.offer_type != 1 ?
-                        (<div>
+                      {this.state.offer_type != 1 ? (
+                        <div>
                           <Row>
                             <Colxx xxs="12" sm="6">
                               <FormGroup className="form-group has-float-label">
@@ -502,10 +447,7 @@ class EditOffer extends Component {
                                   className="form-control"
                                   value={values.business_category}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "business_category",
-                                      event.target.value
-                                    );
+                                    setFieldValue("business_category", event.target.value);
                                     setFieldValue("product_category", "");
                                     setFieldValue("product_subcategory", "");
                                     setFieldValue("product_inv_id", "");
@@ -520,12 +462,7 @@ class EditOffer extends Component {
                                     );
                                   })}
                                 </select>
-                                {errors.business_category &&
-                                  touched.business_category ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.business_category}
-                                    </div>
-                                  ) : null}
+                                {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
                               </FormGroup>
                             </Colxx>
 
@@ -537,16 +474,10 @@ class EditOffer extends Component {
                                   className="form-control"
                                   value={values.product_category}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "product_category",
-                                      event.target.value
-                                    );
+                                    setFieldValue("product_category", event.target.value);
                                     setFieldValue("product_subcategory", "");
                                     setFieldValue("product_inv_id", "");
-                                    this.getSubCategories(
-                                      values.business_category,
-                                      event.target.value
-                                    );
+                                    this.getSubCategories(values.business_category, event.target.value);
                                   }}
                                 >
                                   {this.state.parentCatList.map((item, index) => {
@@ -557,12 +488,7 @@ class EditOffer extends Component {
                                     );
                                   })}
                                 </select>
-                                {errors.product_category &&
-                                  touched.product_category ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.product_category}
-                                    </div>
-                                  ) : null}
+                                {errors.product_category && touched.product_category ? <div className="invalid-feedback d-block">{errors.product_category}</div> : null}
                               </FormGroup>
                             </Colxx>
                           </Row>
@@ -576,16 +502,9 @@ class EditOffer extends Component {
                                   className="form-control"
                                   value={values.product_subcategory}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "product_subcategory",
-                                      event.target.value
-                                    );
+                                    setFieldValue("product_subcategory", event.target.value);
                                     setFieldValue("product_inv_id", "");
-                                    this.getProducts(
-                                      values.business_category,
-                                      values.product_category,
-                                      event.target.value
-                                    );
+                                    this.getProducts(values.business_category, values.product_category, event.target.value);
                                   }}
                                 >
                                   {this.state.subCatList.map((item, index) => {
@@ -596,12 +515,7 @@ class EditOffer extends Component {
                                     );
                                   })}
                                 </select>
-                                {errors.product_subcategory &&
-                                  touched.product_subcategory ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.product_subcategory}
-                                    </div>
-                                  ) : null}
+                                {errors.product_subcategory && touched.product_subcategory ? <div className="invalid-feedback d-block">{errors.product_subcategory}</div> : null}
                               </FormGroup>
                             </Colxx>
 
@@ -617,11 +531,7 @@ class EditOffer extends Component {
                                   onChange={setFieldValue}
                                   onBlur={setFieldTouched}
                                 />
-                                {errors.product_inv_id && touched.product_inv_id ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.product_inv_id}
-                                  </div>
-                                ) : null}
+                                {errors.product_inv_id && touched.product_inv_id ? <div className="invalid-feedback d-block">{errors.product_inv_id}</div> : null}
                                 {/* <select
                                   name="product_inv_id"
                                   className="form-control"
@@ -652,11 +562,11 @@ class EditOffer extends Component {
                               </FormGroup>
                             </Colxx>
                           </Row>
-                        </div>) : null
-                      }
+                        </div>
+                      ) : null}
 
-                      {this.state.offer_type == 4 || this.state.offer_type == "" ?
-                        (<Row>
+                      {this.state.offer_type == 4 || this.state.offer_type == "" ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Card Type</Label>
@@ -665,21 +575,12 @@ class EditOffer extends Component {
                                 className="form-control"
                                 value={values.card_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "card_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("card_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                              <option value="Debit">Debit Card</option>,
-                              <option value="Credit">Credit Card</option>
+                                <option value="">Select</option>,<option value="Debit">Debit Card</option>,<option value="Credit">Credit Card</option>
                               </select>
-                              {errors.card_type && touched.card_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.card_type}
-                                </div>
-                              ) : null}
+                              {errors.card_type && touched.card_type ? <div className="invalid-feedback d-block">{errors.card_type}</div> : null}
                             </FormGroup>
                           </Colxx>
 
@@ -691,28 +592,19 @@ class EditOffer extends Component {
                                 className="form-control"
                                 value={values.bank_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "bank_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("bank_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                              <option value="Debit">Hsbc</option>,
-                              <option value="Credit">Icici</option>
+                                <option value="">Select</option>,<option value="Debit">Hsbc</option>,<option value="Credit">Icici</option>
                               </select>
-                              {errors.bank_type && touched.bank_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.bank_type}
-                                </div>
-                              ) : null}
+                              {errors.bank_type && touched.bank_type ? <div className="invalid-feedback d-block">{errors.bank_type}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
-                      {this.state.offer_type != 3 ?
-                        (<Row>
+                      {this.state.offer_type != 3 ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Amount Type</Label>
@@ -721,130 +613,67 @@ class EditOffer extends Component {
                                 className="form-control"
                                 value={values.offer_amount_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "offer_amount_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("offer_amount_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                              <option value="1">Fixed</option>,
-                              <option value="2">Percentage(%)</option>
+                                <option value="">Select</option>,<option value="1">Fixed</option>,<option value="2">Percentage(%)</option>
                               </select>
-                              {errors.offer_amount_type && touched.offer_amount_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_amount_type}
-                                </div>
-                              ) : null}
+                              {errors.offer_amount_type && touched.offer_amount_type ? <div className="invalid-feedback d-block">{errors.offer_amount_type}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="3">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Price</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_price"
-                                type="text"
-                              />
-                              {errors.offer_price && touched.offer_price ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_price}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_price" type="text" />
+                              {errors.offer_price && touched.offer_price ? <div className="invalid-feedback d-block">{errors.offer_price}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="3">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Amount</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_amount"
-                                type="text"
-                              />
-                              {errors.offer_amount && touched.offer_amount ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_amount}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_amount" type="text" />
+                              {errors.offer_amount && touched.offer_amount ? <div className="invalid-feedback d-block">{errors.offer_amount}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
-                      {this.state.offer_type == 3 || this.state.offer_type == "" ?
-                        (<Row>
+                      {this.state.offer_type == 3 || this.state.offer_type == "" ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Price</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_price"
-                                type="text"
-                              />
-                              {errors.offer_price && touched.offer_price ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_price}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_price" type="text" />
+                              {errors.offer_price && touched.offer_price ? <div className="invalid-feedback d-block">{errors.offer_price}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Quantity</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_quantity"
-                                type="text"
-                              />
-                              {errors.offer_quantity && touched.offer_quantity ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_quantity}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_quantity" type="text" />
+                              {errors.offer_quantity && touched.offer_quantity ? <div className="invalid-feedback d-block">{errors.offer_quantity}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
-                            <Label className="d-block">
-                              Start Date
-                              </Label>
-                            <FormikDatePicker
-                              name="startDate"
-                              value={moment(values.startDate)}
-                              onChange={setFieldValue}
-                              onBlur={setFieldTouched}
-                            />
-                            {errors.startDate && touched.startDate ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.startDate}
-                              </div>
-                            ) : null}
+                            <Label className="d-block">Start Date</Label>
+                            <FormikDatePicker name="startDate" value={moment(values.startDate)} onChange={setFieldValue} onBlur={setFieldTouched} />
+                            {errors.startDate && touched.startDate ? <div className="invalid-feedback d-block">{errors.startDate}</div> : null}
                           </FormGroup>
                         </Colxx>
 
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
-                            <Label className="d-block">
-                              End Date
-                              </Label>
-                            <FormikDatePicker
-                              name="endDate"
-                              value={moment(values.endDate)}
-                              onChange={setFieldValue}
-                              onBlur={setFieldTouched}
-                            />
-                            {errors.endDate && touched.endDate ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.endDate}
-                              </div>
-                            ) : null}
+                            <Label className="d-block">End Date</Label>
+                            <FormikDatePicker name="endDate" value={moment(values.endDate)} onChange={setFieldValue} onBlur={setFieldTouched} />
+                            {errors.endDate && touched.endDate ? <div className="invalid-feedback d-block">{errors.endDate}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -859,22 +688,11 @@ class EditOffer extends Component {
                               type="file"
                               value={this.state.image}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "image",
-                                  event.currentTarget.files[0]
-                                );
+                                setFieldValue("image", event.currentTarget.files[0]);
                               }}
                             />
-                            {errors.image && touched.image ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.image}
-                              </div>
-                            ) : null}
-                            <img
-                              alt={this.state.title}
-                              src={this.state.image_preview}
-                              className="img-thumbnail border-0 list-thumbnail align-self-center image-preview"
-                            />
+                            {errors.image && touched.image ? <div className="invalid-feedback d-block">{errors.image}</div> : null}
+                            <img alt={this.state.title} src={this.state.image_preview} className="img-thumbnail border-0 list-thumbnail align-self-center image-preview" />
                           </FormGroup>
                         </Colxx>
                       </Row>

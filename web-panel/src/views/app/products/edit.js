@@ -12,7 +12,6 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 import EditInventoryForm from "./edit-inventory-form";
 import EditWarehouseInvenotryForm from "./edit-warehouse-inventory";
 
-
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
@@ -20,24 +19,60 @@ import "react-quill/dist/quill.bubble.css";
 const quillModules = {
   toolbar: [
     [{ header: "1" }, { header: "2" }],
-    [{size: []}],
+    [{ size: [] }],
     ["bold", "italic", "underline", "strike", "blockquote"],
-    [{'color': ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color']}],
     [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
+      {
+        color: [
+          "#000000",
+          "#e60000",
+          "#ff9900",
+          "#ffff00",
+          "#008a00",
+          "#0066cc",
+          "#9933ff",
+          "#ffffff",
+          "#facccc",
+          "#ffebcc",
+          "#ffffcc",
+          "#cce8cc",
+          "#cce0f5",
+          "#ebd6ff",
+          "#bbbbbb",
+          "#f06666",
+          "#ffc266",
+          "#ffff66",
+          "#66b966",
+          "#66a3e0",
+          "#c285ff",
+          "#888888",
+          "#a10000",
+          "#b26b00",
+          "#b2b200",
+          "#006100",
+          "#0047b2",
+          "#6b24b2",
+          "#444444",
+          "#5c0000",
+          "#663d00",
+          "#666600",
+          "#003700",
+          "#002966",
+          "#3d1466",
+          "custom-color",
+        ],
+      },
     ],
-   // ["link", "image"],
+    [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+    // ["link", "image"],
     ["clean"],
   ],
 };
 
 const quillFormats = [
-  'header', 
-  'font', 
-  'size',
+  "header",
+  "font",
+  "size",
   "bold",
   "italic",
   "underline",
@@ -48,7 +83,7 @@ const quillFormats = [
   "indent",
   "color",
   //"link",
- // "image",
+  // "image",
 ];
 
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
@@ -56,31 +91,22 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 const ProductFormSchema = Yup.object().shape({
   business_category: Yup.string().required("Please select a business category"),
   product_category: Yup.string().required("Please select a product category"),
-  product_subcategory: Yup.string().required(
-    "Please select a product sub category"
-  ),
+  product_subcategory: Yup.string().required("Please select a product sub category"),
   product_brand: Yup.string().required("Please select a brand"),
-  name: Yup.string()
-    .required("Please enter product name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(120, "Too Long! Atmost 120 letters."),
-    description: Yup.string().required("Please enter product description"),
-  product_images: Yup.mixed().test(
-    "fileType",
-    "Invalid File Format",
-    (files) => {
-      let valid = true;
-      if (files && files != undefined) {
-        for (let i = 0; i < files.length; i++) {
-          if (files[i] && !SUPPORTED_FORMATS.includes(files[i].type)) {
-            valid = false;
-            continue;
-          }
+  name: Yup.string().required("Please enter product name").min(2, "Too Short! Atleast 2 letters.").max(120, "Too Long! Atmost 120 letters."),
+  description: Yup.string().required("Please enter product description"),
+  product_images: Yup.mixed().test("fileType", "Invalid File Format", (files) => {
+    let valid = true;
+    if (files && files != undefined) {
+      for (let i = 0; i < files.length; i++) {
+        if (files[i] && !SUPPORTED_FORMATS.includes(files[i].type)) {
+          valid = false;
+          continue;
         }
       }
-      return valid;
     }
-  ),
+    return valid;
+  }),
 });
 
 class EditProduct extends Component {
@@ -115,9 +141,9 @@ class EditProduct extends Component {
       sku_name: "",
       batch: "",
 
-      tax_type:1,
+      tax_type: 1,
       hsn_code: "",
-      inventory_product_code:"",
+      inventory_product_code: "",
       tax_rate: 0,
       taxable_amount: 0,
       gst_amount: 0,
@@ -127,9 +153,9 @@ class EditProduct extends Component {
       sgst_amount: 0,
       igst_rate: 0,
       igst_amount: 0,
-      min_inventory:0,
+      min_inventory: 0,
 
-      currentPage: this.props.history.location.state ? this.props.history.location.state.pageIndex :1,
+      currentPage: this.props.history.location.state ? this.props.history.location.state.pageIndex : 1,
 
       custoimzations: [],
 
@@ -138,7 +164,6 @@ class EditProduct extends Component {
       subCatList: [{ _id: "", name: "Select" }],
       brandList: [{ _id: "", name: "Select" }],
     };
-   
   }
 
   componentDidMount() {
@@ -149,30 +174,30 @@ class EditProduct extends Component {
   dataRender = async () => {
     let path = ApiRoutes.GET_PRODUCT + "/" + this.state.itemId;
     const res = await Http("GET", path);
+    if (res) {
+      if (res.status == 200) {
+        var productData = res.data[0];
 
-    if (res.status == 200) {
-      var productData = res.data[0];
+        this.setState({
+          business_category: productData.business_category._id,
+          product_category: productData.product_category._id,
+          product_subcategory: productData.product_subcategory._id,
+          product_brand: productData.brand._id,
+          name: productData.name,
+          description: productData.description,
+          preview_images: productData.images,
+          inventory_data: productData.inventory,
+        });
 
-      this.setState({
-        business_category: productData.business_category._id,
-        product_category: productData.product_category._id,
-        product_subcategory: productData.product_subcategory._id,
-        product_brand: productData.brand._id,
-        name: productData.name,
-        description: productData.description,
-        preview_images: productData.images,
-        inventory_data: productData.inventory,
-      });
-
-      this.getBusinessCategories();
-      this.getPerentCategories(productData.business_category._id);
-      this.getSubCategories(
-        productData.business_category._id,
-        productData.product_category._id
-      );
-      this.getBrands();
+        this.getBusinessCategories();
+        this.getPerentCategories(productData.business_category._id);
+        this.getSubCategories(productData.business_category._id, productData.product_category._id);
+        this.getBrands();
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -182,13 +207,16 @@ class EditProduct extends Component {
   getBusinessCategories = async () => {
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -201,13 +229,16 @@ class EditProduct extends Component {
 
       let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          parentCatList: [...parentCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            parentCatList: [...parentCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -226,13 +257,16 @@ class EditProduct extends Component {
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          subCatList: [...subCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            subCatList: [...subCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -245,13 +279,16 @@ class EditProduct extends Component {
     var brandList = [{ _id: "", name: "Select" }];
     let path = ApiRoutes.GET_BRANDS + "?page_no=1&limit=10000";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        brandList: [...brandList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          brandList: [...brandList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -265,16 +302,18 @@ class EditProduct extends Component {
 
       let path = ApiRoutes.DELETE_PRODUCT_IMAGE;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        previewImagesClone.splice(index, 1);
-        this.setState({ preview_images: previewImagesClone });
+      if (res) {
+        if (res.status == 200) {
+          previewImagesClone.splice(index, 1);
+          this.setState({ preview_images: previewImagesClone });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
-      var message =
-        "Upload a new image to delete this. There should atleast one image for a product.";
+      var message = "Upload a new image to delete this. There should atleast one image for a product.";
       NotificationManager.error(message, "Error!", 3000);
     }
   };
@@ -306,13 +345,15 @@ class EditProduct extends Component {
 
     let path = ApiRoutes.UPDATE_PRODUCT_DETAILS + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/products`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/products`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -332,9 +373,9 @@ class EditProduct extends Component {
       batch: "",
       product_quantity: "",
       ProductCustomizationData: [],
-      tax_type:1,
+      tax_type: 1,
       hsn_code: "",
-      inventory_product_code:"",
+      inventory_product_code: "",
       tax_rate: 0,
       taxable_amount: 0,
       gst_amount: 0,
@@ -344,7 +385,7 @@ class EditProduct extends Component {
       sgst_amount: 0,
       igst_rate: 0,
       igst_amount: 0,
-      min_inventory:0,
+      min_inventory: 0,
     };
 
     this.setState((prevState) => ({
@@ -365,21 +406,20 @@ class EditProduct extends Component {
       }
 
       if (savedInventories > 1) {
-        let path =
-          ApiRoutes.DELETE_PRODUCT_INVENTORY_DATA +
-          "/" +
-          inventoryDataClone[index]._id;
+        let path = ApiRoutes.DELETE_PRODUCT_INVENTORY_DATA + "/" + inventoryDataClone[index]._id;
         const res = await Http("DELETE", path);
-
-        if (res.status == 200) {
-          inventoryDataClone.splice(index, 1);
-          this.setState({ inventory_data: inventoryDataClone });
+        if (res) {
+          if (res.status == 200) {
+            inventoryDataClone.splice(index, 1);
+            this.setState({ inventory_data: inventoryDataClone });
+          } else {
+            NotificationManager.error(res.message, "Error!", 3000);
+          }
         } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       } else {
-        var message =
-          "Add a new inventory to delete this. There should atleast one saved inventory for a product.";
+        var message = "Add a new inventory to delete this. There should atleast one saved inventory for a product.";
         NotificationManager.error(message, "Error!", 3000);
       }
     } else {
@@ -394,10 +434,7 @@ class EditProduct extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-product"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-product" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -421,16 +458,7 @@ class EditProduct extends Component {
                   validationSchema={ProductFormSchema}
                   onSubmit={this.handleProductFormSubmit}
                 >
-                  {({
-                    handleProductFormSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleProductFormSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form
                       onChange={(event) => {
                         this.handleProductFormChange(event, values, errors);
@@ -446,10 +474,7 @@ class EditProduct extends Component {
                               className="form-control"
                               value={values.business_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "business_category",
-                                  event.target.value
-                                );
+                                setFieldValue("business_category", event.target.value);
                                 this.getPerentCategories(event.target.value);
                               }}
                             >
@@ -461,12 +486,7 @@ class EditProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.business_category &&
-                            touched.business_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.business_category}
-                              </div>
-                            ) : null}
+                            {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -478,14 +498,8 @@ class EditProduct extends Component {
                               className="form-control"
                               value={values.product_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_category",
-                                  event.target.value
-                                );
-                                this.getSubCategories(
-                                  values.business_category,
-                                  event.target.value
-                                );
+                                setFieldValue("product_category", event.target.value);
+                                this.getSubCategories(values.business_category, event.target.value);
                               }}
                             >
                               {this.state.parentCatList.map((item, index) => {
@@ -496,12 +510,7 @@ class EditProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_category &&
-                            touched.product_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_category}
-                              </div>
-                            ) : null}
+                            {errors.product_category && touched.product_category ? <div className="invalid-feedback d-block">{errors.product_category}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -513,10 +522,7 @@ class EditProduct extends Component {
                               className="form-control"
                               value={values.product_subcategory}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_subcategory",
-                                  event.target.value
-                                );
+                                setFieldValue("product_subcategory", event.target.value);
                               }}
                             >
                               {this.state.subCatList.map((item, index) => {
@@ -527,12 +533,7 @@ class EditProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_subcategory &&
-                            touched.product_subcategory ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_subcategory}
-                              </div>
-                            ) : null}
+                            {errors.product_subcategory && touched.product_subcategory ? <div className="invalid-feedback d-block">{errors.product_subcategory}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -544,10 +545,7 @@ class EditProduct extends Component {
                               className="form-control"
                               value={values.product_brand}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_brand",
-                                  event.target.value
-                                );
+                                setFieldValue("product_brand", event.target.value);
                               }}
                             >
                               {this.state.brandList.map((item, index) => {
@@ -558,11 +556,7 @@ class EditProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_brand && touched.product_brand ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_brand}
-                              </div>
-                            ) : null}
+                            {errors.product_brand && touched.product_brand ? <div className="invalid-feedback d-block">{errors.product_brand}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -580,11 +574,7 @@ class EditProduct extends Component {
                                 });
                               }}
                             />
-                            {errors.name && touched.name ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.name}
-                              </div>
-                            ) : null}
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -592,21 +582,21 @@ class EditProduct extends Component {
                           <FormGroup className="form-group has-float-label">
                             <Label>Description</Label>
                             <Field className="form-control" name="description">
-                                {({ field }) => (
-                                  <ReactQuill
-                                    theme="snow"
-                                    onChange={(value) => {
-                                      this.setState({
-                                        description: value,
-                                      });
-                                    }}
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                    placeholder="Start to enter..."
-                                    value={this.state.description}
-                                  />
-                                )}
-                              </Field>
+                              {({ field }) => (
+                                <ReactQuill
+                                  theme="snow"
+                                  onChange={(value) => {
+                                    this.setState({
+                                      description: value,
+                                    });
+                                  }}
+                                  modules={quillModules}
+                                  formats={quillFormats}
+                                  placeholder="Start to enter..."
+                                  value={this.state.description}
+                                />
+                              )}
+                            </Field>
                             {/* <Field
                               className="form-control"
                               name="description"
@@ -621,11 +611,7 @@ class EditProduct extends Component {
                                 });
                               }}
                             /> */}
-                            {errors.description && touched.description ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.description}
-                              </div>
-                            ) : null}
+                            {errors.description && touched.description ? <div className="invalid-feedback d-block">{errors.description}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -639,30 +625,16 @@ class EditProduct extends Component {
                               multiple
                               value={this.state.product_images}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_images",
-                                  event.currentTarget.files
-                                );
+                                setFieldValue("product_images", event.currentTarget.files);
                               }}
                             />
-                            {errors.product_images && touched.product_images ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_images}
-                              </div>
-                            ) : null}
+                            {errors.product_images && touched.product_images ? <div className="invalid-feedback d-block">{errors.product_images}</div> : null}
                           </FormGroup>
                           {this.state.preview_images.map((item, index) => {
                             return (
-                              <div
-                                key={index}
-                                className="product-img-box-outer"
-                              >
+                              <div key={index} className="product-img-box-outer">
                                 <div id="product-img-box">
-                                  <img
-                                    alt={item.product_image_thumb_url}
-                                    src={item.product_image_thumb_url}
-                                    className="img-thumbnail border-0 list-thumbnail align-self-center image-preview"
-                                  />
+                                  <img alt={item.product_image_thumb_url} src={item.product_image_thumb_url} className="img-thumbnail border-0 list-thumbnail align-self-center image-preview" />
                                 </div>
                                 <div id="delete-btn-box">
                                   <Button
@@ -671,11 +643,7 @@ class EditProduct extends Component {
                                     size="xs"
                                     className="mb-2"
                                     title="Delete"
-                                    onClick={(e) =>
-                                      window.confirm(
-                                        "Are you sure to delete this record?"
-                                      ) && this.onDeleteImage(item._id, index)
-                                    }
+                                    onClick={(e) => window.confirm("Are you sure to delete this record?") && this.onDeleteImage(item._id, index)}
                                   >
                                     <div className="glyph-icon simple-icon-trash"></div>
                                   </Button>
@@ -686,11 +654,7 @@ class EditProduct extends Component {
                         </Colxx>
                       </Row>
 
-                      <Button
-                        color="primary"
-                        type="submit"
-                        innerRef={this.submitBtnRef}
-                      >
+                      <Button color="primary" type="submit" innerRef={this.submitBtnRef}>
                         <IntlMessages id="button.save" />
                       </Button>
                     </Form>
@@ -702,15 +666,7 @@ class EditProduct extends Component {
         </Row>
 
         {this.state.inventory_data.map((item, index) => {
-          return (
-            <EditInventoryForm
-              {...this.props}
-              key={index}
-              inventoryItem={item}
-              inventoryIndex={index}
-              onDeleteInventory={this.onDeleteInventory}
-            />
-          );
+          return <EditInventoryForm {...this.props} key={index} inventoryItem={item} inventoryIndex={index} onDeleteInventory={this.onDeleteInventory} />;
         })}
         {/* {this.state.userRole &&
           this.state.userRole == 1 &&
@@ -727,11 +683,7 @@ class EditProduct extends Component {
 
         <Row style={{ marginTop: 30 }}>
           <Colxx xxs="12" sm="6">
-            <Button
-              onClick={this.onAddNewInventory}
-              color="secondary"
-              type="button"
-            >
+            <Button onClick={this.onAddNewInventory} color="secondary" type="button">
               Add Inventory
             </Button>{" "}
           </Colxx>

@@ -13,10 +13,7 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 
 const FormSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("Please enter brand name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(20, "Too Long! Atmost 20 letters."),
+  name: Yup.string().required("Please enter brand name").min(2, "Too Short! Atleast 2 letters.").max(20, "Too Long! Atmost 20 letters."),
   image: Yup.mixed()
     .required("Please choose a brand image")
     .test("fileType", "Invalid File Format", (value) => {
@@ -45,12 +42,15 @@ class AddBrand extends Component {
 
     let path = ApiRoutes.CREATE_BRAND;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/app/brands");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/app/brands");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -76,31 +76,14 @@ class AddBrand extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Brand Name</Label>
-                            <Field
-                              className="form-control"
-                              name="name"
-                              type="text"
-                            />
-                            {errors.name && touched.name ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.name}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="name" type="text" />
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -114,17 +97,10 @@ class AddBrand extends Component {
                               type="file"
                               value={this.state.image}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "image",
-                                  event.currentTarget.files[0]
-                                );
+                                setFieldValue("image", event.currentTarget.files[0]);
                               }}
                             />
-                            {errors.image && touched.image ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.image}
-                              </div>
-                            ) : null}
+                            {errors.image && touched.image ? <div className="invalid-feedback d-block">{errors.image}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>

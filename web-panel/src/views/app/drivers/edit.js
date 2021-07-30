@@ -24,19 +24,12 @@ const countryCodes = [
 const FormSchema = Yup.object().shape({
   username: Yup.string()
     .required("Please enter user name")
-    .matches(lettersRegex,"Please input alphabet characters only")
+    .matches(lettersRegex, "Please input alphabet characters only")
     .min(2, "Too Short! Atleast 2 letters.")
     .max(50, "Too Long! Atmost 50 letters."),
-  email: Yup.string()
-    .required("Please enter email address")
-    .email("Invalid email format")
-    .max(50, "Too Long! Atmost 50 letters."),
+  email: Yup.string().required("Please enter email address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
   country_code: Yup.string().required("Please select country code"),
-  phone: Yup.string()
-    .required("Please enter phone number")
-    .matches(phoneRegExp, "Phone number is not valid")
-    .min(7, "Too Short! Atleast 7 letters.")
-    .max(15, "Too Long! Atmost 15 letters."),
+  phone: Yup.string().required("Please enter phone number").matches(phoneRegExp, "Phone number is not valid").min(7, "Too Short! Atleast 7 letters.").max(15, "Too Long! Atmost 15 letters."),
   address: Yup.string(),
   //.required("Please provide the address"),
   user_image: Yup.mixed().test("fileType", "Invalid File Format", (value) => {
@@ -61,7 +54,6 @@ class EditDriver extends Component {
       user_image: undefined,
       image_preview: "",
       currentPage: this.props.history.location.state.pageIndex,
-
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -73,19 +65,22 @@ class EditDriver extends Component {
   dataRender = async () => {
     let path = ApiRoutes.GET_DRIVER + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        username: res.data.username,
-        email: res.data.email,
-        country_code: res.data.country_code,
-        phone: res.data.phone,
-        address: res.data.address,
-        image_preview: res.data.user_image_thumb_url,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          username: res.data.username,
+          email: res.data.email,
+          country_code: res.data.country_code,
+          phone: res.data.phone,
+          address: res.data.address,
+          image_preview: res.data.user_image_thumb_url,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -100,13 +95,15 @@ class EditDriver extends Component {
 
     let path = ApiRoutes.UPDATE_DRIVER + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/drivers`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/drivers`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -115,10 +112,7 @@ class EditDriver extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-driver"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-driver" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -140,46 +134,21 @@ class EditDriver extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>User Name</Label>
-                            <Field
-                              className="form-control"
-                              name="username"
-                              type="text"
-                            />
-                            {errors.username && touched.username ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.username}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="username" type="text" />
+                            {errors.username && touched.username ? <div className="invalid-feedback d-block">{errors.username}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Email</Label>
-                            <Field
-                              className="form-control"
-                              name="email"
-                              type="email"
-                            />
-                            {errors.email && touched.email ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.email}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="email" type="email" />
+                            {errors.email && touched.email ? <div className="invalid-feedback d-block">{errors.email}</div> : null}
                           </FormGroup>
                         </Colxx>
                         {/* <Colxx xxs="12" sm="2">
@@ -209,31 +178,15 @@ class EditDriver extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Phone</Label>
-                            <Field
-                              className="form-control"
-                              name="phone"
-                              type="text"
-                            />
-                            {errors.phone && touched.phone ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.phone}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="phone" type="text" />
+                            {errors.phone && touched.phone ? <div className="invalid-feedback d-block">{errors.phone}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Address</Label>
-                            <Field
-                              className="form-control"
-                              name="address"
-                              component="textarea"
-                            />
-                            {errors.address && touched.address ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.address}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="address" component="textarea" />
+                            {errors.address && touched.address ? <div className="invalid-feedback d-block">{errors.address}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
@@ -245,23 +198,12 @@ class EditDriver extends Component {
                               type="file"
                               value={this.state.user_image}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "user_image",
-                                  event.currentTarget.files[0]
-                                );
+                                setFieldValue("user_image", event.currentTarget.files[0]);
                               }}
                             />
-                            {errors.user_image && touched.user_image ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.user_image}
-                              </div>
-                            ) : null}
+                            {errors.user_image && touched.user_image ? <div className="invalid-feedback d-block">{errors.user_image}</div> : null}
                           </FormGroup>
-                          <img
-                            alt={this.state.username}
-                            src={this.state.image_preview}
-                            className="img-thumbnail border-0 list-thumbnail align-self-center image-preview"
-                          />
+                          <img alt={this.state.username} src={this.state.image_preview} className="img-thumbnail border-0 list-thumbnail align-self-center image-preview" />
                         </Colxx>
                       </Row>
 

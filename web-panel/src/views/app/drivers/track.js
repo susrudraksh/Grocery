@@ -1,46 +1,48 @@
 import React, { Component, Fragment } from "react";
-import firebase from 'firebase'
-import GoogleMapReact,{} from 'google-map-react';
+import firebase from "firebase";
+import GoogleMapReact from "google-map-react";
 import { NotificationManager } from "../../../components/common/react-notifications";
 import "rc-switch/assets/index.css";
 import Http from "../../../helpers/Http";
-import { auth, database } from "../../../helpers/Firebase"
+import { auth, database } from "../../../helpers/Firebase";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 
-const AnyReactComponent = ({ text }) => <div><i class="glyph-icon iconsminds-map-marker-2" style={{"font-size": "32px",color:"red","line-height": "42px"}}></i>{text}</div>;
+const AnyReactComponent = ({ text }) => (
+  <div>
+    <i class="glyph-icon iconsminds-map-marker-2" style={{ "font-size": "32px", color: "red", "line-height": "42px" }}></i>
+    {text}
+  </div>
+);
 const getMapBounds = (map, maps, places) => {
-    const bounds = new maps.LatLngBounds();
-    places.forEach((place) => {
-      bounds.extend(new maps.LatLng(
-        place.geometry.location.lat,
-        place.geometry.location.lng,
-      ));
-    });
-    return bounds;
-  };
+  const bounds = new maps.LatLngBounds();
+  places.forEach((place) => {
+    bounds.extend(new maps.LatLng(place.geometry.location.lat, place.geometry.location.lng));
+  });
+  return bounds;
+};
 class renderMap extends Component {
   static defaultProps = {
     center: {
       lat: 24.5854,
-      lng: 73.7125
+      lng: 73.7125,
     },
-    zoom: 10
+    zoom: 10,
   };
   constructor(props) {
     super(props);
     this.mouseTrap = require("mousetrap");
-    console.log(this.props.location)
-    debugger
+    console.log(this.props.location);
+
     this.state = {
       displayOpts: {
         addNewBtn: true,
         keyword: true,
       },
-     
-      user_id:this.props.location.state.data && this.props.location.state.data._id || "",
-      user_name:this.props.location.state.data && this.props.location.state.data.username || "",
-      lat: props.data && props.data.geoLocation.coordinates[1] || 34.039328,
-      lng: props.data && props.data.geoLocation.coordinates[0] || 74.7904645,
+
+      user_id: (this.props.location.state.data && this.props.location.state.data._id) || "",
+      user_name: (this.props.location.state.data && this.props.location.state.data.username) || "",
+      lat: (props.data && props.data.geoLocation.coordinates[1]) || 34.039328,
+      lng: (props.data && props.data.geoLocation.coordinates[0]) || 74.7904645,
 
       searchKeyword: "",
       filterStatus: "",
@@ -49,13 +51,11 @@ class renderMap extends Component {
       lastChecked: null,
       isLoading: false,
       currentPage: this.props.history.location.state.pageIndex,
-
     };
   }
 
   // LifeCycle Methods
   componentDidMount() {
-
     // var rootRef = database.ref(`/athwas_drivers/${'5fe99a2d12d5874bdd5db02d'}`);
     // rootRef.on("value", snap => {
     //   this.setState({
@@ -64,9 +64,7 @@ class renderMap extends Component {
     //   })
     //  // renderMarkers(map, maps);
     // });
-
   }
-
 
   // Methods for Data Rendering
   dataListRender = async () => {
@@ -98,41 +96,34 @@ class renderMap extends Component {
     this.setState({ isLoading: true });
   };
 
-  
-  
   renderMarkers(map, maps) {
-   console.log(new maps.Marker(null));
+    console.log(new maps.Marker(null));
     const bounds = new maps.LatLngBounds();
-    
-    // Fit map to bounds
-    
-    var rootRef = database.ref(`/athwas_drivers/${this.state.user_id}`);
-    
-    rootRef.on("value", snap => {
-        debugger
-        new maps.Marker(null);
-        // this.setState({
 
-        // })
-       
-          bounds.extend(new maps.LatLng(
-            snap.child("lat").val(),
-            snap.child("lng").val(),
-          ));
-          map.fitBounds(bounds);
-    //     console.log(snap.child("lat").val());
+    // Fit map to bounds
+
+    var rootRef = database.ref(`/athwas_drivers/${this.state.user_id}`);
+
+    rootRef.on("value", (snap) => {
+      new maps.Marker(null);
+      // this.setState({
+
+      // })
+
+      bounds.extend(new maps.LatLng(snap.child("lat").val(), snap.child("lng").val()));
+      map.fitBounds(bounds);
+      //     console.log(snap.child("lat").val());
       this.setState({
         lat: snap.child("lat").val(),
-        lng: snap.child("lng").val()
-      })
+        lng: snap.child("lng").val(),
+      });
     });
-    
   }
 
   render() {
     return (
       // Important! Always set the container height explicitly
-      <div style={{ height: '100vh', width: '100%' }}>
+      <div style={{ height: "100vh", width: "100%" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyCnHXmtGqz7eOZg2rW9U20KDit1tRF6rhU" }}
           defaultCenter={this.props.center}
@@ -140,12 +131,7 @@ class renderMap extends Component {
           onGoogleApiLoaded={({ map, maps }) => this.renderMarkers(map, maps)}
           yesIWantToUseGoogleMapApiInternals
         >
-
-          <AnyReactComponent
-            lat={this.state.lat}
-            lng={this.state.lng}
-            text="My Marker"
-          />
+          <AnyReactComponent lat={this.state.lat} lng={this.state.lng} text="My Marker" />
         </GoogleMapReact>
       </div>
     );

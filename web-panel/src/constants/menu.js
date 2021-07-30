@@ -221,7 +221,7 @@ const data = [
     to: "/app/reports",
     check_permission: true,
     module_slug: "reports",
-    permission_type: "edit",
+    permission_type: "list",
     subs: [
       {
         icon: "simple-icon-book-open",

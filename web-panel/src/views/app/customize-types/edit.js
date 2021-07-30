@@ -12,10 +12,7 @@ import Http from "../../../helpers/Http";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const FormSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("Please enter type name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(20, "Too Long! Atmost 20 letters."),
+  name: Yup.string().required("Please enter type name").min(2, "Too Short! Atleast 2 letters.").max(20, "Too Long! Atmost 20 letters."),
 });
 
 class EditCustomizationType extends Component {
@@ -36,14 +33,17 @@ class EditCustomizationType extends Component {
   dataRender = async () => {
     let path = ApiRoutes.GET_CUSTOMIZATION_TYPE + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        name: res.data.name,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          name: res.data.name,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -53,13 +53,15 @@ class EditCustomizationType extends Component {
 
     let path = ApiRoutes.UPDATE_CUSTOMIZATION_TYPE + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/customization-types`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/customization-types`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -68,10 +70,7 @@ class EditCustomizationType extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-customization-type"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-customization-type" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -87,39 +86,22 @@ class EditCustomizationType extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
-                      <Form className="av-tooltip tooltip-label-bottom">
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Type Name</Label>
-                              <Field
-                                className="form-control"
-                                name="name"
-                                type="text"
-                              />
-                              {errors.name && touched.name ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.name}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Button color="primary" type="submit">
-                          <IntlMessages id="button.save" />
-                        </Button>
-                      </Form>
-                    )}
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                    <Form className="av-tooltip tooltip-label-bottom">
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Type Name</Label>
+                            <Field className="form-control" name="name" type="text" />
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Button color="primary" type="submit">
+                        <IntlMessages id="button.save" />
+                      </Button>
+                    </Form>
+                  )}
                 </Formik>
               </CardBody>
             </Card>

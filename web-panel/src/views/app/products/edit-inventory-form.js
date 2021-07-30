@@ -220,7 +220,7 @@ class InventoryForm extends Component {
 
     let path = ApiRoutes.GET_WAREHOUSES;
     const res = await Http("GET", path);
-
+if(res){
     if (res.status == 200) {
       var warehouseTypesArr = res.data.docs.map((item) => {
         return { _id: item._id, name: item.name };
@@ -231,6 +231,8 @@ class InventoryForm extends Component {
       });
     } else {
       NotificationManager.error(res.message, "Error!", 3000);
+    }}else {
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
   // PRODUCT INVENTORY FORM METHODS
@@ -251,7 +253,7 @@ class InventoryForm extends Component {
 
     let path = ApiRoutes.GET_PRODUCT_CUSTOM_TYPES;
     const res = await Http("GET", path);
-
+if(res){
     if (res.status == 200) {
       var customTypesArr = res.data.docs.map((item) => {
         return { _id: item._id, name: item.name };
@@ -262,6 +264,8 @@ class InventoryForm extends Component {
       });
     } else {
       NotificationManager.error(res.message, "Error!", 3000);
+    }}else {
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -272,7 +276,7 @@ class InventoryForm extends Component {
     if (type_id) {
       let path = ApiRoutes.GET_PRODUCT_CUSTOM_SUBTYPES + "/" + type_id;
       const res = await Http("GET", path);
-
+if(res){
       if (res.status == 200) {
         var customTypeValuesArr = res.data.map((item) => {
           return { _id: item._id, name: item.name };
@@ -286,6 +290,8 @@ class InventoryForm extends Component {
         this.setState({ customizeFormsList: prevCustomizeFormsList });
       } else {
         NotificationManager.error(res.message, "Error!", 3000);
+      }}else {
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -406,12 +412,14 @@ class InventoryForm extends Component {
         let path =
           ApiRoutes.DELETE_CUSTOMIZE_DATA + "/" + customizeFormsClone[index].id;
         const res = await Http("DELETE", path);
-
+if(res){
         if (res.status == 200) {
           customizeFormsClone.splice(index, 1);
           this.setState({ customizeForms: customizeFormsClone });
         } else {
           NotificationManager.error(res.message, "Error!", 3000);
+        }}else {
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       } else {
         setTimeout(() => {
@@ -440,7 +448,7 @@ class InventoryForm extends Component {
           "/" +
           customizeWarehouseFormsClone[index].id;
         const res = await Http("DELETE", path);
-
+if(res){
         if (res.status == 200) {
           customizeWarehouseFormsClone.splice(index, 1);
           this.setState({
@@ -448,6 +456,8 @@ class InventoryForm extends Component {
           });
         } else {
           NotificationManager.error(res.message, "Error!", 3000);
+        }}else {
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       } else {
         setTimeout(() => {
@@ -550,7 +560,7 @@ class InventoryForm extends Component {
 
         let path = ApiRoutes.UPDATE_INVENTORY_DETAILS;
         const res = await Http("POST", path, formData);
-
+if(res){
         if (res.status == 200) {
           NotificationManager.success(res.message, "Success!", 3000);
           //this.props.history.push("/app/products");
@@ -558,6 +568,8 @@ class InventoryForm extends Component {
           // window.location.reload();
         } else {
           NotificationManager.error(res.message, "Error!", 3000);
+        }}else {
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       }
     }, 2000)

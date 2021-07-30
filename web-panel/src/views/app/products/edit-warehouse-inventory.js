@@ -14,10 +14,7 @@ var quantityRegExp = /^\d*$/;
 
 const CustomizeFormSchema = Yup.object().shape({
   warehouse_type: Yup.string().required("Please select a warehouse type"),
-  quantity: Yup.string()
-    .required("Please enter quantity")
-    .matches(quantityRegExp, "Invalid quantity value")
-    .max(5, "Too Long! Atmost 5 letters."),
+  quantity: Yup.string().required("Please enter quantity").matches(quantityRegExp, "Invalid quantity value").max(5, "Too Long! Atmost 5 letters."),
 });
 
 class InventoryForm extends Component {
@@ -83,7 +80,7 @@ class InventoryForm extends Component {
     }
   };
 
-  handleInventorySubmit = async (inputValues, formOptions) => { };
+  handleInventorySubmit = async (inputValues, formOptions) => {};
 
   // PRODUCT CUSTOMIZATION METHODS
   getWarehouseList = async () => {
@@ -92,25 +89,24 @@ class InventoryForm extends Component {
 
     let path = ApiRoutes.GET_WAREHOUSES;
     const res = await Http("GET", path);
+    if (res) {
+      if (res.status == 200) {
+        var warehouseTypesArr = res.data.docs.map((item) => {
+          return { _id: item._id, name: item.name };
+        });
 
-    if (res.status == 200) {
-      var warehouseTypesArr = res.data.docs.map((item) => {
-        return { _id: item._id, name: item.name };
-      });
-
-      this.setState({
-        warhousesList: [...warhousesList, ...warehouseTypesArr],
-      });
+        this.setState({
+          warhousesList: [...warhousesList, ...warehouseTypesArr],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
-  addCustomizeForm = (
-    selectedId = "",
-    selectedType = "",
-    selectedValue = ""
-  ) => {
+  addCustomizeForm = (selectedId = "", selectedType = "", selectedValue = "") => {
     var customTypeValuesList = [{ _id: "", name: "Select" }];
     var prevCustomizeFormsList = this.state.customizeFormsList;
     var index = prevCustomizeFormsList.length;
@@ -154,15 +150,17 @@ class InventoryForm extends Component {
 
     if (customizeFormsClone.length > 2) {
       if (customizeFormsClone[index].id != "") {
-        let path =
-          ApiRoutes.DELETE_INVENTORY_DATA + "/" + customizeFormsClone[index].id;
+        let path = ApiRoutes.DELETE_INVENTORY_DATA + "/" + customizeFormsClone[index].id;
         const res = await Http("DELETE", path);
-
-        if (res.status == 200) {
-          customizeFormsClone.splice(index, 1);
-          this.setState({ customizeForms: customizeFormsClone });
+        if (res) {
+          if (res.status == 200) {
+            customizeFormsClone.splice(index, 1);
+            this.setState({ customizeForms: customizeFormsClone });
+          } else {
+            NotificationManager.error(res.message, "Error!", 3000);
+          }
         } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       } else {
         setTimeout(() => {
@@ -171,8 +169,7 @@ class InventoryForm extends Component {
         }, 500);
       }
     } else {
-      let message =
-        "Please add a new record to delete this. There should atleast one customization record for an inventory.";
+      let message = "Please add a new record to delete this. There should atleast one customization record for an inventory.";
       NotificationManager.error(message, "Error!", 3000);
     }
   };
@@ -182,10 +179,7 @@ class InventoryForm extends Component {
     var valid = false;
     var error = "";
 
-    if (
-      stateData.inventory_name == "" ||
-      stateData.price == "" 
-    ) {
+    if (stateData.inventory_name == "" || stateData.price == "") {
     } else if (customizeData.length == 0) {
       error = "Please select atleast 1 customization.";
       NotificationManager.error(error, "Error!", 3000);
@@ -213,12 +207,15 @@ class InventoryForm extends Component {
     if (this.validateFinalSubmit(this.state, customizeFormsClone)) {
       let path = ApiRoutes.UPDATE_INVENTORY_DETAILS;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        NotificationManager.success(res.message, "Success!", 3000);
-        window.location.reload();
+      if (res) {
+        if (res.status == 200) {
+          NotificationManager.success(res.message, "Success!", 3000);
+          window.location.reload();
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     }
   };
@@ -240,115 +237,77 @@ class InventoryForm extends Component {
                       <Formik
                         key={index}
                         initialValues={{
-                          warehouse_type: this.state.customizeForms[index]
-                            .warehouse_type,
+                          warehouse_type: this.state.customizeForms[index].warehouse_type,
                           quantity: this.state.customizeForms[index].quantity,
                         }}
                         validationSchema={CustomizeFormSchema}
                         onSubmit={this.onSubmitCustomizeForm}
                       >
-                        {({
-                          handleInventorySubmit,
-                          setFieldValue,
-                          setFieldTouched,
-                          handleChange,
-                          values,
-                          errors,
-                          touched,
-                          isSubmitting,
-                        }) => (
-                            <Form
-                              //onChange={this.handleCustomzeFormChange}
-                              className="av-tooltip tooltip-label-bottom"
-                            >
-                              <Row>
-                                <Colxx xxs="12" sm="3">
-                                  <FormGroup className="form-group has-float-label">
-                                    <Label>Warehouse Type</Label>
-                                    <select
-                                      name="warehouse_type"
-                                      className="form-control"
-                                      id={"warehouse_type" + index}
-                                      data-id={index}
-                                      value={
-                                        this.state.customizeForms[index]
-                                          .warehouse_type
-                                      }
-                                      onChange={(event) => {
-                                        setFieldValue(
-                                          "warehouse_type",
-                                          event.target.value
-                                        );
-                                        this.onChangeWarehosueType(
-                                          event.target.value,
-                                          index
-                                        );
-                                      }}
-                                    >
-                                      {this.state.warhousesList.map(
-                                        (item, index) => {
-                                          return (
-                                            <option key={index} value={item._id}>
-                                              {item.name}
-                                            </option>
-                                          );
-                                        }
-                                      )}
-                                    </select>
-                                    {errors.warehouse_type &&
-                                      touched.warehouse_type ? (
-                                        <div className="invalid-feedback d-block">
-                                          {errors.warehouse_type}
-                                        </div>
-                                      ) : null}
-                                  </FormGroup>
-                                </Colxx>
-                                <Colxx xxs="12" sm="3">
-                                  <FormGroup className="form-group has-float-label">
-                                    <Label>Quantity</Label>
-                                    <Field
-                                      className="form-control"
-                                      name="quantity"
-                                      type="text"
-                                    />
-                                    {errors.quantity && touched.quantity ? (
-                                      <div className="invalid-feedback d-block">
-                                        {errors.quantity}
-                                      </div>
-                                    ) : null}
-                                  </FormGroup>
-                                </Colxx>
-                                <Colxx xxs="12" sm="2">
-                                  {this.state.customizeForms[index + 1] ? (
-                                    <Button
-                                      outline
-                                      color="danger"
-                                      type="button"
-                                      onClick={() => {
-                                        this.onRemoveCustomizeForm(index);
-                                      }}
-                                    >
-                                      <div className="glyph-icon simple-icon-trash"></div>
-                                    </Button>
-                                  ) : (
-                                      <Button outline color="primary" type="submit">
-                                        Add
-                                      </Button>
-                                    )}
-                                </Colxx>
-                              </Row>
-                            </Form>
-                          )}
+                        {({ handleInventorySubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                          <Form
+                            //onChange={this.handleCustomzeFormChange}
+                            className="av-tooltip tooltip-label-bottom"
+                          >
+                            <Row>
+                              <Colxx xxs="12" sm="3">
+                                <FormGroup className="form-group has-float-label">
+                                  <Label>Warehouse Type</Label>
+                                  <select
+                                    name="warehouse_type"
+                                    className="form-control"
+                                    id={"warehouse_type" + index}
+                                    data-id={index}
+                                    value={this.state.customizeForms[index].warehouse_type}
+                                    onChange={(event) => {
+                                      setFieldValue("warehouse_type", event.target.value);
+                                      this.onChangeWarehosueType(event.target.value, index);
+                                    }}
+                                  >
+                                    {this.state.warhousesList.map((item, index) => {
+                                      return (
+                                        <option key={index} value={item._id}>
+                                          {item.name}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+                                  {errors.warehouse_type && touched.warehouse_type ? <div className="invalid-feedback d-block">{errors.warehouse_type}</div> : null}
+                                </FormGroup>
+                              </Colxx>
+                              <Colxx xxs="12" sm="3">
+                                <FormGroup className="form-group has-float-label">
+                                  <Label>Quantity</Label>
+                                  <Field className="form-control" name="quantity" type="text" />
+                                  {errors.quantity && touched.quantity ? <div className="invalid-feedback d-block">{errors.quantity}</div> : null}
+                                </FormGroup>
+                              </Colxx>
+                              <Colxx xxs="12" sm="2">
+                                {this.state.customizeForms[index + 1] ? (
+                                  <Button
+                                    outline
+                                    color="danger"
+                                    type="button"
+                                    onClick={() => {
+                                      this.onRemoveCustomizeForm(index);
+                                    }}
+                                  >
+                                    <div className="glyph-icon simple-icon-trash"></div>
+                                  </Button>
+                                ) : (
+                                  <Button outline color="primary" type="submit">
+                                    Add
+                                  </Button>
+                                )}
+                              </Colxx>
+                            </Row>
+                          </Form>
+                        )}
                       </Formik>
                     );
                   })}
                 </Colxx>
               </Row>
-              <Button
-                color="primary"
-                type="submit"
-                onClick={this.handleFinalSubmit}
-              >
+              <Button color="primary" type="submit" onClick={this.handleFinalSubmit}>
                 <IntlMessages id="button.save" />
               </Button>{" "}
               <Button

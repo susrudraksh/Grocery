@@ -17,14 +17,8 @@ const FormSchema = Yup.object().shape({
   product_category: Yup.string().required("Please select a product category"),
   product_subcategory: Yup.string().required("Please select a sub category"),
   product_inv_id: Yup.string().required("Please select a product inventory"),
-  title: Yup.string()
-    .required("Please enter banner title")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(50, "Too Long! Atmost 50 letters."),
-  description: Yup.string()
-    .required("Please enter banner description")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(200, "Too Long! Atmost 200 letters."),
+  title: Yup.string().required("Please enter banner title").min(2, "Too Short! Atleast 2 letters.").max(50, "Too Long! Atmost 50 letters."),
+  description: Yup.string().required("Please enter banner description").min(2, "Too Short! Atleast 2 letters.").max(200, "Too Long! Atmost 200 letters."),
   image: Yup.mixed().test("fileType", "Invalid File Format", (value) => {
     if (value && value != "") {
       return value && SUPPORTED_FORMATS.includes(value.type);
@@ -63,13 +57,16 @@ class EditBanner extends Component {
 
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -80,13 +77,17 @@ class EditBanner extends Component {
     let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
     const res = await Http("POST", path, formData);
 
-    if (res.status == 200) {
-      var parentCatList = [{ _id: "", name: "Select" }];
-      this.setState({
-        parentCatList: [...parentCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        var parentCatList = [{ _id: "", name: "Select" }];
+        this.setState({
+          parentCatList: [...parentCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -101,26 +102,25 @@ class EditBanner extends Component {
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          subCatList: [...subCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            subCatList: [...subCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        this.setState({
+          subCatList: subCatList,
+        });
       }
     } else {
-      this.setState({
-        subCatList: subCatList,
-      });
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
-  getProducts = async (
-    business_category,
-    product_category,
-    product_subcategory
-  ) => {
+  getProducts = async (business_category, product_category, product_subcategory) => {
     this.state.isLoading = true;
     var productList = [{ id: "", name: "Select" }];
 
@@ -132,50 +132,49 @@ class EditBanner extends Component {
 
       let path = ApiRoutes.GET_BANNER_PRODUCTS;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          productList: [...productList, ...res.data],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            productList: [...productList, ...res.data],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        this.setState({
+          productList: productList,
+        });
       }
     } else {
-      this.setState({
-        productList: productList,
-      });
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   dataRender = async () => {
     let path = ApiRoutes.GET_BANNER + "/" + this.state.itemId;
     const res = await Http("GET", path);
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          title: res.data.title,
+          description: res.data.description,
+          business_category: res.data.business_category._id,
+          product_category: res.data.category._id,
+          product_subcategory: res.data.subcategory._id,
+          product_inv_id: res.data.product._id,
+          image_preview: res.data.banner_image_thumb_url,
+          isLoading: true,
+        });
 
-    if (res.status == 200) {
-      this.setState({
-        title: res.data.title,
-        description: res.data.description,
-        business_category: res.data.business_category._id,
-        product_category: res.data.category._id,
-        product_subcategory: res.data.subcategory._id,
-        product_inv_id: res.data.product._id,
-        image_preview: res.data.banner_image_thumb_url,
-        isLoading: true,
-      });
-
-      this.getBusinessCategories();
-      this.getPerentCategories(res.data.business_category._id);
-      this.getSubCategories(
-        res.data.business_category._id,
-        res.data.category._id
-      );
-      this.getProducts(
-        res.data.business_category._id,
-        res.data.category._id,
-        res.data.subcategory._id
-      );
+        this.getBusinessCategories();
+        this.getPerentCategories(res.data.business_category._id);
+        this.getSubCategories(res.data.business_category._id, res.data.category._id);
+        this.getProducts(res.data.business_category._id, res.data.category._id, res.data.subcategory._id);
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -191,13 +190,15 @@ class EditBanner extends Component {
 
     let path = ApiRoutes.UPDATE_BANNER + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/banners`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/banners`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -207,10 +208,7 @@ class EditBanner extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-banner"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-banner" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -232,16 +230,7 @@ class EditBanner extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
@@ -252,10 +241,7 @@ class EditBanner extends Component {
                               className="form-control"
                               value={values.business_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "business_category",
-                                  event.target.value
-                                );
+                                setFieldValue("business_category", event.target.value);
                                 setFieldValue("product_category", "");
                                 setFieldValue("product_subcategory", "");
                                 setFieldValue("product_inv_id", "");
@@ -270,12 +256,7 @@ class EditBanner extends Component {
                                 );
                               })}
                             </select>
-                            {errors.business_category &&
-                            touched.business_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.business_category}
-                              </div>
-                            ) : null}
+                            {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
@@ -286,16 +267,10 @@ class EditBanner extends Component {
                               className="form-control"
                               value={values.product_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_category",
-                                  event.target.value
-                                );
+                                setFieldValue("product_category", event.target.value);
                                 setFieldValue("product_subcategory", "");
                                 setFieldValue("product_inv_id", "");
-                                this.getSubCategories(
-                                  values.business_category,
-                                  event.target.value
-                                );
+                                this.getSubCategories(values.business_category, event.target.value);
                               }}
                             >
                               {this.state.parentCatList.map((item, index) => {
@@ -306,12 +281,7 @@ class EditBanner extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_category &&
-                            touched.product_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_category}
-                              </div>
-                            ) : null}
+                            {errors.product_category && touched.product_category ? <div className="invalid-feedback d-block">{errors.product_category}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
@@ -322,16 +292,9 @@ class EditBanner extends Component {
                               className="form-control"
                               value={values.product_subcategory}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_subcategory",
-                                  event.target.value
-                                );
+                                setFieldValue("product_subcategory", event.target.value);
                                 setFieldValue("product_inv_id", "");
-                                this.getProducts(
-                                  values.business_category,
-                                  values.product_category,
-                                  event.target.value
-                                );
+                                this.getProducts(values.business_category, values.product_category, event.target.value);
                               }}
                             >
                               {this.state.subCatList.map((item, index) => {
@@ -342,12 +305,7 @@ class EditBanner extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_subcategory &&
-                            touched.product_subcategory ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_subcategory}
-                              </div>
-                            ) : null}
+                            {errors.product_subcategory && touched.product_subcategory ? <div className="invalid-feedback d-block">{errors.product_subcategory}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
@@ -358,58 +316,33 @@ class EditBanner extends Component {
                               className="form-control"
                               value={values.product_inv_id}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_inv_id",
-                                  event.target.value
-                                );
+                                setFieldValue("product_inv_id", event.target.value);
                               }}
                             >
                               {this.state.productList.map((item, index) => {
                                 return (
                                   <option key={index} value={item.id}>
                                     {item.name}
-                                    {item.inventory_name
-                                      ? " (" + item.inventory_name + ")"
-                                      : ""}
+                                    {item.inventory_name ? " (" + item.inventory_name + ")" : ""}
                                   </option>
                                 );
                               })}
                             </select>
-                            {errors.product_inv_id && touched.product_inv_id ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_inv_id}
-                              </div>
-                            ) : null}
+                            {errors.product_inv_id && touched.product_inv_id ? <div className="invalid-feedback d-block">{errors.product_inv_id}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Banner Title</Label>
-                            <Field
-                              className="form-control"
-                              name="title"
-                              type="text"
-                            />
-                            {errors.title && touched.title ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.title}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="title" type="text" />
+                            {errors.title && touched.title ? <div className="invalid-feedback d-block">{errors.title}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Banner Description</Label>
-                            <Field
-                              className="form-control"
-                              name="description"
-                              component="textarea"
-                            />
-                            {errors.description && touched.description ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.description}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="description" component="textarea" />
+                            {errors.description && touched.description ? <div className="invalid-feedback d-block">{errors.description}</div> : null}
                           </FormGroup>
                         </Colxx>
                         <Colxx xxs="12" sm="6">
@@ -421,23 +354,12 @@ class EditBanner extends Component {
                               type="file"
                               value={this.state.image}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "image",
-                                  event.currentTarget.files[0]
-                                );
+                                setFieldValue("image", event.currentTarget.files[0]);
                               }}
                             />
-                            {errors.image && touched.image ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.image}
-                              </div>
-                            ) : null}
+                            {errors.image && touched.image ? <div className="invalid-feedback d-block">{errors.image}</div> : null}
                           </FormGroup>
-                          <img
-                            alt={this.state.name}
-                            src={this.state.image_preview}
-                            className="img-thumbnail border-0 list-thumbnail align-self-center image-preview"
-                          />
+                          <img alt={this.state.name} src={this.state.image_preview} className="img-thumbnail border-0 list-thumbnail align-self-center image-preview" />
                         </Colxx>
                       </Row>
 

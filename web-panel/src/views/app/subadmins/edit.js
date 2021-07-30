@@ -1,14 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { injectIntl } from "react-intl";
-import {
-  Input,
-  Row,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Button,
-} from "reactstrap";
+import { Input, Row, Card, CardBody, FormGroup, Label, Button } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
@@ -32,19 +24,12 @@ const countryCodes = [
 const FormSchema = Yup.object().shape({
   username: Yup.string()
     .required("Please enter user name")
-    .matches(lettersRegex,"Please input alphabet characters only")
+    .matches(lettersRegex, "Please input alphabet characters only")
     .min(2, "Too Short! Atleast 2 letters.")
     .max(50, "Too Long! Atmost 50 letters."),
-  email: Yup.string()
-    .required("Please enter email address")
-    .email("Invalid email format")
-    .max(50, "Too Long! Atmost 50 letters."),
+  email: Yup.string().required("Please enter email address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
   //country_code: Yup.string().required("Please select country code"),
-  phone: Yup.string()
-    .required("Please enter phone number")
-    .matches(phoneRegExp, "Phone number is not valid")
-    .min(7, "Too Short! Atleast 7 letters.")
-    .max(15, "Too Long! Atmost 15 letters."),
+  phone: Yup.string().required("Please enter phone number").matches(phoneRegExp, "Phone number is not valid").min(7, "Too Short! Atleast 7 letters.").max(15, "Too Long! Atmost 15 letters."),
   warehouse_id: Yup.string().required("Please select a warehouse"),
   user_image: Yup.mixed().test("fileType", "Invalid File Format", (value) => {
     if (value && value != "") {
@@ -87,16 +72,16 @@ class EditSubadmin extends Component {
 
     let path = ApiRoutes.GET_PERMISSIONS;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        permissionsList: [
-          ...this.state.permissionsList,
-          ...res.data.permissionsData,
-        ],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          permissionsList: [...this.state.permissionsList, ...res.data.permissionsData],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -118,22 +103,26 @@ class EditSubadmin extends Component {
   dataRender = async () => {
     let path = ApiRoutes.GET_SUBADMIN + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        username: res.data.username,
-        email: res.data.email,
-        country_code: res.data.country_code,
-        phone: res.data.phone_no,
-        warehouse_id: res.data.warehouse_id,
-        image_preview: res.data.user_image_thumb_url,
-        user_permissions: JSON.parse(res.data.user_permissions),
-        isLoading: true,
-      },
-        () => this.getPermissionsList()
-      );
+    if (res) {
+      if (res.status == 200) {
+        this.setState(
+          {
+            username: res.data.username,
+            email: res.data.email,
+            country_code: res.data.country_code,
+            phone: res.data.phone_no,
+            warehouse_id: res.data.warehouse_id,
+            image_preview: res.data.user_image_thumb_url,
+            user_permissions: JSON.parse(res.data.user_permissions),
+            isLoading: true,
+          },
+          () => this.getPermissionsList()
+        );
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -170,19 +159,19 @@ class EditSubadmin extends Component {
     formData.append("phone", inputValues.phone);
     formData.append("warehouse_id", inputValues.warehouse_id);
     formData.append("user_image", inputValues.user_image);
-    formData.append(
-      "user_permissions",
-      JSON.stringify(this.state.user_permissions)
-    );
+    formData.append("user_permissions", JSON.stringify(this.state.user_permissions));
 
     let path = ApiRoutes.UPDATE_SUBADMIN + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/app/subadmins");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/app/subadmins");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -191,10 +180,7 @@ class EditSubadmin extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-subadmin"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-subadmin" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -216,49 +202,24 @@ class EditSubadmin extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
-                      <Form className="av-tooltip tooltip-label-bottom">
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>User Name</Label>
-                              <Field
-                                className="form-control"
-                                name="username"
-                                type="text"
-                              />
-                              {errors.username && touched.username ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.username}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Email</Label>
-                              <Field
-                                className="form-control"
-                                name="email"
-                                type="email"
-                              />
-                              {errors.email && touched.email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          {/* <Colxx xxs="12" sm="2">
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                    <Form className="av-tooltip tooltip-label-bottom">
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>User Name</Label>
+                            <Field className="form-control" name="username" type="text" />
+                            {errors.username && touched.username ? <div className="invalid-feedback d-block">{errors.username}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Email</Label>
+                            <Field className="form-control" name="email" type="email" />
+                            {errors.email && touched.email ? <div className="invalid-feedback d-block">{errors.email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        {/* <Colxx xxs="12" sm="2">
                             <FormGroup className="form-group has-float-label">
                               <Label>Country Code</Label>
                               <select
@@ -282,145 +243,97 @@ class EditSubadmin extends Component {
                               ) : null}
                             </FormGroup>
                           </Colxx> */}
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Phone</Label>
-                              <Field
-                                className="form-control"
-                                name="phone"
-                                type="text"
-                              />
-                              {errors.phone && touched.phone ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.phone}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Assign Warehouse</Label>
-                              <select
-                                name="warehouse_id"
-                                className="form-control"
-                                value={values.warehouse_id}
-                                onChange={(event) => {
-                                  setFieldValue(
-                                    "warehouse_id",
-                                    event.target.value
-                                  );
-                                }}
-                              >
-                                {this.state.warehousesList.map((item, index) => {
-                                  return (
-                                    <option key={index} value={item.id}>
-                                      {item.name}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                              {errors.warehouse_id && touched.warehouse_id ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.warehouse_id}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Profile Image</Label>
-                              <Field
-                                className="form-control"
-                                name="user_image"
-                                type="file"
-                                value={this.state.user_image}
-                                onChange={(event) => {
-                                  setFieldValue(
-                                    "user_image",
-                                    event.currentTarget.files[0]
-                                  );
-                                }}
-                              />
-                              {errors.user_image && touched.user_image ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.user_image}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                            <img
-                              alt={this.state.username}
-                              src={this.state.image_preview}
-                              className="img-thumbnail border-0 list-thumbnail align-self-center image-preview"
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Phone</Label>
+                            <Field className="form-control" name="phone" type="text" />
+                            {errors.phone && touched.phone ? <div className="invalid-feedback d-block">{errors.phone}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Assign Warehouse</Label>
+                            <select
+                              name="warehouse_id"
+                              className="form-control"
+                              value={values.warehouse_id}
+                              onChange={(event) => {
+                                setFieldValue("warehouse_id", event.target.value);
+                              }}
+                            >
+                              {this.state.warehousesList.map((item, index) => {
+                                return (
+                                  <option key={index} value={item.id}>
+                                    {item.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {errors.warehouse_id && touched.warehouse_id ? <div className="invalid-feedback d-block">{errors.warehouse_id}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Profile Image</Label>
+                            <Field
+                              className="form-control"
+                              name="user_image"
+                              type="file"
+                              value={this.state.user_image}
+                              onChange={(event) => {
+                                setFieldValue("user_image", event.currentTarget.files[0]);
+                              }}
                             />
-                          </Colxx>
+                            {errors.user_image && touched.user_image ? <div className="invalid-feedback d-block">{errors.user_image}</div> : null}
+                          </FormGroup>
+                          <img alt={this.state.username} src={this.state.image_preview} className="img-thumbnail border-0 list-thumbnail align-self-center image-preview" />
+                        </Colxx>
 
-                          <Colxx xxs="12" sm="12">
-                            <Label>
-                              <h3>Permissions</h3>
-                            </Label>
-                            {this.state.permissionsList.map((module, index) => (
-                              <Colxx md="12" key={index}>
-                                <Row>
-                                  <Colxx md="3">
-                                    <Label>{module.module_name}</Label>
-                                  </Colxx>
-                                  <Colxx md="9">
-                                    {module.permissions.map(
-                                      (permission_type, index) => (
-                                        <FormGroup check inline key={index}>
-                                          <Input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            onChange={(e) => {
-                                              this.handleChangePermissions(e);
-                                            }}
-                                            id={
-                                              module.module_name +
-                                              "_" +
-                                              permission_type.slug
-                                            }
-                                            name={module.module_slug}
-                                            data-module={module.module_slug}
-                                            value={permission_type.slug}
-                                            defaultChecked={
-                                              this.state.user_permissions[
-                                                module.module_slug
-                                              ] &&
-                                                this.state.user_permissions[
-                                                  module.module_slug
-                                                ].indexOf(permission_type.slug) !==
-                                                -1
-                                                ? true
-                                                : false
-                                            }
-                                          />
+                        <Colxx xxs="12" sm="12">
+                          <Label>
+                            <h3>Permissions</h3>
+                          </Label>
+                          {this.state.permissionsList.map((module, index) => (
+                            <Colxx md="12" key={index}>
+                              <Row>
+                                <Colxx md="3">
+                                  <Label>{module.module_name}</Label>
+                                </Colxx>
+                                <Colxx md="9">
+                                  {module.permissions.map((permission_type, index) => (
+                                    <FormGroup check inline key={index}>
+                                      <Input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        onChange={(e) => {
+                                          this.handleChangePermissions(e);
+                                        }}
+                                        id={module.module_name + "_" + permission_type.slug}
+                                        name={module.module_slug}
+                                        data-module={module.module_slug}
+                                        value={permission_type.slug}
+                                        defaultChecked={
+                                          this.state.user_permissions[module.module_slug] && this.state.user_permissions[module.module_slug].indexOf(permission_type.slug) !== -1 ? true : false
+                                        }
+                                      />
 
-                                          <Label
-                                            className="form-check-label"
-                                            check
-                                            htmlFor={
-                                              module.module_name +
-                                              "_" +
-                                              permission_type.slug
-                                            }
-                                          >
-                                            {permission_type.title}
-                                          </Label>
-                                        </FormGroup>
-                                      )
-                                    )}
-                                  </Colxx>
-                                </Row>
-                              </Colxx>
-                            ))}
-                          </Colxx>
-                        </Row>
+                                      <Label className="form-check-label" check htmlFor={module.module_name + "_" + permission_type.slug}>
+                                        {permission_type.title}
+                                      </Label>
+                                    </FormGroup>
+                                  ))}
+                                </Colxx>
+                              </Row>
+                            </Colxx>
+                          ))}
+                        </Colxx>
+                      </Row>
 
-                        <Button color="primary" type="submit">
-                          <IntlMessages id="button.save" />
-                        </Button>
-                      </Form>
-                    )}
+                      <Button color="primary" type="submit">
+                        <IntlMessages id="button.save" />
+                      </Button>
+                    </Form>
+                  )}
                 </Formik>
               </CardBody>
             </Card>
