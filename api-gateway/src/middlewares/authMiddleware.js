@@ -202,13 +202,13 @@ const authCheck ={
                            
                             var userData = await authCheck.checkUserAutherization(req, res);
                             console.log("userData",userData);
-                            next();
-                            /*if (userData){
+                            //next();
+                            if (userData==true){
                                     next();
                             }else{
                                 var resMsg = Messages.FORBIDDEN;
-                                Response.send(req, res, 403, resMsg);
-                            }*/
+                                Response.send(req, res, userData, resMsg);
+                            }
                         }
     
                     } catch (err) {
@@ -248,7 +248,7 @@ const authCheck ={
         return axiosHttp.get("/validate_authorization").then(resp => {
             return true;
         }).catch(err => {
-            return false;
+            return err.response.status;
         });
     },
 

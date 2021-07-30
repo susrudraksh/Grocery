@@ -66,7 +66,7 @@ module.exports ={
     
             var key = login_user_role + "_" + login_user_id;
 
-           
+            
             var redisAuthToken = await Redis.hget("_auth_tokens", key);
             if (redisAuthToken && redisAuthToken == authToken) {
     
@@ -75,9 +75,11 @@ module.exports ={
     
                     var decodedToken = Encryption.getJwtDecryption(authToken, config.jwtSecretKey);
                     var userPermissions = JSON.parse(decodedToken.user_permissions) || {};
-    
+                    console.log("userPermissions",userPermissions);
                     var allowedModules = ["profile"];
                     var permissionType = reqMethods[route_method];
+                    console.log("permissionType",permissionType);
+                    console.log("route_module_name",route_module_name);
     
                     if (login_user_role == 2 && (allowedModules.includes(route_module_name) || userPermissions[route_module_name] && userPermissions[
                         route_module_name].includes(permissionType))) {
