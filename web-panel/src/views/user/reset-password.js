@@ -12,14 +12,8 @@ import Http from "../../helpers/Http";
 import ApiRoutes from "../../helpers/ApiRoutes";
 
 const FormSchema = Yup.object().shape({
-  otp_number: Yup.string()
-    .required("Please enter your OTP")
-    .min(4, "It should have 4 letters")
-    .max(4, "It should have 4 letters"),
-  new_password: Yup.string()
-    .required("Please enter your new password")
-    .min(6, "Too Short! Atleast 6 letters.")
-    .max(20, "Too Long! Atmost 20 letters."),
+  otp_number: Yup.string().required("Please enter your OTP").min(4, "It should have 4 letters").max(4, "It should have 4 letters"),
+  new_password: Yup.string().required("Please enter your new password").min(6, "Too Short! Atleast 6 letters.").max(20, "Too Long! Atmost 20 letters."),
   confirm_password: Yup.string()
     .required("Please confirm your new password")
     .min(6, "Too Short! Atleast 6 letters.")
@@ -34,9 +28,7 @@ class ResetPassword extends Component {
     this.state = {
       email: this.props.location.state ? this.props.location.state.email : null,
       view_otp_number: this.props.location.state ? this.props.location.state.otp_number : null,
-      user_id: this.props.location.state
-        ? this.props.location.state.user_id
-        : null,
+      user_id: this.props.location.state ? this.props.location.state.user_id : null,
       new_password: "",
       confirm_password: "",
       otp_number: "",
@@ -59,12 +51,15 @@ class ResetPassword extends Component {
 
     let path = ApiRoutes.ADMIN_UPDATE_FORGET_PASSWORD;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/user/login");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/user/login");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -103,80 +98,39 @@ class ResetPassword extends Component {
                 validationSchema={FormSchema}
                 onSubmit={this.handleSubmit}
               >
-                {({
-                  handleSubmit,
-                  setFieldValue,
-                  setFieldTouched,
-                  values,
-                  errors,
-                  touched,
-                  isSubmitting,
-                }) => (
-                    <Form className="av-tooltip tooltip-label-bottom">
-                      <FormGroup className="form-group has-float-label">
-                        <Label>OTP Number</Label>
-                        <Field
-                          className="form-control"
-                          name="otp_number"
-                          type="text"
-                        />
-                        {errors.otp_number && touched.otp_number && (
-                          <div className="invalid-feedback d-block">
-                            {errors.otp_number}
-                          </div>
-                        )}
-                      </FormGroup>
-                      <FormGroup className="form-group has-float-label">
-                        <Label>New Password</Label>
-                        <Field
-                          className="form-control"
-                          name="new_password"
-                          type="password"
-                        />
-                        {errors.new_password && touched.new_password && (
-                          <div className="invalid-feedback d-block">
-                            {errors.new_password}
-                          </div>
-                        )}
-                      </FormGroup>
-                      <FormGroup className="form-group has-float-label">
-                        <Label>Confirm Password</Label>
-                        <Field
-                          className="form-control"
-                          name="confirm_password"
-                          type="password"
-                        />
-                        {errors.confirm_password && touched.confirm_password && (
-                          <div className="invalid-feedback d-block">
-                            {errors.confirm_password}
-                          </div>
-                        )}
-                      </FormGroup>
+                {({ handleSubmit, setFieldValue, setFieldTouched, values, errors, touched, isSubmitting }) => (
+                  <Form className="av-tooltip tooltip-label-bottom">
+                    <FormGroup className="form-group has-float-label">
+                      <Label>OTP Number</Label>
+                      <Field className="form-control" name="otp_number" type="text" />
+                      {errors.otp_number && touched.otp_number && <div className="invalid-feedback d-block">{errors.otp_number}</div>}
+                    </FormGroup>
+                    <FormGroup className="form-group has-float-label">
+                      <Label>New Password</Label>
+                      <Field className="form-control" name="new_password" type="password" />
+                      {errors.new_password && touched.new_password && <div className="invalid-feedback d-block">{errors.new_password}</div>}
+                    </FormGroup>
+                    <FormGroup className="form-group has-float-label">
+                      <Label>Confirm Password</Label>
+                      <Field className="form-control" name="confirm_password" type="password" />
+                      {errors.confirm_password && touched.confirm_password && <div className="invalid-feedback d-block">{errors.confirm_password}</div>}
+                    </FormGroup>
 
-                      <div className="d-flex justify-content-between align-items-center">
-                        <NavLink to={`/user/forgot-password`}>
-                          Change Email?
-                      </NavLink>
-                        <Button
-                          color="primary"
-                          type="submit"
-                          className={`btn-shadow btn-multiple-state ${
-                            this.props.loading ? "show-spinner" : ""
-                            }`}
-                          size="lg"
-                        >
-                          <span className="spinner d-inline-block">
-                            <span className="bounce1" />
-                            <span className="bounce2" />
-                            <span className="bounce3" />
-                          </span>
-                          <span className="label">
-                            <IntlMessages id="user.reset-password-button" />
-                          </span>
-                        </Button>
-                      </div>
-                    </Form>
-                  )}
+                    <div className="d-flex justify-content-between align-items-center">
+                      <NavLink to={`/user/forgot-password`}>Change Email?</NavLink>
+                      <Button color="primary" type="submit" className={`btn-shadow btn-multiple-state ${this.props.loading ? "show-spinner" : ""}`} size="lg">
+                        <span className="spinner d-inline-block">
+                          <span className="bounce1" />
+                          <span className="bounce2" />
+                          <span className="bounce3" />
+                        </span>
+                        <span className="label">
+                          <IntlMessages id="user.reset-password-button" />
+                        </span>
+                      </Button>
+                    </div>
+                  </Form>
+                )}
               </Formik>
             </div>
           </Card>

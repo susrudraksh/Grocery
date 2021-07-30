@@ -27,7 +27,7 @@ export default (method, path, formData = undefined) => {
         localStorage.removeItem("userData");
 
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // window.location.reload(true);
+        window.location.reload(true);
       } else if ([403].includes(apiRes.status)) {
         return apiRes.json().then((data) => ({
           status: apiRes.status,

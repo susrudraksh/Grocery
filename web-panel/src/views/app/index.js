@@ -73,7 +73,6 @@ const BannerAdd = React.lazy(() => import("./banners/add"));
 const BannerList = React.lazy(() => import("./banners/list"));
 const BannerEdit = React.lazy(() => import("./banners/edit"));
 
-
 // BANNER
 const DealOfDayAdd = React.lazy(() => import("./dealofday/add"));
 const DealOfDayList = React.lazy(() => import("./dealofday/list"));
@@ -483,7 +482,6 @@ const routesItems = [
     permission_type: "edit",
   },
 
-
   {
     path: "/orders",
     name: "",
@@ -568,7 +566,7 @@ const routesItems = [
     component: DeliverySettings,
     check_permission: true,
     module_slug: "setting",
-    //permission_type: "edit",
+    permission_type: "edit",
   },
 
   {
@@ -672,17 +670,14 @@ class App extends Component {
     var routesItems = this.state.routesItems;
     var permittedModules = Object.keys(this.state.userPermissions);
 
-    routesItems = routesItems.map(item => {
-
+    routesItems = routesItems.map((item) => {
       item.allowItem = true;
 
-      if (this.state.userRole == 2 &&
+      if (
+        this.state.userRole == 2 &&
         item.check_permission &&
-        (!this.state.userPermissions[item.module_slug] ||
-          (this.state.userPermissions[item.module_slug] &&
-            this.state.userPermissions[
-              item.module_slug
-            ].indexOf(item.permission_type) == -1))) {
+        (!this.state.userPermissions[item.module_slug] || (this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1))
+      ) {
         item.allowItem = false;
       }
 
@@ -700,30 +695,13 @@ class App extends Component {
         <div className="dashboard-wrapper">
           <Suspense fallback={<div className="loading" />}>
             <Switch>
-              <Redirect
-                exact
-                from={`${match.url}/`}
-                to={`${match.url}/dashboard`}
-              />
+              <Redirect exact from={`${match.url}/`} to={`${match.url}/dashboard`} />
 
               {(this.state.routesItems || []).map((item, idx) => {
                 if (item.allowItem) {
-                  return item.component ? (
-                    <Route
-                      key={idx}
-                      path={`${match.url}` + `${item.path}`}
-                      render={(props) => <item.component {...props} />}
-                    />
-                  ) : null;
-
+                  return item.component ? <Route key={idx} path={`${match.url}` + `${item.path}`} render={(props) => <item.component {...props} />} /> : null;
                 } else {
-                  return (
-                    <Route
-                      key={idx}
-                      path={`${match.url}` + `${item.path}`}
-                      render={(props) => <Page403 {...props} />}
-                    />
-                  );
+                  return <Route key={idx} path={`${match.url}` + `${item.path}`} render={(props) => <Page403 {...props} />} />;
                 }
               })}
 
