@@ -75,14 +75,18 @@ module.exports ={
     
                     var decodedToken = Encryption.getJwtDecryption(authToken, config.jwtSecretKey);
                     var userPermissions = JSON.parse(decodedToken.user_permissions) || {};
-                    console.log("userPermissions",userPermissions);
+                    var spacialallowfeature = ["orders","setting"];
+                    var specialallow = false;
+                    if(spacialallowfeature.includes(route_module_name) && userPermissions[route_module_name]){
+                        specialallow = true;
+                    }
                     var allowedModules = ["profile"];
                     var permissionType = reqMethods[route_method];
                     console.log("permissionType",permissionType);
                     console.log("route_module_name",route_module_name);
-    
+                    
                     if (login_user_role == 2 && (allowedModules.includes(route_module_name) || userPermissions[route_module_name] && userPermissions[
-                        route_module_name].includes(permissionType))) {
+                        route_module_name].includes(permissionType) || specialallow)) {
                         var resMsg = "Success";
                         Response.send(req, res, 200, resMsg);
                     } else {

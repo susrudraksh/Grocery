@@ -21,13 +21,13 @@ export const firebaseConfig = {
   storageBucket: "athwas-294012.appspot.com",
   messagingSenderId: "544469837523",
   appId: "1:544469837523:web:de8aefbbc219e3a22fd626",
-  measurementId: "G-8XZ9YSD9YK",
+  measurementId: "G-8XZ9YSD9YK"
 };
 
 export const searchPath = "/app/pages/search";
-//export const servicePath = "http://3.7.83.168:3060";
+export const servicePath = "http://3.7.83.168:3060";
 //  export const servicePath = "http://3.7.83.168:3063";
-export const servicePath = "http://192.168.1.69:3050";
+//export const servicePath = "http://192.168.1.69:3050";
 export const apiAccessKey = "keMStjdies";
 
 /* 

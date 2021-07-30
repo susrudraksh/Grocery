@@ -278,9 +278,9 @@ update_content : (req, res) => {
       }
   */
  get_faqs: (req, res) => {
-
+  console.log("ss")
   try {
-
+    console.log("ss")
     var findPattern = { option_key: "faq" };
 
     ContentServices.getRecord(findPattern).then(content_data => {

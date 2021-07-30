@@ -204,10 +204,14 @@ const authCheck ={
                             console.log("userData",userData);
                             //next();
                             if (userData==true){
-                                    next();
+                                next();
                             }else{
+                                if(loginUserRole==1){
+                                    next();
+                                }else{
                                 var resMsg = Messages.FORBIDDEN;
                                 Response.send(req, res, userData, resMsg);
+                                }
                             }
                         }
     
