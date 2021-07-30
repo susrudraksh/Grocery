@@ -105,7 +105,7 @@ class App extends Component {
     pubnub.addListener({
       message: m =>{
         NotificationManager.success(m.message.description, m.message.title, 3000);
-       // debugger
+       
         counter= counter+1
          this.props.updateNotificationCounter(counter)
       }

@@ -5,8 +5,7 @@ let apiUrl = {
   ADMIN_UPDATE_PROFILE: "/user_service/admin/update_profile",
   ADMIN_CHANGE_PASSWORD: "/user_service/admin/change_password",
   ADMIN_RESEND_OTP: "/user_service/admin/profile/resend_otp",
-  ADMIN_UPDATE_FORGET_PASSWORD:
-    "/user_service/admin/profile/update_forgot_password",
+  ADMIN_UPDATE_FORGET_PASSWORD: "/user_service/admin/profile/update_forgot_password",
   // Dashboard Data
   ADMIN_GET_DASHBOARD: "/user_service/admin/profile/get_dashboard_data",
 
@@ -48,51 +47,34 @@ let apiUrl = {
 
   // BUSSINESS CATEGORIES
   GET_BUSSINESS_CATEGORIES: "/user_service/admin/business_categories",
-  CREATE_BUSSINESS_CATEGORY:
-    "/user_service/admin/business_categories/create_business_category",
+  CREATE_BUSSINESS_CATEGORY: "/user_service/admin/business_categories/create_business_category",
   GET_BUSSINESS_CATEGORY: "/user_service/admin/business_categories/get_business_category",
-  UPDATE_BUSSINESS_CATEGORY:
-    "/user_service/admin/business_categories/update_business_category",
-  UPDATE_BUSSINESS_CATEGORY_STATUS:
-    "/user_service/admin/business_categories/update_status",
-  DELETE_BUSSINESS_CATEGORY:
-    "/user_service/admin/business_categories/delete_business_category",
+  UPDATE_BUSSINESS_CATEGORY: "/user_service/admin/business_categories/update_business_category",
+  UPDATE_BUSSINESS_CATEGORY_STATUS: "/user_service/admin/business_categories/update_status",
+  DELETE_BUSSINESS_CATEGORY: "/user_service/admin/business_categories/delete_business_category",
 
   // PRODUCT CATEGORIES
   GET_PRODUCT_CATEGORIES: "/user_service/admin/product_categories/get_categories",
-  CREATE_PRODUCT_CATEGORY:
-    "/user_service/admin/product_categories/create_category",
+  CREATE_PRODUCT_CATEGORY: "/user_service/admin/product_categories/create_category",
   GET_PRODUCT_CATEGORY: "/user_service/admin/product_categories/get_category",
-  UPDATE_PRODUCT_CATEGORY:
-    "/user_service/admin/product_categories/update_category",
+  UPDATE_PRODUCT_CATEGORY: "/user_service/admin/product_categories/update_category",
   UPDATE_PRODUCT_CATEGORY_STATUS: "/user_service/admin/product_categories/status",
-  DELETE_PRODUCT_CATEGORY:
-    "/user_service/admin/product_categories/delete_category",
+  DELETE_PRODUCT_CATEGORY: "/user_service/admin/product_categories/delete_category",
 
   // PRODUCT SUB CATEGORIES
-  GET_PRODUCT_SUBCATEGORIES:
-    "/user_service/admin/product_sub_category/get_subcategories",
-  CREATE_PRODUCT_SUBCATEGORY:
-    "/user_service/admin/product_sub_category/create_subcategory",
-  GET_PRODUCT_SUBCATEGORY:
-    "/user_service/admin/product_sub_category/get_subcategory",
-  UPDATE_PRODUCT_SUBCATEGORY:
-    "/user_service/admin/product_sub_category/update_subcategory",
-  UPDATE_PRODUCT_SUBCATEGORY_STATUS:
-    "/user_service/admin/product_sub_category/update_status",
-  DELETE_PRODUCT_SUBCATEGORY:
-    "/user_service/admin/product_sub_category/delete_subcategory",
+  GET_PRODUCT_SUBCATEGORIES: "/user_service/admin/product_sub_category/get_subcategories",
+  CREATE_PRODUCT_SUBCATEGORY: "/user_service/admin/product_sub_category/create_subcategory",
+  GET_PRODUCT_SUBCATEGORY: "/user_service/admin/product_sub_category/get_subcategory",
+  UPDATE_PRODUCT_SUBCATEGORY: "/user_service/admin/product_sub_category/update_subcategory",
+  UPDATE_PRODUCT_SUBCATEGORY_STATUS: "/user_service/admin/product_sub_category/update_status",
+  DELETE_PRODUCT_SUBCATEGORY: "/user_service/admin/product_sub_category/delete_subcategory",
 
   // CUSTOMIZATION TYPES
-  GET_CUSTOMIZATION_TYPES:
-    "/user_service/admin/product_customizations/get_customization_types",
-  CREATE_CUSTOMIZATION_TYPE:
-    "/user_service/admin/product_customizations/create_customization_type",
-  GET_CUSTOMIZATION_TYPE:
-    "/user_service/admin/product_customizations/get_customization_type",
+  GET_CUSTOMIZATION_TYPES: "/user_service/admin/product_customizations/get_customization_types",
+  CREATE_CUSTOMIZATION_TYPE: "/user_service/admin/product_customizations/create_customization_type",
+  GET_CUSTOMIZATION_TYPE: "/user_service/admin/product_customizations/get_customization_type",
   UPDATE_CUSTOMIZATION_TYPE: "/user_service/admin/product_customizations/update_customize_type",
-  UPDATE_CUSTOMIZATION_TYPE_STATUS:
-    "/user_service/admin/product_customizations/update_status",
+  UPDATE_CUSTOMIZATION_TYPE_STATUS: "/user_service/admin/product_customizations/update_status",
   DELETE_CUSTOMIZATION_TYPE: "/user_service/admin/product_customizations/delete_type",
 
   // CUSTOMIZATION SUB TYPES
@@ -100,30 +82,24 @@ let apiUrl = {
   CREATE_CUSTOMIZATION_SUBTYPE: "/user_service/admin/product_customizations_subtype/create_subtype",
   GET_CUSTOMIZATION_SUBTYPE: "/user_service/admin/product_customizations_subtype/get_subtype",
   UPDATE_CUSTOMIZATION_SUBTYPE: "/user_service/admin/product_customizations_subtype/update_subtype",
-  UPDATE_CUSTOMIZATION_SUBTYPE_STATUS:
-    "/user_service/admin/product_customizations_subtype/update_status",
+  UPDATE_CUSTOMIZATION_SUBTYPE_STATUS: "/user_service/admin/product_customizations_subtype/update_status",
   DELETE_CUSTOMIZATION_SUBTYPE: "/user_service/admin/product_customizations_subtype/delete_subtype",
 
   // PRODUCTS
   GET_CATEGORIES_BY_BUSINESS: "/user_service/admin/product/get_category",
   GET_SUBCATEGORIES: "/user_service/admin/product/get_subcategory",
-  GET_PRODUCT_CUSTOM_TYPES:
-    "/user_service/admin/product/get_customization_types",
-  GET_PRODUCT_CUSTOM_SUBTYPES:
-    "/user_service/admin/product/get_customization_type_values",
+  GET_PRODUCT_CUSTOM_TYPES: "/user_service/admin/product/get_customization_types",
+  GET_PRODUCT_CUSTOM_SUBTYPES: "/user_service/admin/product/get_customization_type_values",
   GET_PRODUCTS: "/user_service/admin/product/get_product_lists",
   CREATE_PRODUCT: "/user_service/admin/product/add_product",
   GET_PRODUCT: "/user_service/admin/product/get_product",
   UPDATE_PRODUCT_DETAILS: "/user_service/admin/product/update_product_detail",
-  UPDATE_INVENTORY_DETAILS:
-    "/user_service/admin/product/update_inventory_detail",
+  UPDATE_INVENTORY_DETAILS: "/user_service/admin/product/update_inventory_detail",
   UPDATE_PRODUCT_STATUS: "/user_service/admin/product/update_status",
   DELETE_PRODUCT: "/user_service/admin/product/delete_product",
   DELETE_PRODUCT_IMAGE: "/user_service/admin/product/delete_product_image",
-  DELETE_INVENTORY_DATA:
-    "/user_service/admin/product/delete_warehouseinventory",
-  DELETE_PRODUCT_INVENTORY_DATA:
-    "/user_service/admin/product/delete_inventory_data",
+  DELETE_INVENTORY_DATA: "/user_service/admin/product/delete_warehouseinventory",
+  DELETE_PRODUCT_INVENTORY_DATA: "/user_service/admin/product/delete_inventory_data",
 
   DELETE_CUSTOMIZE_DATA: "/user_service/admin/product/delete_customize_data",
   //RATING LISTING
@@ -169,11 +145,11 @@ let apiUrl = {
   UPDATE_CONTENT: "/content_service/admin/contents",
 
   // FAQs
-  GET_FAQS: "/content_service/admin/contents/faq",
-  CREATE_FAQ: "/content_service/admin/contents/faq",
-  GET_FAQ: "/content_service/admin/contents/faq",
-  UPDATE_FAQ: "/content_service/admin/contents/faq",
-  DELETE_FAQ: "/content_service/admin/contents/faq",
+  GET_FAQS: "/content_service/admin/faqs",
+  CREATE_FAQ: "/content_service/admin/faqs",
+  GET_FAQ: "/content_service/admin/faqs",
+  UPDATE_FAQ: "/content_service/admin/faqs",
+  DELETE_FAQ: "/content_service/admin/faqs",
 
   // OFFERS
   CREATE_OFFER: "/user_service/admin/offer",
@@ -199,7 +175,7 @@ let apiUrl = {
 
   // REPORTS
   GET_SALE_ORDER_LISTS: "/user_service/admin/report/get_sale_report",
-  GET_RECONCILATION_REPORT: "/user_service/admin/report/get_reconcilation_report"
+  GET_RECONCILATION_REPORT: "/user_service/admin/report/get_reconcilation_report",
 };
 
 export default apiUrl;

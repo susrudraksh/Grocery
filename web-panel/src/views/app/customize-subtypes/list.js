@@ -17,11 +17,11 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const swalWithBootstrapButtonsDelete = Swal.mixin({
   customClass: {
-    confirmButton: 'btn-pill mx-1 btn btn-danger',
-    cancelButton: 'btn-pill mx-1 btn btn-neutral-secondary'
+    confirmButton: "btn-pill mx-1 btn btn-danger",
+    cancelButton: "btn-pill mx-1 btn btn-neutral-secondary",
   },
-  buttonsStyling: false
-})
+  buttonsStyling: false,
+});
 
 class CustomizationSubTypeList extends Component {
   constructor(props) {
@@ -57,8 +57,8 @@ class CustomizationSubTypeList extends Component {
   }
 
   // LifeCycle Methods
- async componentDidMount() {
-  await this.props.history.location.state ? this.setState({currentPage:this.props.history.location.state.pageIndex}) : this.setState({currentPage:1})
+  async componentDidMount() {
+    (await this.props.history.location.state) ? this.setState({ currentPage: this.props.history.location.state.pageIndex }) : this.setState({ currentPage: 1 });
 
     this.dataListRender();
   }
@@ -87,14 +87,18 @@ class CustomizationSubTypeList extends Component {
 
     const res = await Http("GET", path);
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -139,14 +143,16 @@ class CustomizationSubTypeList extends Component {
       },
       () => this.dataListRender()
     );
-    this.props.history.push({pathname:this.props.location.pathname, state:{pageIndex:page}})
+    this.props.history.push({ pathname: this.props.location.pathname, state: { pageIndex: page } });
   };
 
   onSearchFilters = () => {
-    this.setState({
-      currentPage: 1,
-    }, () => this.dataListRender()
-    )
+    this.setState(
+      {
+        currentPage: 1,
+      },
+      () => this.dataListRender()
+    );
   };
 
   onResetFilters = () => {
@@ -170,94 +176,101 @@ class CustomizationSubTypeList extends Component {
 
     let path = ApiRoutes.UPDATE_CUSTOMIZATION_SUBTYPE_STATUS + "/" + itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      this.dataListRender();
-      NotificationManager.success(res.message, "Success!", 3000);
+    if (res) {
+      if (res.status == 200) {
+        this.dataListRender();
+        NotificationManager.success(res.message, "Success!", 3000);
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   onDeleteItem = async (itemId, index) => {
-    swalWithBootstrapButtonsDelete.fire({
-      title: '<h5><b>Are you sure you want to delete this entry?</b></h5>',
-      text: "You cannot undo this operation.",
-      type: "error",
-      width: 315,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '<span class="btn-wrapper--label">Delete</span>',
-      cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
-      reverseButtons: true,
-    }).then(async (result) => {
-      if (result.value) {
-        let path = ApiRoutes.DELETE_CUSTOMIZATION_SUBTYPE + "/" + itemId;
-        const res = await Http("DELETE", path);
-
-        if (res.status == 200) {
-          this.dataListRender();
-          NotificationManager.success(res.message, "Success!", 3000);
-        } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+    swalWithBootstrapButtonsDelete
+      .fire({
+        title: "<h5><b>Are you sure you want to delete this entry?</b></h5>",
+        text: "You cannot undo this operation.",
+        type: "error",
+        width: 315,
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: '<span class="btn-wrapper--label">Delete</span>',
+        cancelButtonText: '<span class="btn-wrapper--label">Cancel</span>',
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.value) {
+          let path = ApiRoutes.DELETE_CUSTOMIZATION_SUBTYPE + "/" + itemId;
+          const res = await Http("DELETE", path);
+          if (res) {
+            if (res.status == 200) {
+              this.dataListRender();
+              NotificationManager.success(res.message, "Success!", 3000);
+            } else {
+              NotificationManager.error(res.message, "Error!", 3000);
+            }
+          } else {
+            NotificationManager.error("Server Error", "Error!", 3000);
+          }
         }
-      }
-    })
+      });
   };
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.customization-subtypes"
-              match={match}
-              addNewItemRoute={this.state.addNewItemRoute}
-              displayOpts={this.state.displayOpts}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              searchPlaceholder={this.state.searchPlaceholder}
-              searchKeyword={this.state.searchKeyword}
-              filterStatus={this.state.filterStatus}
-              onSearchKey={this.onSearchKey}
-              changeStatus={this.changeStatus}
-              changePageSize={this.changePageSize}
-              onSearchFilters={this.onSearchFilters}
-              onResetFilters={this.onResetFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+      <Fragment>
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.customization-subtypes"
+            match={match}
+            addNewItemRoute={this.state.addNewItemRoute}
+            displayOpts={this.state.displayOpts}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            searchPlaceholder={this.state.searchPlaceholder}
+            searchKeyword={this.state.searchKeyword}
+            filterStatus={this.state.filterStatus}
+            onSearchKey={this.onSearchKey}
+            changeStatus={this.changeStatus}
+            changePageSize={this.changePageSize}
+            onSearchFilters={this.onSearchFilters}
+            onResetFilters={this.onResetFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Sub Type Name</th>
-                          <th>Type Name</th>
-                          {/* <th>Status</th> */}
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{(this.state.selectedPageSize * (this.state.currentPage -1)) + index +1}</td>
-                              <td>{item.name}</td>
-                              <td>{item.customization_value ? item.customization_value.name : ""}</td>
-                              {/* <td>
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Sub Type Name</th>
+                        <th>Type Name</th>
+                        {/* <th>Status</th> */}
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
+                            <td>{item.name}</td>
+                            <td>{item.customization_value ? item.customization_value.name : ""}</td>
+                            {/* <td>
                                 <Badge
                                   color={
                                     item.is_active
@@ -273,8 +286,8 @@ class CustomizationSubTypeList extends Component {
                                     )}
                                 </Badge>
                               </td> */}
-                              <td>
-                                {/* <Switch
+                            <td>
+                              {/* <Switch
                                   className="custom-switch custom-switch-small custom-switch-primary-inverse"
                                   checked={item.is_active == 1 ? true : false}
                                   title={
@@ -291,60 +304,44 @@ class CustomizationSubTypeList extends Component {
                                     )
                                   }
                                 />{" "} */}
-                                  <Link to={{
+                              <Link
+                                to={{
                                   pathname: `edit-customization-subtype/${item._id}`,
                                   state: {
-                                    pageIndex: this.state.currentPage
-                                  }
-                                }}>
-                                  <Button
-                                    outline
-                                    color="info"
-                                    size="xs"
-                                    className="mb-2"
-                                    title="Edit"
-                                  >
-                                    <div className="glyph-icon simple-icon-note"></div>
-                                  </Button>
-                                </Link>{" "}
-                                <Button
-                                  outline
-                                  color="danger"
-                                  size="xs"
-                                  className="mb-2"
-                                  title="Delete"
-                                  onClick={(e) => this.onDeleteItem(item._id, index)
-                                  }
-                                >
-                                  <div className="glyph-icon simple-icon-trash"></div>
+                                    pageIndex: this.state.currentPage,
+                                  },
+                                }}
+                              >
+                                <Button outline color="info" size="xs" className="mb-2" title="Edit">
+                                  <div className="glyph-icon simple-icon-note"></div>
                                 </Button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="3" className="text-center">
-                              No data available.
-                          </td>
+                              </Link>{" "}
+                              <Button outline color="danger" size="xs" className="mb-2" title="Delete" onClick={(e) => this.onDeleteItem(item._id, index)}>
+                                <div className="glyph-icon simple-icon-trash"></div>
+                              </Button>
+                            </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="3" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 export default CustomizationSubTypeList;

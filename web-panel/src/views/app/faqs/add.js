@@ -11,14 +11,8 @@ import Http from "../../../helpers/Http";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const FormSchema = Yup.object().shape({
-  question: Yup.string()
-    .required("Please enter a question")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(80, "Too Long! Atmost 80 letters."),
-  answer: Yup.string()
-    .required("Please enter an answer")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(500, "Too Long! Atmost 500 letters."),
+  question: Yup.string().required("Please enter a question").min(2, "Too Short! Atleast 2 letters.").max(80, "Too Long! Atmost 80 letters."),
+  answer: Yup.string().required("Please enter an answer").min(2, "Too Short! Atleast 2 letters.").max(500, "Too Long! Atmost 500 letters."),
 });
 
 class AddFaq extends Component {
@@ -38,12 +32,15 @@ class AddFaq extends Component {
 
     let path = ApiRoutes.CREATE_FAQ;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/app/faqs");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/app/faqs");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -69,31 +66,14 @@ class AddFaq extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Question</Label>
-                            <Field
-                              className="form-control"
-                              name="question"
-                              type="text"
-                            />
-                            {errors.question && touched.question ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.question}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="question" type="text" />
+                            {errors.question && touched.question ? <div className="invalid-feedback d-block">{errors.question}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -101,16 +81,8 @@ class AddFaq extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Answer</Label>
-                            <Field
-                              className="form-control"
-                              name="answer"
-                              component="textarea"
-                            />
-                            {errors.answer && touched.answer ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.answer}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="answer" component="textarea" />
+                            {errors.answer && touched.answer ? <div className="invalid-feedback d-block">{errors.answer}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>

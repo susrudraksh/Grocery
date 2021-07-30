@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Row, Button, Card, CardBody, Badge, Table } from "reactstrap";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
-import { NavLink,Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import moment from "moment";
 import { CSVLink, CSVDownload } from "react-csv";
 
@@ -36,7 +36,6 @@ class CustomersList extends Component {
       },
 
       // addNewItemRoute: "/app/add-customer",
-
 
       orderOptions: [
         { column: "createdAt", label: "Created On" },
@@ -101,32 +100,34 @@ class CustomersList extends Component {
       `${this.state.searchKeyword}`;
 
     const res = await Http("GET", path);
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          totalPage: res.data.totalPages,
+          items: res.data.docs,
+          totalItemCount: res.data.totalDocs,
+        });
 
-    if (res.status == 200) {
-      this.setState({
-        totalPage: res.data.totalPages,
-        items: res.data.docs,
-        totalItemCount: res.data.totalDocs,
-      });
+        let resultUsersJson = res.data || {};
 
-      let resultUsersJson = res.data || {};
+        this.setState({ pageSize: resultUsersJson.limit, users: resultUsersJson, totalDocs: res.data.totalDocs, totalPages: res.data.totalPages, activePage: resultUsersJson.page || 1 });
+        const csvData = [];
 
-      this.setState({ pageSize: resultUsersJson.limit, users: resultUsersJson, totalDocs: res.data.totalDocs, totalPages: res.data.totalPages, activePage: resultUsersJson.page || 1 });
-      const csvData = [];
+        resultUsersJson.docs.map((user, index) => {
+          const csvData1 = {};
+          csvData1["username"] = user.username;
+          csvData1["phone"] = user.phone;
+          csvData1["email"] = user.email;
+          csvData1["status"] = user.is_active;
+          csvData.push(csvData1);
+        });
 
-      resultUsersJson.docs.map((user, index) => {
-        const csvData1 = {};
-        csvData1['username'] = user.username;
-        csvData1['phone'] = user.phone;
-        csvData1['email'] = user.email;
-        csvData1['status'] = user.is_active;
-        csvData.push(csvData1);
-
-      })
-
-      this.setState({ 'csvData': csvData })
+        this.setState({ csvData: csvData });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
     this.setState({ isLoading: true });
   };
@@ -135,9 +136,7 @@ class CustomersList extends Component {
   changeOrderBy = (column) => {
     this.setState(
       {
-        selectedOrderOption: this.state.orderOptions.find(
-          (x) => x.column === column
-        ),
+        selectedOrderOption: this.state.orderOptions.find((x) => x.column === column),
       },
       () => this.dataListRender()
     );
@@ -154,7 +153,6 @@ class CustomersList extends Component {
   };
 
   changeStatus = (value) => {
-
     this.setState(
       {
         filterStatus: value,
@@ -207,7 +205,7 @@ class CustomersList extends Component {
         currentPage: 1,
         filterStatus: "",
         daysStatus: "",
-        amountStatus: ""
+        amountStatus: "",
       },
       () => this.dataListRender()
     );
@@ -222,160 +220,151 @@ class CustomersList extends Component {
 
     let path = ApiRoutes.UPDATE_CUSTOMER_STATUS + "/" + itemId;
     const res = await Http("PUT", path, formData);
+    if (res) {
+      if (res.status == 200) {
+        this.dataListRender();
 
-    if (res.status == 200) {
-      this.dataListRender();
-
-      NotificationManager.success(res.message, "Success!", 3000);
+        NotificationManager.success(res.message, "Success!", 3000);
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   onDeleteItem = async (itemId, index) => {
     let path = ApiRoutes.DELETE_CUSTOMER + "/" + itemId;
     const res = await Http("DELETE", path);
+    if (res) {
+      if (res.status == 200) {
+        this.dataListRender();
 
-    if (res.status == 200) {
-      this.dataListRender();
-
-      NotificationManager.success(res.message, "Success!", 3000);
+        NotificationManager.success(res.message, "Success!", 3000);
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   render() {
     const { match } = this.props;
-    const startIndex =
-      (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
+    const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
     return !this.state.isLoading ? (
       <div className="loading" />
     ) : (
-        <Fragment>
-          <div>
-            <Button color="primary" size="xs" style={{ float: "right" }}><CSVLink data={(this.state.csvData && this.state.csvData || [])} filename={"user-list.csv"}><IntlMessages id="pages.download" /></CSVLink></Button>
-          </div>
+      <Fragment>
+        <div>
+          <Button color="primary" size="xs" style={{ float: "right" }}>
+            <CSVLink data={(this.state.csvData && this.state.csvData) || []} filename={"user-list.csv"}>
+              <IntlMessages id="pages.download" />
+            </CSVLink>
+          </Button>
+        </div>
 
-          <div className="disable-text-selection">
-            <ListPageHeading
-              heading="menu.customers"
-              match={match}
-              displayOpts={this.state.displayOpts}
-              orderOptions={this.state.orderOptions}
-              pageSizes={this.state.pageSizes}
-              selectedPageSize={this.state.selectedPageSize}
-              selectedOrderOption={this.state.selectedOrderOption}
-              searchKeyword={this.state.searchKeyword}
-              searchPlaceholder={this.state.searchPlaceholder}
-              filterFromDate={this.state.filterFromDate}
-              filterToDate={this.state.filterToDate}
-              filterStatus={this.state.filterStatus}
-              daysStatus={this.state.daysStatus}
-              amountStatus={this.state.amountStatus}
-              onSearchKey={this.onSearchKey}
-              onChangeFromDate={this.onChangeFromDate}
-              onChangeToDate={this.onChangeToDate}
-              changeOrderBy={this.changeOrderBy}
-              changeStatus={this.changeStatus}
-              changeDaysStatus={this.changeDaysStatus}
-              changeAmountStatus={this.changeAmountStatus}
-              changePageSize={this.changePageSize}
-              onResetFilters={this.onResetFilters}
-              totalItemCount={this.state.totalItemCount}
-              startIndex={startIndex}
-              endIndex={endIndex}
-            />
+        <div className="disable-text-selection">
+          <ListPageHeading
+            heading="menu.customers"
+            match={match}
+            displayOpts={this.state.displayOpts}
+            orderOptions={this.state.orderOptions}
+            pageSizes={this.state.pageSizes}
+            selectedPageSize={this.state.selectedPageSize}
+            selectedOrderOption={this.state.selectedOrderOption}
+            searchKeyword={this.state.searchKeyword}
+            searchPlaceholder={this.state.searchPlaceholder}
+            filterFromDate={this.state.filterFromDate}
+            filterToDate={this.state.filterToDate}
+            filterStatus={this.state.filterStatus}
+            daysStatus={this.state.daysStatus}
+            amountStatus={this.state.amountStatus}
+            onSearchKey={this.onSearchKey}
+            onChangeFromDate={this.onChangeFromDate}
+            onChangeToDate={this.onChangeToDate}
+            changeOrderBy={this.changeOrderBy}
+            changeStatus={this.changeStatus}
+            changeDaysStatus={this.changeDaysStatus}
+            changeAmountStatus={this.changeAmountStatus}
+            changePageSize={this.changePageSize}
+            onResetFilters={this.onResetFilters}
+            totalItemCount={this.state.totalItemCount}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
 
-            <Row>
-              <Colxx xxs="12">
-                <Card className="mb-4">
-                  <CardBody>
-                    <Table hover>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Image</th>
-                          <th>User Name</th>
-                          <th>User Code</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Status</th>
-                          <th>Created On</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.items.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{(this.state.selectedPageSize * (this.state.currentPage -1)) + index +1}</td>
-                              <td>
-                                <img
-                                  alt={item.username} 
-                                  src={item.user_image_thumb_url}
-                                  className="img-thumbnail border-0 list-thumbnail align-self-center xsmall"
-                                />
-                              </td>
-                              <td>
-                              <Link to={{
+          <Row>
+            <Colxx xxs="12">
+              <Card className="mb-4">
+                <CardBody>
+                  <Table hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>User Name</th>
+                        <th>User Code</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.items.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
+                            <td>
+                              <img alt={item.username} src={item.user_image_thumb_url} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
+                            </td>
+                            <td>
+                              <Link
+                                to={{
                                   pathname: `edit-customer/${item._id}`,
                                   state: {
-                                    pageIndex: this.state.currentPage
-                                  }
-                                }}>
+                                    pageIndex: this.state.currentPage,
+                                  },
+                                }}
+                              >
                                 {/* <NavLink to={`edit-customer/${item._id}`}> */}
-                                  {item.username}
-                                </Link>
-                              </td>
-                              <td>{item.register_id}</td>
-                              <td>{item.email}</td>
-                              <td>{item.phone}</td>
-                              <td>
-                                <Badge
-                                  color={
-                                    item.is_active
-                                      ? "outline-success"
-                                      : "outline-danger"
-                                  }
-                                  pill
-                                >
-                                  {item.is_active ? (
-                                    <IntlMessages id="label.active" />
-                                  ) : (
-                                      <IntlMessages id="label.inactive" />
-                                    )}
-                                </Badge>
-                              </td>
-                              <td>{moment(item.createdAt).format("lll")}</td>
-
-                            </tr>
-                          );
-                        })}
-
-                        {this.state.items.length == 0 && (
-                          <tr>
-                            <td colSpan="8" className="text-center">
-                              No data available.
-                          </td>
+                                {item.username}
+                              </Link>
+                            </td>
+                            <td>{item.register_id}</td>
+                            <td>{item.email}</td>
+                            <td>{item.phone}</td>
+                            <td>
+                              <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
+                                {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
+                              </Badge>
+                            </td>
+                            <td>{moment(item.createdAt).format("lll")}</td>
                           </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                        );
+                      })}
 
-                    <Pagination
-                      currentPage={this.state.currentPage}
-                      totalPage={this.state.totalPage}
-                      onChangePage={(i) => this.onChangePage(i)}
-                    />
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Row>
-          </div>
-        </Fragment>
-      );
+                      {this.state.items.length == 0 && (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No data available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+
+                  <Pagination currentPage={this.state.currentPage} totalPage={this.state.totalPage} onChangePage={(i) => this.onChangePage(i)} />
+                </CardBody>
+              </Card>
+            </Colxx>
+          </Row>
+        </div>
+      </Fragment>
+    );
   }
 }
 export default CustomersList;

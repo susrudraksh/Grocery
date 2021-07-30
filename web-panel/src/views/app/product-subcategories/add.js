@@ -15,10 +15,7 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 const FormSchema = Yup.object().shape({
   business_category: Yup.string().required("Please select a business category"),
   parent_category: Yup.string().required("Please select a parent category"),
-  name: Yup.string()
-    .required("Please enter category name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(30, "Too Long! Atmost 30 letters."),
+  name: Yup.string().required("Please enter category name").min(2, "Too Short! Atleast 2 letters.").max(30, "Too Long! Atmost 30 letters."),
   image: Yup.mixed()
     .required("Please choose a category image")
     .test("fileType", "Invalid File Format", (value) => {
@@ -54,13 +51,16 @@ class AddProductCategory extends Component {
 
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -72,15 +72,17 @@ class AddProductCategory extends Component {
 
     let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-
-      var parentCatList = [{ _id: "", name: "Select" }];
-      this.setState({
-        parentCatList: [...parentCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        var parentCatList = [{ _id: "", name: "Select" }];
+        this.setState({
+          parentCatList: [...parentCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -93,12 +95,15 @@ class AddProductCategory extends Component {
 
     let path = ApiRoutes.CREATE_PRODUCT_SUBCATEGORY;
     const res = await Http("POST", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/app/product-subcategories");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/app/product-subcategories");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -108,10 +113,7 @@ class AddProductCategory extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.add-product-subcategory"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.add-product-subcategory" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -129,121 +131,82 @@ class AddProductCategory extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
-                      <Form className="av-tooltip tooltip-label-bottom">
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Business Category</Label>
-                              <select
-                                name="business_category"
-                                className="form-control"
-                                value={values.business_category}
-                                onChange={(event) => {
-                                  setFieldValue("business_category", event.target.value);
-                                  this.getPerentCategories(event.target.value);
-                                }}
-                              >
-                                {this.state.businessCatList.map((item, index) => {
-                                  return (
-                                    <option key={index} value={item._id}>
-                                      {item.name}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                              {errors.business_category &&
-                                touched.business_category ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.business_category}
-                                  </div>
-                                ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Parent Category</Label>
-                              <select
-                                name="parent_category"
-                                className="form-control"
-                                value={values.parent_category}
-                                onChange={handleChange}
-                              >
-                                {this.state.parentCatList.map((item, index) => {
-                                  return (
-                                    <option key={index} value={item._id}>
-                                      {item.name}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                              {errors.parent_category &&
-                                touched.parent_category ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.parent_category}
-                                  </div>
-                                ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Category Name</Label>
-                              <Field
-                                className="form-control"
-                                name="name"
-                                type="text"
-                              />
-                              {errors.name && touched.name ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.name}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Category Image</Label>
-                              <Field
-                                className="form-control"
-                                name="image"
-                                type="file"
-                                value={this.state.image}
-                                onChange={(event) => {
-                                  setFieldValue(
-                                    "image",
-                                    event.currentTarget.files[0]
-                                  );
-                                }}
-                              />
-                              {errors.image && touched.image ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.image}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                    <Form className="av-tooltip tooltip-label-bottom">
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Business Category</Label>
+                            <select
+                              name="business_category"
+                              className="form-control"
+                              value={values.business_category}
+                              onChange={(event) => {
+                                setFieldValue("business_category", event.target.value);
+                                this.getPerentCategories(event.target.value);
+                              }}
+                            >
+                              {this.state.businessCatList.map((item, index) => {
+                                return (
+                                  <option key={index} value={item._id}>
+                                    {item.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Parent Category</Label>
+                            <select name="parent_category" className="form-control" value={values.parent_category} onChange={handleChange}>
+                              {this.state.parentCatList.map((item, index) => {
+                                return (
+                                  <option key={index} value={item._id}>
+                                    {item.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {errors.parent_category && touched.parent_category ? <div className="invalid-feedback d-block">{errors.parent_category}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Category Name</Label>
+                            <Field className="form-control" name="name" type="text" />
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Category Image</Label>
+                            <Field
+                              className="form-control"
+                              name="image"
+                              type="file"
+                              value={this.state.image}
+                              onChange={(event) => {
+                                setFieldValue("image", event.currentTarget.files[0]);
+                              }}
+                            />
+                            {errors.image && touched.image ? <div className="invalid-feedback d-block">{errors.image}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
 
-                        <Button color="primary" type="submit">
-                          <IntlMessages id="button.save" />
-                        </Button>
-                      </Form>
-                    )}
+                      <Button color="primary" type="submit">
+                        <IntlMessages id="button.save" />
+                      </Button>
+                    </Form>
+                  )}
                 </Formik>
               </CardBody>
             </Card>

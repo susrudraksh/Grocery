@@ -16,17 +16,52 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 
-
 const quillModules = {
   toolbar: [
     ["bold", "italic", "underline", "strike", "blockquote"],
-    [{'color': ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color']}],
     [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
+      {
+        color: [
+          "#000000",
+          "#e60000",
+          "#ff9900",
+          "#ffff00",
+          "#008a00",
+          "#0066cc",
+          "#9933ff",
+          "#ffffff",
+          "#facccc",
+          "#ffebcc",
+          "#ffffcc",
+          "#cce8cc",
+          "#cce0f5",
+          "#ebd6ff",
+          "#bbbbbb",
+          "#f06666",
+          "#ffc266",
+          "#ffff66",
+          "#66b966",
+          "#66a3e0",
+          "#c285ff",
+          "#888888",
+          "#a10000",
+          "#b26b00",
+          "#b2b200",
+          "#006100",
+          "#0047b2",
+          "#6b24b2",
+          "#444444",
+          "#5c0000",
+          "#663d00",
+          "#666600",
+          "#003700",
+          "#002966",
+          "#3d1466",
+          "custom-color",
+        ],
+      },
     ],
+    [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
     //["link", "image"],
     ["clean"],
   ],
@@ -42,7 +77,7 @@ const quillFormats = [
   "list",
   "bullet",
   "indent",
-  "color"
+  "color",
   // "link",
   // "image",
 ];
@@ -52,14 +87,9 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 const ProductFormSchema = Yup.object().shape({
   business_category: Yup.string().required("Please select a business category"),
   product_category: Yup.string().required("Please select a product category"),
-  product_subcategory: Yup.string().required(
-    "Please select a product sub category"
-  ),
+  product_subcategory: Yup.string().required("Please select a product sub category"),
   product_brand: Yup.string().required("Please select a brand"),
-  name: Yup.string()
-    .required("Please enter product name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(120, "Too Long! Atmost 120 letters."),
+  name: Yup.string().required("Please enter product name").min(2, "Too Short! Atleast 2 letters.").max(120, "Too Long! Atmost 120 letters."),
   description: Yup.string().required("Please enter product description"),
   product_images: Yup.mixed()
     .required("Please choose a product image")
@@ -114,9 +144,9 @@ class AddProduct extends Component {
       sku_name: "",
       batch: "",
 
-      tax_type:1,
+      tax_type: 1,
       hsn_code: "",
-      inventory_product_code:"",
+      inventory_product_code: "",
       tax_rate: 0,
       taxable_amount: 0,
       gst_amount: 0,
@@ -126,8 +156,7 @@ class AddProduct extends Component {
       sgst_amount: 0,
       igst_rate: 0,
       igst_amount: 0,
-      min_inventory:0
-      
+      min_inventory: 0,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -141,13 +170,16 @@ class AddProduct extends Component {
   getBusinessCategories = async () => {
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -160,13 +192,16 @@ class AddProduct extends Component {
 
       let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          parentCatList: [...parentCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            parentCatList: [...parentCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -185,13 +220,16 @@ class AddProduct extends Component {
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-
-      if (res.status == 200) {
-        this.setState({
-          subCatList: [...subCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            subCatList: [...subCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -204,13 +242,16 @@ class AddProduct extends Component {
     var brandList = [{ _id: "", name: "Select" }];
     let path = ApiRoutes.GET_BRANDS + "?page_no=1&limit=10000";
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        brandList: [...brandList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          brandList: [...brandList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -235,9 +276,8 @@ class AddProduct extends Component {
   };
 
   handleInventorySubmit = async (inputValues) => {
-    
     this.setState({
-      tax_type:inputValues.tax_type,
+      tax_type: inputValues.tax_type,
 
       taxable_amount: inputValues.taxable_amount,
       gst_amount: inputValues.gst_amount,
@@ -247,7 +287,7 @@ class AddProduct extends Component {
       sgst_amount: inputValues.sgst_amount,
       igst_rate: inputValues.igst_rate,
       igst_amount: inputValues.igst_amount,
-      min_inventory:inputValues.min_inventory,
+      min_inventory: inputValues.min_inventory,
 
       price: inputValues.price,
       quantity: inputValues.quantity,
@@ -276,7 +316,6 @@ class AddProduct extends Component {
   // };
   // Final Submit Methods
   validateFinalSubmit = async (stateData) => {
-
     var valid = false;
     var error = "";
 
@@ -291,8 +330,7 @@ class AddProduct extends Component {
       stateData.price == "" ||
       //stateData.quantity == "" ||
       !stateData.images
-    ) { 
-      
+    ) {
     } else if (stateData.custoimzations.length == 0) {
       error = "Please select atleast 1 customization.";
       NotificationManager.error(error, "Error!", 3000);
@@ -303,13 +341,11 @@ class AddProduct extends Component {
   };
 
   handleFinalSubmit = async (e) => {
-  
     this.submitBtnRef.current.click();
     this.inventoryFormBtnRef.current.click();
     setTimeout(async () => {
       //console.log(this.state);
       if (await this.validateFinalSubmit(this.state)) {
-
         // if(this.state.description.length > 500 || this.state.name.length > 50){
         //   return false;
         // }
@@ -332,36 +368,21 @@ class AddProduct extends Component {
         formData.append("batch", this.state.batch);
 
         formData.append("customize", JSON.stringify(custoimzations));
-        formData.append(
-          "warehouse_inventory",
-          JSON.stringify(warhouseCustoimzations)
-        );
+        formData.append("warehouse_inventory", JSON.stringify(warhouseCustoimzations));
         formData.append("inventory_name", this.state.inventory_name);
         formData.append("price", this.state.price);
-        formData.append(
-          "is_discount",
-          this.state.is_discount ? this.state.is_discount : 0
-        );
-        formData.append(
-          "discount_type",
-          this.state.discount_type ? this.state.discount_type : 2
-        );
-        formData.append( 
-          "discount_value",
-          this.state.discount_value ? this.state.discount_value : 0
-        );
+        formData.append("is_discount", this.state.is_discount ? this.state.is_discount : 0);
+        formData.append("discount_type", this.state.discount_type ? this.state.discount_type : 2);
+        formData.append("discount_value", this.state.discount_value ? this.state.discount_value : 0);
 
         // formData.append("is_discount", this.state.is_discount);
         // formData.append("discount_type", this.state.discount_type);
         // formData.append("discount_value", this.state.discount_value);
-        formData.append(
-          "discounted_product_price",
-          this.state.discounted_product_price
-        );
+        formData.append("discounted_product_price", this.state.discounted_product_price);
         formData.append("quantity", this.state.quantity);
 
         //Sales Product Field
-        formData.append("tax_type", this.state.tax_type?this.state.tax_type:0);
+        formData.append("tax_type", this.state.tax_type ? this.state.tax_type : 0);
         formData.append("hsn_code", this.state.hsn_code);
         formData.append("inventory_product_code", this.state.inventory_product_code);
         formData.append("tax_rate", this.state.tax_rate);
@@ -374,7 +395,7 @@ class AddProduct extends Component {
         formData.append("igst_rate", this.state.igst_rate);
         formData.append("igst_amount", this.state.igst_amount);
         formData.append("min_inventory", this.state.min_inventory);
-       
+
         //
 
         if (this.state.images) {
@@ -385,12 +406,15 @@ class AddProduct extends Component {
 
         let path = ApiRoutes.CREATE_PRODUCT;
         const res = await Http("POST", path, formData);
-
-        if (res.status == 200) {
-          NotificationManager.success(res.message, "Success!", 3000);
-          this.props.history.push("/app/products");
+        if (res) {
+          if (res.status == 200) {
+            NotificationManager.success(res.message, "Success!", 3000);
+            this.props.history.push("/app/products");
+          } else {
+            NotificationManager.error(res.message, "Error!", 3000);
+          }
         } else {
-          NotificationManager.error(res.message, "Error!", 3000);
+          NotificationManager.error("Server Error", "Error!", 3000);
         }
       }
     }, 2000);
@@ -402,10 +426,7 @@ class AddProduct extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.add-product"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.add-product" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -428,16 +449,7 @@ class AddProduct extends Component {
                   validationSchema={ProductFormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form
                       onChange={(event) => {
                         this.handleProductFormChange(event, values, errors);
@@ -453,10 +465,7 @@ class AddProduct extends Component {
                               className="form-control"
                               value={values.business_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "business_category",
-                                  event.target.value
-                                );
+                                setFieldValue("business_category", event.target.value);
                                 this.getPerentCategories(event.target.value);
                               }}
                             >
@@ -468,12 +477,7 @@ class AddProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.business_category &&
-                            touched.business_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.business_category}
-                              </div>
-                            ) : null}
+                            {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -485,14 +489,8 @@ class AddProduct extends Component {
                               className="form-control"
                               value={values.product_category}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_category",
-                                  event.target.value
-                                );
-                                this.getSubCategories(
-                                  values.business_category,
-                                  event.target.value
-                                );
+                                setFieldValue("product_category", event.target.value);
+                                this.getSubCategories(values.business_category, event.target.value);
                               }}
                             >
                               {this.state.parentCatList.map((item, index) => {
@@ -503,12 +501,7 @@ class AddProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_category &&
-                            touched.product_category ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_category}
-                              </div>
-                            ) : null}
+                            {errors.product_category && touched.product_category ? <div className="invalid-feedback d-block">{errors.product_category}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -520,10 +513,7 @@ class AddProduct extends Component {
                               className="form-control"
                               value={values.product_subcategory}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_subcategory",
-                                  event.target.value
-                                );
+                                setFieldValue("product_subcategory", event.target.value);
                               }}
                             >
                               {this.state.subCatList.map((item, index) => {
@@ -534,12 +524,7 @@ class AddProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_subcategory &&
-                            touched.product_subcategory ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_subcategory}
-                              </div>
-                            ) : null}
+                            {errors.product_subcategory && touched.product_subcategory ? <div className="invalid-feedback d-block">{errors.product_subcategory}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -557,11 +542,7 @@ class AddProduct extends Component {
                                 });
                               }}
                             />
-                            {errors.name && touched.name ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.name}
-                              </div>
-                            ) : null}
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -573,10 +554,7 @@ class AddProduct extends Component {
                               className="form-control"
                               value={values.product_brand}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_brand",
-                                  event.target.value
-                                );
+                                setFieldValue("product_brand", event.target.value);
                               }}
                             >
                               {this.state.brandList.map((item, index) => {
@@ -587,11 +565,7 @@ class AddProduct extends Component {
                                 );
                               })}
                             </select>
-                            {errors.product_brand && touched.product_brand ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_brand}
-                              </div>
-                            ) : null}
+                            {errors.product_brand && touched.product_brand ? <div className="invalid-feedback d-block">{errors.product_brand}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -599,33 +573,29 @@ class AddProduct extends Component {
                           <FormGroup className="form-group has-float-label">
                             <Label>Description</Label>
                             <Field className="form-control" name="description">
-                                {({ field }) => (
-                                  <ReactQuill
-                                    theme="snow"
-                                    onChange={(value) => {
-                                      this.setState({
-                                        description: value,
-                                      });
-                                    }}
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                    placeholder="Start to enter..."
-                                    value={this.state.description}
-                                  />
-                                )}
-                              </Field>
-                            
+                              {({ field }) => (
+                                <ReactQuill
+                                  theme="snow"
+                                  onChange={(value) => {
+                                    this.setState({
+                                      description: value,
+                                    });
+                                  }}
+                                  modules={quillModules}
+                                  formats={quillFormats}
+                                  placeholder="Start to enter..."
+                                  value={this.state.description}
+                                />
+                              )}
+                            </Field>
+
                             {/* <Field
                               className="form-control"
                               name="description"
                               component="textarea"
                              
                             /> */}
-                            {errors.description && touched.description ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.description}
-                              </div>
-                            ) : null}
+                            {errors.description && touched.description ? <div className="invalid-feedback d-block">{errors.description}</div> : null}
                           </FormGroup>
                         </Colxx>
 
@@ -639,26 +609,15 @@ class AddProduct extends Component {
                               multiple
                               value={this.state.product_images}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "product_images",
-                                  event.currentTarget.files
-                                );
+                                setFieldValue("product_images", event.currentTarget.files);
                               }}
                             />
-                            {errors.product_images && touched.product_images ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.product_images}
-                              </div>
-                            ) : null}
+                            {errors.product_images && touched.product_images ? <div className="invalid-feedback d-block">{errors.product_images}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
 
-                      <Button
-                        className="hide-element"
-                        type="submit"
-                        innerRef={this.submitBtnRef}
-                      ></Button>
+                      <Button className="hide-element" type="submit" innerRef={this.submitBtnRef}></Button>
                     </Form>
                   )}
                 </Formik>
@@ -672,9 +631,7 @@ class AddProduct extends Component {
           handleInventorySubmit={this.handleInventorySubmit}
           inventoryFormBtnRef={this.inventoryFormBtnRef}
           handleCustomizationSubmit={this.handleCustomizationSubmit}
-          handleCustomizationWarehouseSubmit={
-            this.handleCustomizationWarehouseSubmit
-          }
+          handleCustomizationWarehouseSubmit={this.handleCustomizationWarehouseSubmit}
         />
         {/* {this.state.userRole && this.state.userRole == 1 && (
           <WarehouseInventoryForm
@@ -685,14 +642,9 @@ class AddProduct extends Component {
           />
         )} */}
 
-        
         <Row style={{ marginTop: 30 }}>
           <Colxx xxs="12" sm="6">
-            <Button
-              color="primary"
-              type="button"
-              onClick={this.handleFinalSubmit}
-            >
+            <Button color="primary" type="button" onClick={this.handleFinalSubmit}>
               <IntlMessages id="button.save" />
             </Button>{" "}
           </Colxx>

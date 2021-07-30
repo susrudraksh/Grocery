@@ -13,10 +13,7 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const FormSchema = Yup.object().shape({
   parent_type: Yup.string().required("Please select a parent type"),
-  name: Yup.string()
-    .required("Please enter subtype name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(20, "Too Long! Atmost 20 letters."),
+  name: Yup.string().required("Please enter subtype name").min(2, "Too Short! Atleast 2 letters.").max(20, "Too Long! Atmost 20 letters."),
 });
 
 class EditCustomizationSubType extends Component {
@@ -43,29 +40,35 @@ class EditCustomizationSubType extends Component {
 
     let path = ApiRoutes.GET_PRODUCT_CUSTOM_TYPES;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      var parentTypeList = [{ _id: "", name: "Select" }];
-      this.setState({
-        parentTypeList: [...parentTypeList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        var parentTypeList = [{ _id: "", name: "Select" }];
+        this.setState({
+          parentTypeList: [...parentTypeList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
   dataRender = async () => {
     let path = ApiRoutes.GET_CUSTOMIZATION_SUBTYPE + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        parent_type: res.data.parent_id,
-        name: res.data.name,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          parent_type: res.data.parent_id,
+          name: res.data.name,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -76,13 +79,15 @@ class EditCustomizationSubType extends Component {
 
     let path = ApiRoutes.UPDATE_CUSTOMIZATION_SUBTYPE + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/customization-subtypes`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/customization-subtypes`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -91,10 +96,7 @@ class EditCustomizationSubType extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-customization-subtype"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-customization-subtype" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -111,65 +113,39 @@ class EditCustomizationSubType extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
-                      <Form className="av-tooltip tooltip-label-bottom">
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Parent Type</Label>
-                              <select
-                                name="parent_type"
-                                className="form-control"
-                                value={values.parent_type}
-                                onChange={handleChange}
-                              >
-                                {this.state.parentTypeList.map((item, index) => {
-                                  return (
-                                    <option key={index} value={item._id}>
-                                      {item.name}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                              {errors.parent_type && touched.parent_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.parent_type}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Sub Type Name</Label>
-                              <Field
-                                className="form-control"
-                                name="name"
-                                type="text"
-                              />
-                              {errors.name && touched.name ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.name}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Button color="primary" type="submit">
-                          <IntlMessages id="button.save" />
-                        </Button>
-                      </Form>
-                    )}
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                    <Form className="av-tooltip tooltip-label-bottom">
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Parent Type</Label>
+                            <select name="parent_type" className="form-control" value={values.parent_type} onChange={handleChange}>
+                              {this.state.parentTypeList.map((item, index) => {
+                                return (
+                                  <option key={index} value={item._id}>
+                                    {item.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {errors.parent_type && touched.parent_type ? <div className="invalid-feedback d-block">{errors.parent_type}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Sub Type Name</Label>
+                            <Field className="form-control" name="name" type="text" />
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Button color="primary" type="submit">
+                        <IntlMessages id="button.save" />
+                      </Button>
+                    </Form>
+                  )}
                 </Formik>
               </CardBody>
             </Card>

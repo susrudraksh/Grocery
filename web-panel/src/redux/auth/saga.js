@@ -32,7 +32,7 @@ const loginWithEmailPasswordAsync = async (email, password) => {
 
   let path = ApiRoutes.ADMIN_LOGIN;
   const res = await Http("POST", path, formData);
-  debugger
+
   if(res){
     if (res.status==200) {
       return res.data;

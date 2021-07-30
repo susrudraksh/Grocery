@@ -93,13 +93,15 @@ class CustomersList extends Component {
 
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-
+if(res){
     if (res.status == 200) {
       this.setState({
         businessCatList: [...this.state.businessCatList, ...res.data.docs],
       });
     } else {
       NotificationManager.error(res.message, "Error!", 3000);
+    }}else {
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -109,7 +111,7 @@ class CustomersList extends Component {
 
     let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
     const res = await Http("POST", path, formData);
-
+if(res){
     if (res.status == 200) {
       var parentCatList = [{ _id: "", name: "Select" }];
       this.setState({
@@ -117,6 +119,8 @@ class CustomersList extends Component {
       });
     } else {
       NotificationManager.error(res.message, "Error!", 3000);
+    }}else {
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -131,13 +135,15 @@ class CustomersList extends Component {
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-
+if(res){
       if (res.status == 200) {
         this.setState({
           subCatList: [...subCatList, ...res.data.docs],
         });
       } else {
         NotificationManager.error(res.message, "Error!", 3000);
+      }}else {
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -163,7 +169,7 @@ class CustomersList extends Component {
 
       let path = ApiRoutes.GET_BANNER_PRODUCTS;
       const res = await Http("POST", path, formData);
-
+if(res){
       if (res.status == 200) {
         this.setState({
           productList: [...productList, ...res.data],
@@ -177,6 +183,8 @@ class CustomersList extends Component {
         setFieldValue('options', options)
       } else {
         NotificationManager.error(res.message, "Error!", 3000);
+      }}else {
+        NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
       this.setState({
@@ -192,7 +200,7 @@ class CustomersList extends Component {
 
     let path = ApiRoutes.GET_RECONCILATION_REPORT;
     const res = await Http("POST", path, formData);
-   
+   if(res){
     if (res.status == 200) {
       this.setState({
         totalPage: res.data.totalPages,
@@ -232,6 +240,8 @@ class CustomersList extends Component {
       //this.props.history.push("/app/customization-types");
     } else {
       NotificationManager.error(res.message, "Error!", 3000);
+    }}else {
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
