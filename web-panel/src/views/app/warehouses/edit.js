@@ -14,19 +14,9 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 var latLongRegExp = /^-?[0-9]{1,3}(?:\.[0-9]{1,10})?$/;
 
 const FormSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("Please enter warehouse name")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(20, "Too Long! Atmost 20 letters."),
-  address: Yup.string()
-    .required("Please enter warehouse address")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(150, "Too Long! Atmost 150 letters."),
-  latitude: Yup.string()
-    .required("Please enter latitude for address")
-    .matches(latLongRegExp, "Invalid latitude value")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(15, "Too Long! Atmost 15 letters."),
+  name: Yup.string().required("Please enter warehouse name").min(2, "Too Short! Atleast 2 letters.").max(20, "Too Long! Atmost 20 letters."),
+  address: Yup.string().required("Please enter warehouse address").min(2, "Too Short! Atleast 2 letters.").max(150, "Too Long! Atmost 150 letters."),
+  latitude: Yup.string().required("Please enter latitude for address").matches(latLongRegExp, "Invalid latitude value").min(2, "Too Short! Atleast 2 letters.").max(15, "Too Long! Atmost 15 letters."),
   longitude: Yup.string()
     .required("Please enter longitude for address")
     .matches(latLongRegExp, "Invalid longitude value")
@@ -55,17 +45,20 @@ class EditWarehouse extends Component {
   dataRender = async () => {
     let path = ApiRoutes.GET_WAREHOUSE + "/" + this.state.itemId;
     const res = await Http("GET", path);
-
-    if (res.status == 200) {
-      this.setState({
-        name: res.data.name,
-        address: res.data.address,
-        latitude: res.data.latitude,
-        longitude: res.data.longitude,
-        isLoading: true,
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          name: res.data.name,
+          address: res.data.address,
+          latitude: res.data.latitude,
+          longitude: res.data.longitude,
+          isLoading: true,
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -78,13 +71,15 @@ class EditWarehouse extends Component {
 
     let path = ApiRoutes.UPDATE_WAREHOUSE + "/" + this.state.itemId;
     const res = await Http("PUT", path, formData);
-
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push({pathname:`/app/warehouses`, state:{pageIndex:this.state.currentPage}})
-
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push({ pathname: `/app/warehouses`, state: { pageIndex: this.state.currentPage } });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
+      NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -93,10 +88,7 @@ class EditWarehouse extends Component {
       <Fragment>
         <Row>
           <Colxx xxs="12">
-            <Breadcrumb
-              heading="heading.edit-warehouse"
-              match={this.props.match}
-            />
+            <Breadcrumb heading="heading.edit-warehouse" match={this.props.match} />
             <Separator className="mb-5" />
           </Colxx>
         </Row>
@@ -115,31 +107,14 @@ class EditWarehouse extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Warehouse Name</Label>
-                            <Field
-                              className="form-control"
-                              name="name"
-                              type="text"
-                            />
-                            {errors.name && touched.name ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.name}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="name" type="text" />
+                            {errors.name && touched.name ? <div className="invalid-feedback d-block">{errors.name}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -147,16 +122,8 @@ class EditWarehouse extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Address</Label>
-                            <Field
-                              className="form-control"
-                              name="address"
-                              component="textarea"
-                            />
-                            {errors.address && touched.address ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.address}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="address" component="textarea" />
+                            {errors.address && touched.address ? <div className="invalid-feedback d-block">{errors.address}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -164,16 +131,8 @@ class EditWarehouse extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Latitude</Label>
-                            <Field
-                              className="form-control"
-                              name="latitude"
-                              type="text"
-                            />
-                            {errors.latitude && touched.latitude ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.latitude}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="latitude" type="text" />
+                            {errors.latitude && touched.latitude ? <div className="invalid-feedback d-block">{errors.latitude}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -181,16 +140,8 @@ class EditWarehouse extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Longitude</Label>
-                            <Field
-                              className="form-control"
-                              name="longitude"
-                              type="text"
-                            />
-                            {errors.longitude && touched.longitude ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.longitude}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="longitude" type="text" />
+                            {errors.longitude && touched.longitude ? <div className="invalid-feedback d-block">{errors.longitude}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>

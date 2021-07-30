@@ -199,13 +199,16 @@ class WarehouseList extends Component {
 
           let path = ApiRoutes.UPDATE_WAREHOUSE_STATUS + "/" + itemId;
           const res = await Http("PUT", path, formData);
+          if (res) {
+            if (res.status == 200) {
+              this.dataListRender();
 
-          if (res.status == 200) {
-            this.dataListRender();
-
-            NotificationManager.success(res.message, "Success!", 3000);
+              NotificationManager.success(res.message, "Success!", 3000);
+            } else {
+              NotificationManager.error(res.message, "Error!", 3000);
+            }
           } else {
-            NotificationManager.error(res.message, "Error!", 3000);
+            NotificationManager.error("Server Error", "Error!", 3000);
           }
         }
       });
