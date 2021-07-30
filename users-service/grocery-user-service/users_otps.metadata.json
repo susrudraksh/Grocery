@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"grocery-user-service.users_otps"}],"uuid":"7b0a0a5552a14eb884c4459a2dbe0172"}

@@ -1,0 +1,15 @@
+{
+    "name": "Laundry App Content Service Apidoc",
+    "version": "0.0.0",
+    "description": "Laundry App Content Service API documentation",
+    "title": "Laundry App Apidoc",
+    "url": "",
+    "template": {
+        "forceLanguage": "en"
+    },
+    "order": [
+        "GlobalErrors",
+        "Content",
+        "Promocode"
+    ]
+}

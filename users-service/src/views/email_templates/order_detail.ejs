@@ -1,0 +1,208 @@
+
+<table style="width: 100%; background-color:#f8f8f8;font-family: Open Sans, sans-serif,arial;font-size:100%;font-weight:400;line-height:1.4;color:#000; font-size:13px;">
+    <tr>
+        <td>
+            <table style="width:750px;margin:50px auto 10px;background-color:#fff;padding:24px; padding: 1.75rem; border-radius: 10px; color:#212529; box-shadow: 0 1px 15px rgb(0 0 0 / 4%), 0 1px 6px rgb(0 0 0 / 4%);">
+                <tr>
+                    <td>
+                        <table style="width:100%; border-bottom:1px solid #d7d7d7; padding-bottom:32px; margin-bottom:15px;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;"> Order Details</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Order Date : <%= moment(order_date).format("LLLL")  %> </td>
+                                    <td style="text-align:left; font-size:14px; width:50%;"> Order Status: <%= (order_status!=0)?newstatus1[order_status]:'Pending'  %> </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align:left; font-size:14px;">Payment Mode: <%= payment_mode  %> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!--=====config-table-list=======-->
+                        <table style="width:100%; border-bottom:1px solid #d7d7d7; padding-bottom:32px; margin-bottom:15px; color:#212529;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;">Warehouse Details</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Warehouse Id:<span><%= warehouseData.length >0 ? warehouseData[0]._id : null  %></span></td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">Warehouse Name: <span><%= warehouseData.length >0 ? warehouseData[0].name : null  %></span></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <!--=====config-table-list=======-->
+                        <table style="width:100%; border-bottom:1px solid #d7d7d7; padding-bottom:32px; margin-bottom:15px; color:#212529;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;">Customer Details</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Customer Id: <%= userData.register_id  %> </td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">Customer Name: <%= userData.username %></td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align:left; font-size:14px;">Customer Phone number: <span><%= userData.phone %></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                        <!--=====config-table-list=======-->
+                        <table style="width:100%; border-bottom:1px solid #d7d7d7; padding-bottom:32px; margin-bottom:15px; color:#212529;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;">Driver Details</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Driver Id: <%= (driver.length > 0) ? driver[0].register_id : null  %><span></span> </td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">Driver Name: <%= (driver.length > 0) ? driver[0].username : null  %> <span></span></td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align:left; font-size:14px;">Driver Phone number: <%= (driver.length > 0) ? driver[0].phone : null  %> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!--=====config-table-list=======-->
+                        <table style="width:100%; border-bottom:1px solid #d7d7d7; padding-bottom:32px; margin-bottom:15px; color:#212529;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;">Order Status</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Order Picked up:  <%= tracking_status.Packed.status == 0 ? "No" : "Yes" %><span></span> </td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">Picked Up Date: <%= moment(tracking_status.Packed.time).format("LLLL") %></td>
+                                </tr>
+
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Order In Transit: <%= tracking_status.In_Transit.status == 0 ? "No" : "Yes" %></td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">In Transit Date: <%= moment(tracking_status.In_Transit.time).format("LLLL") %></td>
+                                </tr>
+
+                                <tr style="line-height: 2.5;">
+                                    <td style="text-align:left; font-size:14px; width:50%;">Delivered: <%= tracking_status.Delivered.status == 0 ? "No" : "Yes" %></td>
+                                    <td style="text-align:left; font-size:14px; width:50%;">Delivered Date:<%= moment(tracking_status.In_Transit.time).format("LLLL") %></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+
+                        <!--=====item-detail=======-->
+                        <table style="width:100%; padding-bottom:32px; margin-bottom:15px; color:#212529;">
+                            <thead>
+                                <tr style="">
+                                    <th style="line-height: 2;text-align:left; font-weight: 700 !important; font-size:1.1rem; margin-bottom:15px;">Item Details</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-bottom:1px solid #d7d7d7;">
+                                <% for(var i=0; i < category.length; i++) {  %>
+                                    <tr style="line-height: 2.5;">
+                                        <td style="text-align:left; font-size:14px; width:50%;">Category Name: <%= category[i].name  %></td>
+                                    </tr>
+    
+                                    <tr>
+                                        <td style="padding: 1.75rem;box-shadow: 0 1px 15px rgb(0 0 0 / 4%), 0 1px 6px rgb(0 0 0 / 4%);border-radius: 0.75rem;">
+                                            <table class="table table-hover" style="width:100%;" cellpadding="15" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Item Image</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Name</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Base Price</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Discounted Price</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Quantity</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Total Cost</th>
+                                                        <th style="font-size:13px; text-align:center; border-top:1px solid #f3f3f3 ; border-bottom:1px solid #f3f3f3 ;">Return Request</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% for(var j=0; j < category[i].products.length; j++) {  %>
+                                                        <tr>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><img alt="Fat free oil"
+                                                                src= <%= (category[i].products[j] && category[i].products[j].images ) ? category[i].products[j].images[0].product_image_thumb_url
+                                                                : ""  %>
+                                                                > </td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><%= category[i].products[j].name %></td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><%= category[i].products[j].price %></td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><%= category[i].products[j].is_discount == 1 ? category[i].products[j].offer_price : "" %></td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><%= category[i].products[j].quantity  %></td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"><%= category[i].products[j].is_discount == 1 ?
+                                                                category[i].products[j].offer_price ? category[i].products[j].offer_price * category[i].products[j].quantity : category[i].products[j].price * category[i].products[j].quantity  :  category[i].products[j].price * category[i].products[j].quantity 
+                                                               %></td>
+                                                            <td style="font-size:13px; border-top:1px solid #f3f3f3 ;"></td>
+                                                        </tr>
+                                                    <% }  %>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                <% }  %>
+                               
+                            </tbody>
+                        </table>
+
+
+                        <!--=====total-detail=======-->
+
+                        <table class="totalamount" style="display: table; float: right; color:#212529;" cellpadding="10" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <td class="font-weight-bold" style="font-size:13px; font-weight:bold;">Delivery Fees :</td>
+                                    <td class="text-right" style="font-size:13px;" align="right">Rs <%= delivery_fee  %></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold" style="font-size:13px; font-weight:bold;">Vat amount :</td>
+                                    <td class="text-right" style="font-size:13px;" align="right">Rs <%= vat_amount  %></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold" style="font-size:13px; font-weight:bold;">Promo code &amp; Discount : </td>
+                                    <td class="text-right" style="font-size:13px;" align="right">Rs <%= discount  %></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold" style="font-size:13px; font-weight:bold;">Subtotal :</td>
+                                    <td class="text-right" style="font-size:13px;" align="right">Rs <%= net_amount  %></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold" style="font-size:13px; font-weight:bold;">Total Pay :</td>
+                                    <td class="text-right" style="font-size:13px;" align="right">Rs <%= net_amount  %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+
+
+
+
+
+
+
+                    </td>
+                </tr>
+
+
+
+
+
+            </table>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,12 @@
+.downloadcsv a span{
+color: white !important;
+}
+canvas{
+    display :none;
+}
+
+
+.navbar .header-icon.notificationButton a i {
+    color: #c6cabe;
+    font-size: 20px;
+}

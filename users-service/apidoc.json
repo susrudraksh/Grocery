@@ -1,0 +1,12 @@
+{
+    "name": "Grocery Users Service Apidoc",
+    "version": "0.0.1",
+    "description": "Grocery Users Service API documentation",
+    "title": "Grocery Apidoc",
+    "url" : "",
+    "template": {
+        "forceLanguage": "en"
+    }
+    
+    
+}

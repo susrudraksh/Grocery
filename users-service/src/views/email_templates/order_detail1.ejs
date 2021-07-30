@@ -1,0 +1,302 @@
+ 
+  
+ <!DOCTYPE html>
+ <html>
+ <head>
+ <title>Athwas</title>
+ <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+ <style>
+    body{
+        font-size: 10px;
+    }
+ </style>
+ </head>
+ <body>
+ <table style="width: 100%; background-color:#fff;font-family: 'Roboto', sans-serif;line-height:1.4;color:#000; font-size:13px; border-spacing:0px; margin:auto;">
+    <tr>
+        <td>
+            <table style="width:100%;" cellspacing="0">
+           <!--==top-row==-->
+                <tr>
+                    <td style="border:1px solid #000; border-right:none; width:45%;  padding-left:5px; padding-right:5px;">
+                        <table>
+                           <tr>
+                               <td><img src=<%= logo %> alt="logo"></td>
+                           </tr>
+                       </table>						
+                   </td>
+                   
+                     <td style="border:1px solid #000; font-size:16px; width:55%; padding-left:5px; padding-right:5px;">
+                        <table align="left">
+                       <tr>
+                           <td align="left"><b>Tax Invoice/Bill of Supply/Cash Memo</b></br>
+                           (Original for Recipient)
+                           </td>
+                       </tr>
+                       </table>						
+                    </td>				
+               </tr>
+               <!--==end0-top-row==-->
+               
+               
+           <!--==top-row==-->
+                <tr>
+                    <td style="border-right:none;  border-left:1px solid #000; width:45%;  padding-left:5px; padding-right:5px; vertical-align:top;">
+                        <table>
+                           <tr>
+                               <td><b>Sold By:</b><br>
+                               <%= office_address %><br>
+                               </td>
+                           </tr>
+                           
+                           <tr style="padding:15px 0;">
+                               <td>
+                               <br>
+                               <b>PAN No:</b>	 <%= pan_number %></br>
+                               <b>GST Registration No:</b><%= gst_number %>
+                                
+                               </td>
+                                
+                           </tr>
+                       </table>						
+                   </td>
+                   
+                     <td style="border:1px solid #000; border-top:none; border-bottom:none;  width:55%; padding-left:5px; padding-right:5px; vertical-align:top;">
+                        <table align="left">
+                       <tr>
+                           <td style="text-transform:uppercase;"><b style="text-transform:capitalize;">Billing Address:</b></br>
+                           <%= userData.username %></br>
+                           <%= delivery_address.full_address %></br>
+                           <!-- CITY, STATE, PINCODE</br>
+                           IN</br> -->
+                               </td>
+                           </tr>
+                           
+                           <!-- <tr>
+                               <td style="padding-bottom:20px;"><b>State/UT Code:</b> 01 </td>
+                           </tr> -->
+                           
+                           <tr>
+                           <td style="text-transform:uppercase; padding:5px 0;"><b style="text-transform:capitalize;">Shipping Address:</b></br>
+                            <%= userData.username %></br>
+                            <%= delivery_address.full_address %></br>
+                           <!-- CITY, STATE, PINCODE</br>
+                           IN
+                           </br> -->
+                           </td>
+                           </tr>
+                           
+                           <tr>
+                               <td><b>State/UT Code:</b> 01 </td>
+                           </tr>
+                           
+                           <tr>
+                               <td><b>Place of supply:</b>  JAMMU & KASHMIR</td>
+                           </tr>
+                           
+                           <tr>
+                               <td><b>Place of delivery:</b>  JAMMU & KASHMIR</td>
+                           </tr>
+                           
+                           
+                       </table>						
+                    </td>				
+               </tr>
+               <!--==end0-top-row==-->
+               <!--==top-row==-->
+                <tr>
+                    <td style="border-right:none; border-bottom:none;  border-top:1px solid #000; border-left:1px solid #000; width:45%;  padding-left:5px; padding-right:5px;">
+                        <table>
+                           <tr>
+                               <td style="padding-bottom:10px;"><b>Order Number:</b> #<%= order_id %></td>
+                           </tr>
+                           <tr>
+                               <td><b>Order Date: </b> <%= moment(order_date).format("LLLL")  %></td>
+                           </tr>
+                           
+                       </table>						
+                   </td>
+                   
+                     <td style="border:1px solid #000; border-bottom:none; width:55%; padding-left:5px; padding-right:5px;">
+                        <table>
+                           <tr>
+                               <td style="padding-bottom:10px;"><b>Invoice Number:</b> #6567896754</td>
+                           </tr>
+                           <tr>
+                               <td><b>Invoice Date: </b> <%= moment(order_date).format("LLLL")  %></td>
+                           </tr>
+                           
+                       </table>							
+                    </td>				
+               </tr>
+               <!--==end0-top-row==-->
+               <!-- <table border="1px solid #000" cellspacing="0" border-spacing="0"> -->
+               <!-- <tr>				 -->
+                 <!-- <td style="border:none;"> -->
+                        <table style="font-size:9px; font-weight:normal;" cellspacing="0" border="none" width="100%">
+                            <thead>
+                                <tr>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">S. No.</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;" width="80">Description</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">MRP<br/>Rs</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Qty.</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Gross.</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Disc<br/>%</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Disc.<br/>Amt.</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Value</th>							 
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Taxable Amount</th>
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0px;" colspan="2">
+                                    <table class="subtable" cellspacing="0">
+                                        <tr style=" text-align: center;"> 
+                                            <th style="border-bottom: 1px solid #333; text-align: center; " colspan="2">CGST</th>                                            
+                                        </tr>
+                                        <tr>
+                                            <td style="border-right: 1px solid #333; text-align: center; width: 40px;">Rate</td>  
+                                            <td style="text-align: center;  width: 40px;">Amt.</td>                                         
+                                        </tr>
+                                    </table>                               
+                                </th>
+
+                                
+                                <!-- <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Cgst Amt.</th> -->
+                               
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0px;" colspan="2">
+                                    <table class="subtable" cellspacing="0">
+                                        <tr style=" text-align: center;"> 
+                                            <th style="border-bottom: 1px solid #333; text-align: center;" colspan="2">SGST</th>                                            
+                                        </tr>
+                                        <tr>
+                                            <td style="border-right: 1px solid #333; text-align: center;  width: 40px;">Rate</td>  
+                                            <td style="text-align: center;  width: 40px;">Amt.</td>                                         
+                                        </tr>
+                                    </table>                                       
+                                </th>
+                                <!-- <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Sgst rate</th> -->
+                                <!-- <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Sgst Amt</th> -->
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0px;" colspan="2">
+                                    <table class="subtable" cellspacing="0">
+                                    <tr style=" text-align: center;"> 
+                                        <th style="border-bottom: 1px solid #333; text-align: center;" colspan="2">IGST</th>                                            
+                                    </tr>
+                                    <tr>
+                                        <td style="border-right: 1px solid #333; text-align: center; width: 40px;">Rate</td>  
+                                        <td style="text-align: center;  width: 40px">Amt.</td>                                         
+                                    </tr>
+                                </table>
+                            </th>
+                                <!-- <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px;">Igst Amt</th> -->
+                                <th style="font-weight:normal; padding-bottom:10px; vertical-align:top; padding:0 2px; width: 60px;" >Net Amt</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i < category.length; i++) {  %>
+                           <% for(var j=0; j < category[i].products.length; j++) {  %>
+                            <%  var gross = 0;
+                                gross = category[i].products[j].price * category[i].products[j].quantity;
+                            var discounted_amount = 0;
+                                discounted_amount = category[i].products[j].price - category[i].products[j].offer_price;
+                            var value = gross - discounted_amount;
+                            var tax_rate = (category[i].products[j].tax_rate && category[i].products[j].tax_rate != 0) ? (parseFloat(1 + (category[i].products[j].tax_rate / 100))) : 0;
+                            
+                            var taxable_amount   = tax_rate!=0 ? (value / tax_rate):0;
+                            
+                            var cgst_rate = (category[i].products[j].cgst_rate && category[i].products[j].cgst_rate != 0) ? category[i].products[j].cgst_rate / 100 : 0;
+                            var sgst_rate = (category[i].products[j].sgst_rate && category[i].products[j].sgst_rate != 0) ? category[i].products[j].sgst_rate / 100 : 0;
+                            var igst_rate = (category[i].products[j].igst_rate && category[i].products[j].igst_rate != 0) ? category[i].products[j].igst_rate / 100 : 0;
+
+                            var cgst_amount = 0;
+                            var sgst_amount = 0;
+                            var igst_amount = 0;
+
+                            var gst_amount = tax_rate != 0 ? value - taxable_amount : 0;
+                            var tax_type = category[i].products[j].tax_type;
+                            if (tax_type == 1) {
+                                cgst_amount = (taxable_amount * cgst_rate);
+                                cgst_amount = cgst_amount.toFixed(2);
+                                sgst_amount = (taxable_amount * sgst_rate);
+                                sgst_amount = sgst_amount.toFixed(2);
+                            } else {
+                                igst_amount = (taxable_amount * igst_rate);
+                                igst_amount = igst_amount.toFixed(2);
+                            }
+
+                             %>
+                           <tr>
+                               <td style="padding:0 3px;"><% j+1 %></td>
+                               <td style="padding:0 3px;"  width="80"><%= category[i].products[j].name %></td>
+                               <td  style="padding:0 3px;"><%= category[i].products[j].price %></td>
+                               <td  style="padding:0 3px;"><%= category[i].products[j].quantity %></td>
+                               <td  style="padding:0 3px;"><%= gross %></td>
+                               <td  style="padding:0 3px;"></td>
+                               <td  style="padding:0 3px;"><%= discounted_amount %></td>
+                               <td  style="padding:0 3px;"><%= value %></td>
+                               <td  style="padding:0 3px;"><%= taxable_amount.toFixed(2) %></td>
+                               <td  style="padding:0px;" colspan="2">
+                                <table class="subtable" cellspacing="0">
+                                <tr>
+                                    <td style="border-right: 1px solid #333; text-align: center; width: 40px;"><%= category[i].products[j].cgst_rate %></td>  
+                                    <td style="text-align: center;width: 40px;"><%= cgst_amount %></td>                                         
+                                </tr>
+                                </table> 
+                                </td> 
+                               <!-- <td  style="padding:0 3px;"><%= category[i].products[j].cgst_rate %></td>
+                               <td  style="padding:0 3px;"><%= cgst_amount %></td> -->
+                               <td  style="padding:0px;" colspan="2">
+                                <table class="subtable" cellspacing="0">
+                                <tr>
+                                    <td style="border-right: 1px solid #333; text-align: center; width: 40px;"><%= category[i].products[j].sgst_rate %></td>  
+                                    <td style="text-align: center;width: 40px;"><%= sgst_amount %></td>                                         
+                                </tr>
+                                </table> 
+                                </td> 
+                               <!-- <td  style="padding:0 3px;"><%= category[i].products[j].sgst_rate %></td>
+                               <td  style="padding:0 3px;"><%= sgst_amount %></td> -->
+                               <td  style="padding:0px;" colspan="2">
+                                <table class="subtable" cellspacing="0">
+                                <tr>
+                                    <td style="border-right: 1px solid #333; text-align: center; width: 40px;"><%= category[i].products[j].igst_rate %></td>  
+                                    <td style="text-align: center;width: 40px;"><%= igst_amount %></td>                                         
+                                </tr>
+                                </table> 
+                                </td> 
+                               <!-- <td  style="padding:0 3px;"><%= category[i].products[j].igst_rate %></td>
+                               <td  style="padding:0 3px;"><%= igst_amount %></td> -->
+                               <td  style="padding:0 3px;">
+                            <%=
+                                category[i].products[j].is_discount == 1 ?
+                                category[i].products[j].offer_price ? category[i].products[j].offer_price * category[i].products[j].quantity : category[i].products[j].price * category[i].products[j].quantity  :  category[i].products[j].price * category[i].products[j].quantity 
+                            %></td>
+                           </tr>
+                           
+                           <% }  }%>
+                        </tbody>
+                           <tr>								 
+                               <td style="width:100%; font-size:14px; padding:0 3px;" colspan="15"><b>Promo code</b></td>								 						 
+                            
+                               <td style=""><%= discount  %></td>
+                           </tr>
+                            <tr>								 
+                                <td style="width:100%; font-size:14px; padding:0 5px;" colspan="15"><b>Total</b></td>								 						 
+                               
+                                <td style=""><%= net_amount  %></td>
+                            </tr>
+                           
+                           <tr>								 
+                               <td style="width:100%; font-size:13px; padding:0 5px;" colspan="16" ><b>Amount in Words:</br></b>
+                                <strong style="text-transform: capitalize;"><%= amountInWord %> </strong>(In Round Figure)
+                               </td>	 
+                           </tr> 
+                            </table>
+                            
+                    </td>	
+               
+               
+               
+               
+               </tr>
+               
+               
+            </table>
+
+ </body>
+ </html>

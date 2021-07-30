@@ -1,0 +1,59 @@
+<%-include('layout/header') %>
+
+<table class="main" id="table-2">
+
+  <!-- START MAIN CONTENT AREA -->
+  <tr>
+    <td class="wrapper" id="td-3">
+      <table border="0" cellpadding="0" cellspacing="0" id="table-3">
+        <tr>
+          <td id="td-4">
+            <p id="p-1">Hi there,</p>
+            <p id="p-2">You have received a Feedback from an App User.</p>
+            <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" id="table-4">
+              <tbody>
+                <tr>
+                  <td align="left" id="td-5">
+                    <table border="0" cellpadding="0" cellspacing="0" id="table-5">
+                      <tbody>
+                        <tr>
+                          <td style="width: 30%;">User Name</td>
+                          <td style="width: 2%;">:</td>
+                          <td style="width: 68%;"><%= user_name %></td>
+                        </tr>
+                        <tr>
+                          <td style="width: 30%;">Email</td>
+                          <td style="width: 2%;">:</td>
+                          <td style="width: 68%;"><%= user_email %></td>
+                        </tr>
+                        <tr>
+                          <td style="width: 30%;">Request Type</td>
+                          <td style="width: 2%;">:</td>
+                          <td style="width: 68%;"><%= request_type %></td>
+                        </tr>
+                        <tr>
+                          <td style="width: 30%;">Message</td>
+                          <td style="width: 2%;">:</td>
+                          <td style="width: 68%;"><%= message_text %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p id="p-3"></p>
+            <p id="p-3"></p>
+            <p id="p-3"></p>
+            <p id="p-4">Best Regards</p>
+            <p id="p-4"><%= siteTitle %> Team</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+<!-- END MAIN CONTENT AREA -->
+</table>
+
+<%-include('layout/footer') %>
