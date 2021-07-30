@@ -108,3 +108,4 @@ dist
 *.bak
 /*/*.zip
 /api-gateway/public/
+ api-gateway/src/config/
