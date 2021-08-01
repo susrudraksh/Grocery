@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 app.all('/*', (req, res, next) => {
- // console.log(req)
+  console.log(req.url)
   // CORS header support
   res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');

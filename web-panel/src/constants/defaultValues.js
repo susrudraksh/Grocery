@@ -26,7 +26,7 @@ export const firebaseConfig = {
 
 export const searchPath = "/app/pages/search";
 export const servicePath = "http://3.7.83.168:3060";
-// export const servicePath = "http://3.7.83.168:3063";
+//  export const servicePath = "http://3.7.83.168:3063";
 //export const servicePath = "http://192.168.1.69:3050";
 export const apiAccessKey = "keMStjdies";
 

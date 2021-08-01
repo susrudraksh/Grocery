@@ -276,7 +276,7 @@ const ContentController = {
        }
    */
   get_faqs: (req, res) => {
-
+    console.log(req)
     try {
 
       var findPattern = { option_key: "faq" };
