@@ -213,19 +213,27 @@ class Sidebar extends Component {
     var permittedModules = Object.keys(this.state.userPermissions);
 
     menuItems = menuItems.map((item) => {
-      console.log("item", item);
       item.showItem = true;
+      let hasPermission = false;
+
+      if (Array.isArray(item.module_slug)) {
+        item.module_slug.map((item1) => {
+          if (this.state.userPermissions[item1] !== undefined) {
+            hasPermission = true;
+          }
+          console.log("hasPermission");
+        });
+      }
 
       if (
-        this.state.userRole == 2 &&
-        item.check_permission &&
-        (!this.state.userPermissions[item.module_slug] || (this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1))
+        (this.state.userRole == 2 && item.check_permission && !Array.isArray(item.module_slug) && !this.state.userPermissions[item.module_slug]) ||
+        (hasPermission && this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1)
       ) {
         item.showItem = false;
       }
 
       if (item.subs && item.subs.length > 0) {
-        item.subs = this.modifySubMenuItemsByPermissions(item.subs);
+        item.subs = this.modifySubMenuItemsByPermissions(item, item.subs);
       }
 
       return item;
@@ -234,14 +242,26 @@ class Sidebar extends Component {
     this.setState({ menuItems: menuItems });
   }
 
-  modifySubMenuItemsByPermissions(subMenuItems) {
+  modifySubMenuItemsByPermissions(mainMenu, subMenuItems) {
     subMenuItems = subMenuItems.map((item) => {
       item.showItem = true;
+      let hasPermission = false;
+
+      if (Array.isArray(mainMenu.module_slug)) {
+        mainMenu.module_slug.map((item1) => {
+          if (this.state.userPermissions[item1] !== undefined) {
+            hasPermission = true;
+          }
+          console.log("hasPermission");
+        });
+      }
 
       if (
-        this.state.userRole == 2 &&
-        item.check_permission &&
-        (!this.state.userPermissions[item.module_slug] || (this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1))
+        (this.state.userRole == 2 && mainMenu.check_permission && !Array.isArray(mainMenu.module_slug) && !this.state.userPermissions[mainMenu.module_slug]) ||
+        (hasPermission &&
+          this.state.userPermissions[mainMenu.module_slug] &&
+          this.state.userPermissions[mainMenu.module_slug].indexOf(mainMenu.permission_type) == -1 &&
+          !this.state.userPermissions[mainMenu.module_slug].includes("list"))
       ) {
         item.showItem = false;
       }

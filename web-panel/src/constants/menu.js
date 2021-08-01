@@ -23,7 +23,7 @@ const data = [
     label: "menu.users",
     to: "/app/users",
     check_permission: true,
-    module_slug: "users",
+    module_slug: ["users", "drivers", "users"],
     permission_type: "list",
     subs: [
       {
@@ -58,7 +58,7 @@ const data = [
     label: "menu.product-categories",
     to: "/app/product-categories",
     check_permission: true,
-    module_slug: "product_categories",
+    module_slug: ["product_categories", "product_sub_category"],
     permission_type: "list",
     subs: [
       {
@@ -79,7 +79,7 @@ const data = [
     label: "menu.product-customizations",
     to: "/app/product-categories",
     check_permission: true,
-    module_slug: "product_customizations",
+    module_slug: ["product_customizations", "product_customizations_subtype"],
     permission_type: "list",
     subs: [
       {
