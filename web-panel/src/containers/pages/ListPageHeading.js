@@ -23,7 +23,7 @@ var amountOptions = [
   { value: "40", label: "40 K" },
 ];
 var orderStatus = [
-  { value: "", label: "Select" },
+  // { value: "", label: "Select" },
   { value: "", label: "All" },
   { value: "2", label: "Passed" },
   { value: "1", label: "Current" },
@@ -102,6 +102,9 @@ class ListPageHeading extends Component {
       daysStatus,
       amountStatus,
     } = this.props;
+
+    var newfilter = orderStatus.find((item) => item.value == filterStatus);
+    var statusOptions1 = statusOptions.find((item) => item.column == filterStatus);
 
     const { displayOptionsIsOpen } = this.state;
     return (
@@ -242,8 +245,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedOrderStatus.label}
-                        {console.log(this.state.selectedOrderStatus.label)}
+                        {newfilter.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {orderStatus.map((status, index) => {
@@ -268,7 +270,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedStatusOption.label}
+                        {statusOptions1.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {statusOptions.map((status, index) => {

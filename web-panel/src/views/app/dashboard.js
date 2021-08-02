@@ -217,10 +217,10 @@ class Dashboard extends Component {
           iconCardsData: iconCardsData,
         });
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+       // NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-      NotificationManager.error("Server Error", "Error!", 3000);
+     // NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -245,10 +245,10 @@ class Dashboard extends Component {
           isLoading: true,
         });
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+     //   NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-      NotificationManager.error("Server Error", "Error!", 3000);
+     // NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -271,10 +271,10 @@ class Dashboard extends Component {
           isLoading: true,
         });
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
+     //   NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-      NotificationManager.error("Server Error", "Error!", 3000);
+    //  NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
