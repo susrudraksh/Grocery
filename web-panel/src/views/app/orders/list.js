@@ -70,8 +70,8 @@ class OrderList extends Component {
   }
 
   getActiveDrivers = async () => {
-    this.state.isLoading = true;
-
+    // this.state.isLoading = true;
+    this.setState({ isLoading: true });
     // let path = ApiRoutes.GET_ACTIVE_DRIVERS + "?page_no=1&limit=100";
     let path = ApiRoutes.GET_ACTIVE_DRIVERS;
 
@@ -82,8 +82,10 @@ class OrderList extends Component {
         this.setState({ activeDriverList: [""] });
         this.setState({
           activeDriverList: [...this.state.activeDriverList, ...res.data],
+          isLoading: false,
         });
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
@@ -94,7 +96,7 @@ class OrderList extends Component {
 
   dataListRender = async () => {
     // this.state.isLoading = true;
-
+    this.setState({ isLoading: true });
     let path =
       ApiRoutes.GET_ORDERS +
       "?page_no=" +
@@ -116,7 +118,7 @@ class OrderList extends Component {
           items: res.data.docs,
           totalPage: res.data.totalPages,
           totalItemCount: res.data.totalDocs,
-
+          filterStatus: this.state.filterStatus,
           isLoading: false,
         });
       } else {
@@ -269,7 +271,6 @@ class OrderList extends Component {
           </Button>
         </div>
         <div className="disable-text-selection">
-          {this.state.filterStatus}
           <ListPageHeading
             heading="menu.orders"
             match={match}
@@ -462,13 +463,15 @@ class OrderList extends Component {
                             setFieldValue("driver_id", event.target.value);
                           }}
                         >
-                          {this.state.activeDriverList.map((item, index) => {
-                            return (
-                              <option key={index} value={item._id}>
-                                {item.username}
-                              </option>
-                            );
-                          })}
+                          <option value="">Assign Driver</option>
+                          {this.state.activeDriverList.length > 0 &&
+                            this.state.activeDriverList.map((item, index) => {
+                              return (
+                                <option key={index} value={item._id}>
+                                  {item.username}
+                                </option>
+                              );
+                            })}
                         </select>
 
                         {errors.driver_id && touched.driver_id ? <div className="invalid-feedback d-block">{errors.driver_id}</div> : null}

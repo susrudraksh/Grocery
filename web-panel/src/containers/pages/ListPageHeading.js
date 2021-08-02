@@ -23,7 +23,7 @@ var amountOptions = [
   { value: "40", label: "40 K" },
 ];
 var orderStatus = [
-  { value: "", label: "Select" },
+  // { value: "", label: "Select" },
   { value: "", label: "All" },
   { value: "2", label: "Passed" },
   { value: "1", label: "Current" },
@@ -103,10 +103,8 @@ class ListPageHeading extends Component {
       amountStatus,
     } = this.props;
 
-    var newfilter = filterStatus;
-    if(!newfilter || newfilter==""){
-      newfilter = 0;
-    }
+    var newfilter = orderStatus.find((item) => item.value == filterStatus);
+    var statusOptions1 = statusOptions.find((item) => item.column == filterStatus);
 
     const { displayOptionsIsOpen } = this.state;
     return (
@@ -247,13 +245,14 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {orderStatus[newfilter].label}
+                        {newfilter.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {orderStatus.map((status, index) => {
                           return (
                             <DropdownItem
                               key={index}
+                              value={orderStatus[index]}
                               onClick={() => {
                                 this.setState({ selectedOrderStatus: orderStatus[index] });
                                 changeOrderStatus(status.value);
@@ -271,7 +270,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedStatusOption.label}
+                        {statusOptions1.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {statusOptions.map((status, index) => {
@@ -299,6 +298,8 @@ class ListPageHeading extends Component {
                       onClick={() => {
                         this.setState({ selectedOrderStatus: orderStatus[0] });
                         this.setState({ selectedStatusOption: statusOptions[0] });
+                        this.setState({ selectedAmountOption: amountOptions[0] });
+                        this.setState({ selectedDaysOption: daysOptions[0] });
                         onResetFilters();
                       }}
                     >

@@ -80,7 +80,7 @@ class BusinessCategoriesList extends Component {
 
   // Methods for Data Rendering
   dataListRender = async () => {
-    this.state.isLoading = true;
+    this.setState({ isLoading: true });
 
     let path =
       ApiRoutes.GET_BUSSINESS_CATEGORIES +
@@ -101,15 +101,16 @@ class BusinessCategoriesList extends Component {
           totalPage: res.data.totalPages,
           items: res.data.docs,
           totalItemCount: res.data.totalDocs,
+          isLoading: false,
         });
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.setState({ isLoading: false });
       NotificationManager.error("Server Error", "Error!", 3000);
     }
-
-    this.setState({ isLoading: true });
   };
 
   // Methods for Filters Actions
@@ -255,7 +256,7 @@ class BusinessCategoriesList extends Component {
     const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
-    return !this.state.isLoading ? (
+    return this.state.isLoading ? (
       <div className="loading" />
     ) : (
       <Fragment>
@@ -297,52 +298,54 @@ class BusinessCategoriesList extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.items.map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
-                            <td>
-                              <img alt={item.name} src={item.category_image_thumb_url} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
-                            </td>
-                            <td>
-                              <Link
-                                to={{
-                                  pathname: `edit-business-category/${item._id}`,
-                                  state: {
-                                    pageIndex: this.state.currentPage,
-                                  },
-                                }}
-                              >
-                                {item.name}
-                              </Link>
-                            </td>
-                            <td>{item.cancelation_time}</td>
-                            <td>{item.return_time}</td>
-                            <td>
-                              <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
-                                {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
-                              </Badge>
-                            </td>
-                            <td>
-                              <Switch
-                                className="custom-switch custom-switch-small custom-switch-primary-inverse"
-                                checked={item.is_active == 1 ? true : false}
-                                title={item.is_active ? "Deactivate" : "Activate"}
-                                onChange={(e) => this.onChangeItemStatus(item._id, index, item.is_active)}
-                              />{" "}
-                              <Link
-                                to={{
-                                  pathname: `edit-business-category/${item._id}`,
-                                  state: {
-                                    pageIndex: this.state.currentPage,
-                                  },
-                                }}
-                              >
-                                <Button outline color="info" size="xs" className="mb-2" title="Edit">
-                                  <div className="glyph-icon simple-icon-note"></div>
-                                </Button>
-                              </Link>{" "}
-                              {/* <Button
+                      {this.state.items &&
+                        this.state.items.length > 0 &&
+                        this.state.items.map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
+                              <td>
+                                <img alt={item.name} src={item.category_image_thumb_url} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
+                              </td>
+                              <td>
+                                <Link
+                                  to={{
+                                    pathname: `edit-business-category/${item._id}`,
+                                    state: {
+                                      pageIndex: this.state.currentPage,
+                                    },
+                                  }}
+                                >
+                                  {item.name}
+                                </Link>
+                              </td>
+                              <td>{item.cancelation_time}</td>
+                              <td>{item.return_time}</td>
+                              <td>
+                                <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
+                                  {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
+                                </Badge>
+                              </td>
+                              <td>
+                                <Switch
+                                  className="custom-switch custom-switch-small custom-switch-primary-inverse"
+                                  checked={item.is_active == 1 ? true : false}
+                                  title={item.is_active ? "Deactivate" : "Activate"}
+                                  onChange={(e) => this.onChangeItemStatus(item._id, index, item.is_active)}
+                                />{" "}
+                                <Link
+                                  to={{
+                                    pathname: `edit-business-category/${item._id}`,
+                                    state: {
+                                      pageIndex: this.state.currentPage,
+                                    },
+                                  }}
+                                >
+                                  <Button outline color="info" size="xs" className="mb-2" title="Edit">
+                                    <div className="glyph-icon simple-icon-note"></div>
+                                  </Button>
+                                </Link>{" "}
+                                {/* <Button
                                   outline
                                   color="danger"
                                   size="xs"
@@ -353,10 +356,10 @@ class BusinessCategoriesList extends Component {
                                 >
                                   <div className="glyph-icon simple-icon-trash"></div>
                                 </Button> */}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                              </td>
+                            </tr>
+                          );
+                        })}
 
                       {this.state.items.length == 0 && (
                         <tr>
