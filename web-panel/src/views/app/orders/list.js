@@ -77,6 +77,7 @@ class OrderList extends Component {
 
     const res = await Http("GET", path);
     if (res) {
+      this.state.isLoading = false;
       if (res.status == 200) {
         this.setState({ activeDriverList: [""] });
         this.setState({
@@ -86,6 +87,7 @@ class OrderList extends Component {
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.state.isLoading = false;
       NotificationManager.error("Server Error", "Error!", 3000);
     }
   };

@@ -88,18 +88,19 @@ module.exports = {
     },
 
   
-inWords: (num)=> {
-    if ((num = num.toString()).length > 9) return 'overflow';
-    var n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return; var str = '';
-    str += (n[1] != 0) ? (aNum[Number(n[1])] || bNum[n[1][0]] + ' ' + aNum[n[1][1]]) + 'crore ' : '';
-    str += (n[2] != 0) ? (aNum[Number(n[2])] || bNum[n[2][0]] + ' ' + aNum[n[2][1]]) + 'lakh ' : '';
-    str += (n[3] != 0) ? (aNum[Number(n[3])] || bNum[n[3][0]] + ' ' + aNum[n[3][1]]) + 'thousand ' : '';
-    str += (n[4] != 0) ? (aNum[Number(n[4])] || bNum[n[4][0]] + ' ' + aNum[n[4][1]]) + 'hundred ' : '';
-    str += (n[5] != 0) ? ((str != '') ? '' : '') + (aNum[Number(n[5])] || bNum[n[5][0]] + ' ' + aNum[n[5][1]]) : '';
-    str = (str=="")?'Zero only ':' only'
-    return str;
-}
+    inWords: (num)=> {
+        if ((num = num.toString()).length > 9) return 'overflow';
+        var n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!n) return; var str = '';
+        str += (n[1] != 0) ? (aNum[Number(n[1])] || bNum[n[1][0]] + ' ' + aNum[n[1][1]]) + 'crore ' : '';
+        str += (n[2] != 0) ? (aNum[Number(n[2])] || bNum[n[2][0]] + ' ' + aNum[n[2][1]]) + 'lakh ' : '';
+        str += (n[3] != 0) ? (aNum[Number(n[3])] || bNum[n[3][0]] + ' ' + aNum[n[3][1]]) + 'thousand ' : '';
+        str += (n[4] != 0) ? (aNum[Number(n[4])] || bNum[n[4][0]] + ' ' + aNum[n[4][1]]) + 'hundred ' : '';
+        str += (n[5] != 0) ? ((str != '') ? '' : '') + (aNum[Number(n[5])] || bNum[n[5][0]] + ' ' + aNum[n[5][1]]) : '';
+        console.log("str",str)
+        str += (str=="")?'Zero only ':' only'
+        return str;
+    }
 
 
 

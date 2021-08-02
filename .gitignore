@@ -110,3 +110,4 @@ dist
 /api-gateway/public/
 /api-gateway/src/config/
 /users-service/src/config/
+/web-panel/build
