@@ -105,10 +105,10 @@ class OrderList extends Component {
       `${this.state.searchKeyword}` +
       "&order_status=" +
       `${this.state.filterStatus}`;
-    {
-      this.state.filterStatus == "" && this.setState({ isLoading: true });
-    }
-
+    // {
+    //   this.state.filterStatus == "" && this.setState({ isLoading: true });
+    // }
+    //this.setState({isLoading:true})
     const res = await Http("GET", path);
     if (res) {
       if (res.status == 200) {
@@ -269,6 +269,7 @@ class OrderList extends Component {
           </Button>
         </div>
         <div className="disable-text-selection">
+          {this.state.filterStatus}
           <ListPageHeading
             heading="menu.orders"
             match={match}

@@ -103,6 +103,11 @@ class ListPageHeading extends Component {
       amountStatus,
     } = this.props;
 
+    var newfilter = filterStatus;
+    if(!newfilter || newfilter==""){
+      newfilter = 0;
+    }
+
     const { displayOptionsIsOpen } = this.state;
     return (
       <Row>
@@ -242,7 +247,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedOrderStatus.label}
+                        {orderStatus[newfilter].label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {orderStatus.map((status, index) => {
