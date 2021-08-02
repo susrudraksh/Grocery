@@ -97,6 +97,7 @@ class CustomersList extends Component {
   }
 
   handleSubmit = async (inputValues) => {
+    this.setState({ isLoading: true });
     let formData = new FormData();
     formData.append("startDate", moment(inputValues.startDate).format("YYYY-MM-DD"));
     formData.append("endDate", moment(inputValues.endDate).format("YYYY-MM-DD"));
@@ -200,13 +201,15 @@ class CustomersList extends Component {
           });
         });
 
-        this.setState({ csvData: csvData });
+        this.setState({ csvData: csvData, isLoading: false });
         NotificationManager.success(res.message, "Success!", 3000);
         //this.props.history.push("/app/customization-types");
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.setState({ isLoading: false });
       NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
@@ -346,56 +349,61 @@ class CustomersList extends Component {
             </Colxx>
           </Row>
           <br />
-          <Row>
-            <Colxx xxs="12">
-              <Card className="mb-4">
-                <CardBody>
-                  <Table hover>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>User Name</th>
-                        <th>Phone</th>
-                        <th>Order Id</th>
-                        <th>Payment Mode</th>
-                        <th>Net Amount</th>
-                        <th>Created On</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.items.map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{item.user_name}</td>
-                            <td>{item.phone}</td>
-                            <td>{item.order_id}</td>
-                            <td>{item.payment_mode}</td>
-                            <td>{item.net_amount}</td>
-                            <td>{moment(item.createdAt).format("lll")}</td>
-                          </tr>
-                        );
-                      })}
-
-                      {this.state.items.length == 0 && (
+          {this.state.isLoading ? (
+            <div className="loading" />
+          ) : (
+            <Row>
+              <Colxx xxs="12">
+                <Card className="mb-4">
+                  <CardBody>
+                    <Table hover>
+                      <thead>
                         <tr>
-                          <td colSpan="8" className="text-center">
-                            No data available.
-                          </td>
+                          <th>#</th>
+                          <th>User Name</th>
+                          <th>Phone</th>
+                          <th>Order Id</th>
+                          <th>Payment Mode</th>
+                          <th>Net Amount</th>
+                          <th>Created On</th>
                         </tr>
-                      )}
-                    </tbody>
-                  </Table>
+                      </thead>
 
-                  {/* <Pagination
+                      <tbody>
+                        {this.state.items.map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{item.user_name}</td>
+                              <td>{item.phone}</td>
+                              <td>{item.order_id}</td>
+                              <td>{item.payment_mode}</td>
+                              <td>{item.net_amount}</td>
+                              <td>{moment(item.createdAt).format("lll")}</td>
+                            </tr>
+                          );
+                        })}
+
+                        {this.state.items.length == 0 && (
+                          <tr>
+                            <td colSpan="8" className="text-center">
+                              No data available.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </Table>
+
+                    {/* <Pagination
                     currentPage={this.state.currentPage}
                     totalPage={this.state.totalPage}
                     onChangePage={(i) => this.onChangePage(i)}
                   /> */}
-                </CardBody>
-              </Card>
-            </Colxx>
-          </Row>
+                  </CardBody>
+                </Card>
+              </Colxx>
+            </Row>
+          )}
         </div>
       </Fragment>
     );

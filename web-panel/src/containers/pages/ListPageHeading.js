@@ -105,6 +105,8 @@ class ListPageHeading extends Component {
 
     var newfilter = orderStatus.find((item) => item.value == filterStatus);
     var statusOptions1 = statusOptions.find((item) => item.column == filterStatus);
+    var daysOptions1 = daysOptions.find((item) => item.value == daysStatus);
+    var amountOptions1 = amountOptions.find((item) => item.value == amountStatus);
 
     const { displayOptionsIsOpen } = this.state;
     return (
@@ -198,7 +200,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedDaysOption.label}
+                        {daysOptions1.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {daysOptions.map((status, index) => {
@@ -221,7 +223,7 @@ class ListPageHeading extends Component {
                     <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
-                        {this.state.selectedAmountOption.label}
+                        {amountOptions1.label}
                       </DropdownToggle>
                       <DropdownMenu>
                         {amountOptions.map((status, index) => {

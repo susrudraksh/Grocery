@@ -72,8 +72,7 @@ class CustomizationSubTypeList extends Component {
 
   // Methods for Data Rendering
   dataListRender = async () => {
-    this.state.isLoading = true;
-
+    this.setState({ isLoading: true });
     let path =
       ApiRoutes.GET_CUSTOMIZATION_SUBTYPES +
       "?page_no=" +
@@ -93,15 +92,16 @@ class CustomizationSubTypeList extends Component {
           totalPage: res.data.totalPages,
           items: res.data.docs,
           totalItemCount: res.data.totalDocs,
+          isLoading: false,
         });
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.setState({ isLoading: false });
       NotificationManager.error("Server Error", "Error!", 3000);
     }
-
-    this.setState({ isLoading: true });
   };
 
   onSearchKey = (e) => {
@@ -224,7 +224,7 @@ class CustomizationSubTypeList extends Component {
     const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
-    return !this.state.isLoading ? (
+    return this.state.isLoading ? (
       <div className="loading" />
     ) : (
       <Fragment>
