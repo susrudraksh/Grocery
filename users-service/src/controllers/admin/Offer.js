@@ -226,6 +226,23 @@ const OfferController = {
 
                 if (coupon_code && coupon_code != "") {
                     findPattern.coupon_code = coupon_code;
+                }else{
+                    if(business_category_id && business_category_id!=""){
+                        findPattern.business_category_id = ObjectID(business_category_id);
+                    }
+                    if(category_id && category_id!=""){
+                        findPattern.category_id = ObjectID(category_id);
+                    }
+                    if(sub_category_id && sub_category_id!=""){
+                        findPattern.sub_category_id = ObjectID(sub_category_id);
+                    }
+                    if(product_id && product_id!=""){
+                        findPattern.product_id = ObjectID(product_id);
+                    }
+                    
+                    if(offer_type && offer_type==1){
+                        findPattern.offer_type = offer_type;
+                    }
                 }
 
                 if (start_date != "" || endDate != "") {
@@ -240,6 +257,7 @@ const OfferController = {
                 }
 
                 let aggregateConditions = [{ $match: findPattern }];
+                console.log(aggregateConditions);
 
                 OfferServices.oneRecord(aggregateConditions).then(async matchdata => {
 
@@ -515,6 +533,22 @@ const OfferController = {
 
                 if (coupon_code && coupon_code != "") {
                     findExistPattern.coupon_code = coupon_code;
+                }else{
+                    if(business_category_id && business_category_id!=""){
+                        findExistPattern.business_category_id = ObjectID(business_category_id);
+                    }
+                    if(category_id && category_id!=""){
+                        findExistPattern.category_id = ObjectID(category_id);
+                    }
+                    if(sub_category_id && sub_category_id!=""){
+                        findExistPattern.sub_category_id = ObjectID(sub_category_id);
+                    }
+                    if(product_id && product_id!=""){
+                        findExistPattern.product_id = ObjectID(product_id);
+                    }
+                    if(offer_type && offer_type==1){
+                        findExistPattern.offer_type = offer_type;
+                    }
                 }
 
                 if (start_date != "" || endDate != "") {
@@ -531,7 +565,7 @@ const OfferController = {
                 findExistPattern._id = { '$ne': ObjectID(offer_id) };
 
                 let aggregateConditions = [{ $match: findExistPattern }];
-
+                console.log(JSON.stringify(aggregateConditions))
                 OfferServices.oneRecord(aggregateConditions).then(async matchdata => {
 
                     if (matchdata) {

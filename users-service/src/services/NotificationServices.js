@@ -88,7 +88,7 @@ const NotificationServices = {
     
     sendNotification: async (title = "Athwas", message = "", user_id, user_type, sender_id, sender_type,order_id="",notification_type=[1,2,3],product_id='',message_type='') => {
       
-        console.log(user_id,user_type)
+        console.log(user_id,user_type,notification_type)
         if (user_id && user_id!="") {
             
             var createNotification = {
@@ -121,6 +121,8 @@ const NotificationServices = {
             
             if(notification_type.includes(2)){
               let userInfo = await UserServices.getUserDetailById({ _id: user_id });
+             
+             
               if(userInfo.device_token!="" && (user_type==3 || user_type==4)){
                 var messagedata_id  = '';
                 if(message_type ==2){
@@ -130,19 +132,49 @@ const NotificationServices = {
                     messagedata_id = order_id;
                 }
 
-                  var Fcmmessage = {
-                      to: userInfo.device_token,
-                      collapse_key: '',
-                      data: {
-                          your_custom_data_key: 'your_custom_data_value',
-                          custom_message_type:message_type,
-                          id:messagedata_id
-                      },
-                      notification: {
-                          title: title,
-                          body: message
-                      }
-                  };
+                var Fcmmessage = {};
+                if(userInfo.device_type=="1"){
+                    // var newdata = {
+                    //     your_custom_data_key: 'your_custom_data_value',
+                    //     custom_message_type:message_type,
+                    //     id:messagedata_id,
+                    //     title: title,
+                    //     body: message
+                    // }
+                     Fcmmessage = {
+                        to: userInfo.device_token,
+                        collapse_key: '',
+                        priority: "high",
+                        data: {
+                            your_custom_data_key: 'your_custom_data_value',
+                            custom_message_type:message_type,
+                            id:messagedata_id,
+                            title: title,
+                            body: message
+                        },
+                        // notification: {
+                        //     title: title,
+                        //     body: message
+                        // }
+                    };
+                }else{
+                    Fcmmessage = {
+                        to: userInfo.device_token,
+                        collapse_key: '',
+                        data: {
+                            your_custom_data_key: 'your_custom_data_value',
+                            custom_message_type:message_type,
+                            id:messagedata_id
+                        },
+                        notification: {
+                            title: title,
+                            body: message
+                        }
+                    };
+                }
+
+            
+                  console.log(JSON.stringify(Fcmmessage));
                   PushNotification.sendForAndriodIos(Fcmmessage);
               }
             }
@@ -168,6 +200,6 @@ const NotificationServices = {
     }
     
 }
-// NotificationServices.sendNotification('Athwas', 'Order Placed Successfully', "5f18295dd364c8608604b992", 1, '', '', "", [1])
+//NotificationServices.sendNotification('Athwas', 'test', "6052f3833a20d57e9738223b", 3, '', '', "", [2])
 //NotificationServices.createRecord({title:"Hello2",message:"Test message2",user_id:'5f730e04b8ca663ae84a36ce',user_type:3,sender_id:'5f18295dd364c8608604b992',sender_type:1,read_status:0,notification_type:1})
 module.exports = NotificationServices; 
