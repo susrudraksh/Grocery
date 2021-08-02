@@ -187,7 +187,7 @@ const routesItems = [
     name: "",
     component: ActiveInactiveList,
     check_permission: true,
-    module_slug: "active-inactive-users",
+    module_slug: "users",
     permission_type: "list",
   },
   {
@@ -278,7 +278,7 @@ const routesItems = [
     name: "",
     component: ProductSubCategoryList,
     check_permission: true,
-    module_slug: "product_subcategories",
+    module_slug: "product_sub_category",
     permission_type: "list",
   },
   {
@@ -286,7 +286,7 @@ const routesItems = [
     name: "",
     component: ProductSubCategoryAdd,
     check_permission: true,
-    module_slug: "product_subcategories",
+    module_slug: "product_sub_category",
     permission_type: "add",
   },
   {
@@ -294,7 +294,7 @@ const routesItems = [
     name: "",
     component: ProductSubCategoryEdit,
     check_permission: true,
-    module_slug: "product_subcategories",
+    module_slug: "product_sub_category",
     permission_type: "edit",
   },
 

@@ -60,7 +60,7 @@ class Dashboard extends Component {
           icon: "iconsminds-mens",
           value: 0,
           check_permission: true,
-          module_slug: "users",
+          module_slug: "drivers",
           permission_type: "list",
         },
         {
@@ -126,7 +126,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.modifyCardItemsByPermissions();
-    this.getDashboardData();
+    // this.getDashboardData();
   }
 
   modifyCardItemsByPermissions() {
@@ -147,7 +147,7 @@ class Dashboard extends Component {
       return item;
     });
 
-    this.setState({ iconCardsData: iconCardsData });
+    this.setState({ iconCardsData: iconCardsData }, () => this.getDashboardData());
   }
 
   getDashboardData() {
