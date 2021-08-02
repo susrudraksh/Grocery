@@ -866,6 +866,14 @@ getProducts: async (req, res) => {
                 { 'newprice': { "$gte": parseInt(price_start) } },
                 { 'newprice': { "$lte": parseInt(price_end) } }
             ]
+        }else if (price_start != '' ) {
+            pricefilter["$and"] = [
+                { 'newprice': { "$gte": parseInt(price_start) } },
+            ]
+        }else if(price_end != '') {
+            pricefilter["$and"] = [
+                { 'newprice': { "$lte": parseInt(price_end) } }
+            ]
         }
 
 
@@ -896,9 +904,10 @@ getProducts: async (req, res) => {
         if (rating != "") {
             filterbyRating["$and"] = [
                 { 'rating': { "$gte": parseInt(rating) } },
-                { 'rating': { "$lt": parseInt(rating + 1) } },
+                { 'rating': { "$lt": parseInt(rating) + 1 } },
             ]
         }
+        
 
         let aggregateCondition = [
             { $match: filter },
@@ -1043,11 +1052,12 @@ getProducts: async (req, res) => {
                     offer_price: "$discounted_product_price",
                     rating: { $toString: "$rating" },
                     newprice: "$newprice",
+                    createdAt:1
                 }
             },
 
         ];
-
+        console.log(JSON.stringify(aggregateCondition));
 
         //  const activeMatches = await Product.aggregate(aggregateCondition);
         //     res.status(200).json(activeMatches);
