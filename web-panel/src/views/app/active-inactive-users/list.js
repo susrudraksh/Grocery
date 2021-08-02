@@ -118,7 +118,7 @@ class CustomersList extends Component {
           csvData1["username"] = user.username;
           csvData1["phone"] = user.phone;
           csvData1["email"] = user.email;
-          csvData1["status"] = user.is_active;
+          csvData1["status"] = user.is_active ? "Active" : "Inactive";
           csvData.push(csvData1);
         });
 
@@ -156,15 +156,16 @@ class CustomersList extends Component {
     this.setState(
       {
         filterStatus: value,
+        currentPage: 1,
       },
       () => this.dataListRender()
     );
   };
   changeDaysStatus = (value) => {
-    console.log(value);
     this.setState(
       {
         daysStatus: value,
+        currentPage: 1,
       },
       () => this.dataListRender()
     );
@@ -173,6 +174,7 @@ class CustomersList extends Component {
     this.setState(
       {
         amountStatus: value,
+        currentPage: 1,
       },
       () => this.dataListRender()
     );
@@ -198,17 +200,14 @@ class CustomersList extends Component {
   };
 
   onResetFilters = () => {
-    this.setState(
-      {
-        selectedOrderOption: { column: "createdAt", label: "Created On" },
-        selectedPageSize: 10,
-        currentPage: 1,
-        filterStatus: "",
-        daysStatus: "",
-        amountStatus: "",
-      },
-      () => this.dataListRender()
-    );
+    this.setState({
+      selectedOrderOption: { column: "createdAt", label: "Created On" },
+      selectedPageSize: 10,
+      currentPage: 1,
+      filterStatus: "",
+      daysStatus: "",
+      amountStatus: "",
+    });
   };
 
   // Methods for Actions
@@ -259,8 +258,8 @@ class CustomersList extends Component {
     ) : (
       <Fragment>
         <div>
-          <Button color="primary" size="xs" style={{ float: "right" }}>
-            <CSVLink data={(this.state.csvData && this.state.csvData) || []} filename={"user-list.csv"}>
+          <Button color="primary" size="xs" style={{ float: "right", color: "white" }}>
+            <CSVLink data={(this.state.csvData && this.state.csvData) || []} filename={"user-list.csv"} style={{ color: "white" }}>
               <IntlMessages id="pages.download" />
             </CSVLink>
           </Button>

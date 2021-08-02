@@ -80,8 +80,7 @@ class ProductList extends Component {
 
   // Methods for Data Rendering
   dataListRender = async () => {
-    this.state.isLoading = true;
-
+    this.setState({ isLoading: true });
     let path =
       ApiRoutes.GET_PRODUCTS +
       "?page_no=" +
@@ -101,15 +100,17 @@ class ProductList extends Component {
           totalPage: res.data.totalPages,
           items: res.data.docs,
           totalItemCount: res.data.totalDocs,
+          isLoading: false,
+          // filterStatus:this.state.filterStatus
         });
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.setState({ isLoading: false });
       NotificationManager.error("Server Error", "Error!", 3000);
     }
-
-    this.setState({ isLoading: true });
   };
 
   // Methods for Filters Actions
@@ -251,7 +252,7 @@ class ProductList extends Component {
     const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
-    return !this.state.isLoading ? (
+    return this.state.isLoading ? (
       <div className="loading" />
     ) : (
       <Fragment>
@@ -294,60 +295,62 @@ class ProductList extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.items.map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
-                            <td>
-                              <img alt={item.name} src={item.images[0] ? item.images[0].product_image_thumb_url : ""} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
-                            </td>
-                            <td>{item.name}</td>
-                            <td>{item ? item.business_category.name : ""}</td>
-                            <td>{item ? item.category.name : ""}</td>
-                            <td>{item ? item.subcategory.name : ""}</td>
-                            <td>
-                              <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
-                                {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
-                              </Badge>
-                            </td>
-                            <td>
-                              <Switch
-                                className="custom-switch custom-switch-small custom-switch-primary-inverse"
-                                checked={item.is_active == 1 ? true : false}
-                                title={item.is_active ? "Deactivate" : "Activate"}
-                                onChange={(e) => this.onChangeItemStatus(item._id, index, item.is_active)}
-                              />{" "}
-                              <Link
-                                to={{
-                                  pathname: `edit-product/${item._id}`,
-                                  state: {
-                                    pageIndex: this.state.currentPage,
-                                  },
-                                }}
-                              >
-                                <Button outline color="info" size="xs" className="mb-2" title="Edit">
-                                  <div className="glyph-icon simple-icon-note"></div>
-                                </Button>
-                              </Link>{" "}
-                              <Button outline color="danger" size="xs" className="mb-2" title="Delete" onClick={(e) => this.onDeleteItem(item._id, index)}>
-                                <div className="glyph-icon simple-icon-trash"></div>
-                              </Button>{" "}
-                              <Link
-                                to={{
-                                  pathname: `list-rating/${item._id}`,
-                                  state: {
-                                    pageIndex: this.state.currentPage,
-                                  },
-                                }}
-                              >
-                                <Button outline color="success" size="xs" className="mb-2" title="View Rating">
-                                  <div className="glyph-icon simple-icon-eye"></div>
-                                </Button>
-                              </Link>{" "}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                      {this.state.items &&
+                        this.state.items.length > 0 &&
+                        this.state.items.map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
+                              <td>
+                                <img alt={item.name} src={item.images[0] ? item.images[0].product_image_thumb_url : ""} className="img-thumbnail border-0 list-thumbnail align-self-center xsmall" />
+                              </td>
+                              <td>{item.name}</td>
+                              <td>{item ? item.business_category.name : ""}</td>
+                              <td>{item ? item.category.name : ""}</td>
+                              <td>{item ? item.subcategory.name : ""}</td>
+                              <td>
+                                <Badge color={item.is_active ? "outline-success" : "outline-danger"} pill>
+                                  {item.is_active ? <IntlMessages id="label.active" /> : <IntlMessages id="label.inactive" />}
+                                </Badge>
+                              </td>
+                              <td>
+                                <Switch
+                                  className="custom-switch custom-switch-small custom-switch-primary-inverse"
+                                  checked={item.is_active == 1 ? true : false}
+                                  title={item.is_active ? "Deactivate" : "Activate"}
+                                  onChange={(e) => this.onChangeItemStatus(item._id, index, item.is_active)}
+                                />{" "}
+                                <Link
+                                  to={{
+                                    pathname: `edit-product/${item._id}`,
+                                    state: {
+                                      pageIndex: this.state.currentPage,
+                                    },
+                                  }}
+                                >
+                                  <Button outline color="info" size="xs" className="mb-2" title="Edit">
+                                    <div className="glyph-icon simple-icon-note"></div>
+                                  </Button>
+                                </Link>{" "}
+                                <Button outline color="danger" size="xs" className="mb-2" title="Delete" onClick={(e) => this.onDeleteItem(item._id, index)}>
+                                  <div className="glyph-icon simple-icon-trash"></div>
+                                </Button>{" "}
+                                <Link
+                                  to={{
+                                    pathname: `list-rating/${item._id}`,
+                                    state: {
+                                      pageIndex: this.state.currentPage,
+                                    },
+                                  }}
+                                >
+                                  <Button outline color="success" size="xs" className="mb-2" title="View Rating">
+                                    <div className="glyph-icon simple-icon-eye"></div>
+                                  </Button>
+                                </Link>{" "}
+                              </td>
+                            </tr>
+                          );
+                        })}
 
                       {this.state.items.length == 0 && (
                         <tr>

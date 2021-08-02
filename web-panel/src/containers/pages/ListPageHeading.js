@@ -243,12 +243,14 @@ class ListPageHeading extends Component {
                       <DropdownToggle caret color="outline-dark" size="xs">
                         <IntlMessages id="pages.status" />
                         {this.state.selectedOrderStatus.label}
+                        {console.log(this.state.selectedOrderStatus.label)}
                       </DropdownToggle>
                       <DropdownMenu>
                         {orderStatus.map((status, index) => {
                           return (
                             <DropdownItem
                               key={index}
+                              value={orderStatus[index]}
                               onClick={() => {
                                 this.setState({ selectedOrderStatus: orderStatus[index] });
                                 changeOrderStatus(status.value);
@@ -294,6 +296,8 @@ class ListPageHeading extends Component {
                       onClick={() => {
                         this.setState({ selectedOrderStatus: orderStatus[0] });
                         this.setState({ selectedStatusOption: statusOptions[0] });
+                        this.setState({ selectedAmountOption: amountOptions[0] });
+                        this.setState({ selectedDaysOption: daysOptions[0] });
                         onResetFilters();
                       }}
                     >

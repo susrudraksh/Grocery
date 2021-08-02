@@ -221,7 +221,7 @@ class Sidebar extends Component {
           if (this.state.userPermissions[item1] !== undefined) {
             hasPermission = true;
           }
-          console.log("hasPermission");
+          console.log("hasPermission", item1, hasPermission);
         });
       }
 
