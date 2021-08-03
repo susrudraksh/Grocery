@@ -77,7 +77,7 @@ class CustomersList extends Component {
 
   // Methods for Data Rendering
   dataListRender = async () => {
-    this.state.isLoading = true;
+    this.setState({ isLoading: true });
 
     let path =
       ApiRoutes.GET_NOTIFICATIONS +
@@ -104,14 +104,17 @@ class CustomersList extends Component {
           totalPage: res.data.totalPages,
           items: res.data.docs,
           totalItemCount: res.data.totalDocs,
+          isLoading: false
         });
       } else {
+        this.setState({ isLoading: false });
         NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
+      this.setState({ isLoading: false });
       NotificationManager.error("Server Error", "Error!", 3000);
     }
-    this.setState({ isLoading: true });
+    //this.setState({ isLoading: true });
   };
 
   // Methods for Filters Actions
@@ -166,6 +169,7 @@ class CustomersList extends Component {
     this.setState(
       {
         filterFromDate: e.target.value,
+        currentPage: 1,
       },
       () => this.dataListRender()
     );
@@ -175,6 +179,7 @@ class CustomersList extends Component {
     this.setState(
       {
         filterToDate: e.target.value,
+        currentPage: 1,
       },
       () => this.dataListRender()
     );
@@ -200,7 +205,7 @@ class CustomersList extends Component {
     const startIndex = (this.state.currentPage - 1) * this.state.selectedPageSize + 1;
     const endIndex = this.state.currentPage * this.state.selectedPageSize;
 
-    return !this.state.isLoading ? (
+    return this.state.isLoading ? (
       <div className="loading" />
     ) : (
       <Fragment>
@@ -249,7 +254,7 @@ class CustomersList extends Component {
                       {this.state.items.map((item, index) => {
                         return (
                           <tr key={index}>
-                            <td>{index + 1}</td>
+                            <td>{this.state.selectedPageSize * (this.state.currentPage - 1) + index + 1}</td>
                             <td>{item.title}</td>
                             <td>{item.message}</td>
                             <td>{item.userData && item.userData.length > 0 && item.userData[0].username}</td>

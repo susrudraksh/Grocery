@@ -209,28 +209,32 @@ class Sidebar extends Component {
   }
 
   modifyMenuItemsByPermissions() {
+    
     var menuItems = this.state.menuItems;
     var permittedModules = Object.keys(this.state.userPermissions);
 
     menuItems = menuItems.map((item) => {
       item.showItem = true;
       let hasPermission = false;
-
+   //   debugger
       if (Array.isArray(item.module_slug)) {
         item.module_slug.map((item1) => {
           if (this.state.userPermissions[item1] !== undefined) {
             hasPermission = true;
           }
         });
-      }
-
+      } 
+      
+     
       if (
         (this.state.userRole == 2 && item.check_permission && !Array.isArray(item.module_slug) && !this.state.userPermissions[item.module_slug]) ||
         (hasPermission && this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1)
       ) {
         item.showItem = false;
       }
-
+      if(this.state.userRole == 2 &&  item.check_permission && Array.isArray(item.module_slug) && !hasPermission ){
+        item.showItem = false;
+      }
       if (item.subs && item.subs.length > 0) {
         item.subs = this.modifySubMenuItemsByPermissions(item, item.subs);
       }
