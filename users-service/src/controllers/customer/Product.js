@@ -933,6 +933,14 @@ getProducts: async (req, res) => {
                     let: { "id": "$Products.business_category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                        {
+                            $match:{
+                                  $and: [
+                                    { $expr: { $eq: ["$is_active", 1] } },
+                                    { $expr: { $eq: ["$is_deleted", 0] } }
+                                ]
+                            }
+                        },
                         { $project: { "name": 1 } }
                     ],
                     as: 'businessCategoryData'
@@ -963,6 +971,14 @@ getProducts: async (req, res) => {
                     let: { "id": "$Products.category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                        {
+                            $match:{
+                                  $and: [
+                                    { $expr: { $eq: ["$is_active", 1] } },
+                                    { $expr: { $eq: ["$is_deleted", 0] } }
+                                ]
+                            }
+                        },
                         { $project: { 'name': 1 } }],
                     as: 'CategoryData'
                 }
@@ -975,6 +991,14 @@ getProducts: async (req, res) => {
                     let: { "id": "$Products.sub_category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                        {
+                            $match:{
+                                  $and: [
+                                    { $expr: { $eq: ["$is_active", 1] } },
+                                    { $expr: { $eq: ["$is_deleted", 0] } }
+                                ]
+                            }
+                        },
                         { $project: { 'name': 1 } }],
                     as: 'SubCategoryData'
                 }
@@ -3157,7 +3181,7 @@ getDiscountProduct: async (req, res) => {
                     let: { "id": "$product_id" },
                     pipeline: [
                         // { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                        { $match: { $expr: { $eq: ["$_id", "$$id"] }, "is_deleted": 0 } },
+                        { $match: { $expr: { $eq: ["$_id", "$$id"] }, "is_active": 1,"is_deleted": 0 } },
                         { $unset: ['createdAt', 'updatedAt', '__v'] },
                     ],
                     as: 'Products'
@@ -3170,7 +3194,7 @@ getDiscountProduct: async (req, res) => {
                     from: 'business_categories',
                     let: { "id": "$Products.business_category_id" },
                     pipeline: [
-                        { $match: { $expr: { $eq: ["$_id", "$$id"] },"is_deleted": 0 } },
+                        { $match: { $expr: { $eq: ["$_id", "$$id"] },"is_deleted": 0,"is_active": 1 } },
                         { $project: { "name": 1 } }
                     ],
                     as: 'businessCategoryData'
@@ -3202,6 +3226,14 @@ getDiscountProduct: async (req, res) => {
                     let: { "id": "$Products.category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                        {
+                            $match:{
+                                  $and: [
+                                    { $expr: { $eq: ["$is_active", 1] } },
+                                    { $expr: { $eq: ["$is_deleted", 0] } }
+                                ]
+                            }
+                        },
                         { $project: { 'name': 1 } }],
                     as: 'CategoryData'
                 }
@@ -3214,6 +3246,14 @@ getDiscountProduct: async (req, res) => {
                     let: { "id": "$Products.sub_category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                        {
+                            $match:{
+                                  $and: [
+                                    { $expr: { $eq: ["$is_active", 1] } },
+                                    { $expr: { $eq: ["$is_deleted", 0] } }
+                                ]
+                            }
+                        },
                         { $project: { 'name': 1 } }],
                     as: 'SubCategoryData'
                 }

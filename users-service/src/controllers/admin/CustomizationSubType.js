@@ -102,7 +102,7 @@ const CustomizationSubTypeController = {
             { $unwind: '$customization_value' },
 
             {
-                $project: { name: 1, parent_id: 1, customization_value: '$customization_value' }
+                $project: { name: 1, parent_id: 1, customization_value: '$customization_value',createdAt:1 }
             }
             ];
             CustomizationTypeServices.getPaginatedData(aggregateCondition, sortPattern, page, limit).then(categorydata => {
