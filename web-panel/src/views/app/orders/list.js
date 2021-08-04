@@ -221,7 +221,9 @@ class OrderList extends Component {
       if (res) {
         if (res.status == 200) {
           NotificationManager.success(res.message, "Success!", 3000);
-          window.location.reload();
+          this.setState({ modal: false });
+          this.dataListRender();
+          // window.location.reload();
         } else {
           NotificationManager.error(res.message, "Error!", 3000);
         }

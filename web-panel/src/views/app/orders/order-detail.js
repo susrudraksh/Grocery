@@ -284,7 +284,7 @@ class OrderDetails extends Component {
 
                               {this.state.categoryData.map((item, index) => {
                                 return (
-                                  <>
+                                  <div key={index}>
                                     <Row>
                                       <Colxx xxs="8" sm="8">
                                         <p>Category Name: {item.name}</p>
@@ -345,13 +345,11 @@ class OrderDetails extends Component {
                                                   <th>Quantity</th>
                                                   <th>Total Cost</th>
 
-                                                  {item && item.all_return == 0 ? (
+                                                  {item && item.all_return == 0 && (
                                                     <>
                                                       <th>Reason</th>
                                                       <th>Return Request</th>
                                                     </>
-                                                  ) : (
-                                                    ""
                                                   )}
                                                 </tr>
                                               </thead>
@@ -421,7 +419,7 @@ class OrderDetails extends Component {
                                         </Card>
                                       </Colxx>
                                     </Row>
-                                  </>
+                                  </div>
                                 );
                               })}
 

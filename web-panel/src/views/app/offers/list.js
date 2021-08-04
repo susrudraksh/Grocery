@@ -287,7 +287,7 @@ class OfferList extends Component {
                         <th>Offer Title</th>
                         <th>Offer Type</th>
                         <th>Coupon code</th>
-                        <th>Satrt Date</th>
+                        <th>Start Date</th>
                         <th>End Date</th>
                         <th>Status</th>
                         <th>Action</th>

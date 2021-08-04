@@ -3,7 +3,7 @@ import { injectIntl } from "react-intl";
 import { Row, Card, CardBody, FormGroup, Label, Button } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import moment from 'moment';
+import moment from "moment";
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -20,17 +20,9 @@ var digitRegExp = /^\d+(?:[.]\d+)*$/;
 
 const FormSchema = Yup.object().shape({
   offer_type: Yup.string().required("Please select offer type"),
-  title: Yup.string()
-    .required("Please enter title")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(30, "Too Long! Atmost 30 letters."),
-  description: Yup.string()
-    .required("Please enter title")
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(200, "Too Long! Atmost 200 letters."),
-  coupon_code: Yup.string()
-    .min(2, "Too Short! Atleast 2 letters.")
-    .max(10, "Too Long! Atmost 10 letters."),
+  title: Yup.string().required("Please enter title").min(2, "Too Short! Atleast 2 letters.").max(30, "Too Long! Atmost 30 letters."),
+  description: Yup.string().required("Please enter title").min(2, "Too Short! Atleast 2 letters.").max(200, "Too Long! Atmost 200 letters."),
+  coupon_code: Yup.string().min(2, "Too Short! Atleast 2 letters.").max(10, "Too Long! Atmost 10 letters."),
   // offer_price: Yup.string()
   //    .required("Please enter price")
   //   .matches(digitRegExp, "Invalid offer price")
@@ -39,12 +31,8 @@ const FormSchema = Yup.object().shape({
   //   //.required("Please enter offer amount")
   //   .matches(digitRegExp, "Invalid offer amount")
   //   .max(5, "Too Long! Atmost 5 Digit."),
-  startDate: Yup.date()
-    .nullable()
-    .required("Start date is required"),
-  endDate: Yup.date()
-    .nullable()
-    .required("End date is required"),
+  startDate: Yup.date().nullable().required("Start date is required"),
+  endDate: Yup.date().nullable().required("End date is required"),
   // quantity: Yup.string()
   //   .required("Please enter quantity")
   //   .matches(digitRegExp, "Invalid quantity")
@@ -100,15 +88,15 @@ class AddOffer extends Component {
 
     let path = ApiRoutes.GET_BUSSINESS_CATEGORIES + "?page_no=1&limit=100";
     const res = await Http("GET", path);
-if(res){
-    if (res.status == 200) {
-      this.setState({
-        businessCatList: [...this.state.businessCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        this.setState({
+          businessCatList: [...this.state.businessCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
-    }}
-    else {
       NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
@@ -119,15 +107,16 @@ if(res){
 
     let path = ApiRoutes.GET_CATEGORIES_BY_BUSINESS;
     const res = await Http("POST", path, formData);
-if(res){
-    if (res.status == 200) {
-      var parentCatList = [{ _id: "", name: "Select" }];
-      this.setState({
-        parentCatList: [...parentCatList, ...res.data.docs],
-      });
+    if (res) {
+      if (res.status == 200) {
+        var parentCatList = [{ _id: "", name: "Select" }];
+        this.setState({
+          parentCatList: [...parentCatList, ...res.data.docs],
+        });
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
-    }}else {
       NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
@@ -143,14 +132,15 @@ if(res){
 
       let path = ApiRoutes.GET_SUBCATEGORIES;
       const res = await Http("POST", path, formData);
-if(res){
-      if (res.status == 200) {
-        this.setState({
-          subCatList: [...subCatList, ...res.data.docs],
-        });
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            subCatList: [...subCatList, ...res.data.docs],
+          });
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
-      }}else {
         NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
@@ -160,12 +150,7 @@ if(res){
     }
   };
 
-  getProducts = async (
-    business_category,
-    product_category,
-    product_subcategory,
-    setFieldValue
-  ) => {
+  getProducts = async (business_category, product_category, product_subcategory, setFieldValue) => {
     this.state.isLoading = true;
     var productList = [{ id: "", name: "Select" }];
 
@@ -177,21 +162,22 @@ if(res){
 
       let path = ApiRoutes.GET_BANNER_PRODUCTS;
       const res = await Http("POST", path, formData);
-if(res){
-      if (res.status == 200) {
-        this.setState({
-          productList: [...productList, ...res.data],
-        });
-        res.data.map((item, index) => {
-          options.push({ "value": item.id, "label": item.inventory_name })
-        })
-        this.setState({
-          options: options,
-        });
-        setFieldValue('options',options)
+      if (res) {
+        if (res.status == 200) {
+          this.setState({
+            productList: [...productList, ...res.data],
+          });
+          res.data.map((item, index) => {
+            options.push({ value: item.id, label: item.inventory_name });
+          });
+          this.setState({
+            options: options,
+          });
+          setFieldValue("options", options);
+        } else {
+          NotificationManager.error(res.message, "Error!", 3000);
+        }
       } else {
-        NotificationManager.error(res.message, "Error!", 3000);
-      }}else {
         NotificationManager.error("Server Error", "Error!", 3000);
       }
     } else {
@@ -201,9 +187,7 @@ if(res){
     }
   };
 
-  handleSubmit = async (inputValues) => {
-
-    
+  handleSubmit = async (inputValues, formOptions) => {
     var error = "";
     let formData = new FormData();
 
@@ -231,7 +215,6 @@ if(res){
     }
 
     if (inputValues.offer_type != "1") {
-
       if (inputValues.offer_type == "2") {
         var productData = new Array();
         inputValues.product_inv_id.map((data, index) => {
@@ -242,7 +225,12 @@ if(res){
         productData.push(inputValues.product_inv_id.value);
       }
     }
-
+    let startDate1 = new Date(inputValues.startDate);
+    let endDate1 = new Date(inputValues.endDate);
+    if (startDate1.getTime() > endDate1.getTime()) {
+      formOptions.setFieldError("startDate", "Start Date cannot be greater than end date");
+      return false;
+    }
     formData.append("offer_type", inputValues.offer_type);
     formData.append("coupon_code", inputValues.coupon_code);
 
@@ -271,31 +259,30 @@ if(res){
 
     let path = ApiRoutes.CREATE_OFFER;
     const res = await Http("POST", path, formData);
-if(res){
-    if (res.status == 200) {
-      NotificationManager.success(res.message, "Success!", 3000);
-      this.props.history.push("/app/offers");
+    if (res) {
+      if (res.status == 200) {
+        NotificationManager.success(res.message, "Success!", 3000);
+        this.props.history.push("/app/offers");
+      } else {
+        NotificationManager.error(res.message, "Error!", 3000);
+      }
     } else {
-      NotificationManager.error(res.message, "Error!", 3000);
-    }}
-    else {
       NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
-  handleChangeStartDate = date => {
+  handleChangeStartDate = (date) => {
     this.setState({
-      startDate: date
+      startDate: date,
     });
   };
-  handleChangeEndDate = date => {
+  handleChangeEndDate = (date) => {
     this.setState({
-      endDate: date
+      endDate: date,
     });
   };
 
   render() {
-
     const { messages } = this.props.intl;
 
     return (
@@ -324,7 +311,6 @@ if(res){
                     offer_product: this.state.offer_product,
                     offer_quantity: this.state.offer_quantity,
 
-
                     offer_type: this.state.offer_type,
                     coupon_code: this.state.coupon_code,
                     title: this.state.title,
@@ -339,18 +325,7 @@ if(res){
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    handleChangeStartDate,
-                    handleChangeEndDate,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, handleChangeStartDate, handleChangeEndDate, values, errors, touched, isSubmitting }) => (
                     <Form className="av-tooltip tooltip-label-bottom">
                       <Row>
                         <Colxx xxs="12" sm="6">
@@ -361,83 +336,47 @@ if(res){
                               className="form-control"
                               value={values.offer_type}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "offer_type",
-                                  event.target.value
-                                );
+                                setFieldValue("offer_type", event.target.value);
                                 this.setState({ offer_type: event.target.value });
                               }}
                             >
-                              <option value="">Select</option>,
-                                  <option value="1">Promocode Offer</option>,
-                                  <option value="2">Bundle Offer</option>,
-                                  <option value="3">Promotional Offer</option>,
-                                  <option value="4">Bank Offer</option>
-
+                              <option value="">Select</option>,<option value="1">Promocode Offer</option>,<option value="2">Bundle Offer</option>,<option value="3">Promotional Offer</option>,
+                              <option value="4">Bank Offer</option>
                             </select>
-                            {errors.offer_type &&
-                              touched.offer_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_type}
-                                </div>
-                              ) : null}
+                            {errors.offer_type && touched.offer_type ? <div className="invalid-feedback d-block">{errors.offer_type}</div> : null}
                           </FormGroup>
                         </Colxx>
-                        {this.state.offer_type != 4 ?
-                          (<Colxx xxs="12" sm="6">
+                        {this.state.offer_type != 4 ? (
+                          <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Coupon Code</Label>
-                              <Field
-                                className="form-control"
-                                name="coupon_code"
-                                type="text"
-                              />
-                              {errors.coupon_code && touched.coupon_code ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.coupon_code}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="coupon_code" type="text" />
+                              {errors.coupon_code && touched.coupon_code ? <div className="invalid-feedback d-block">{errors.coupon_code}</div> : null}
                             </FormGroup>
-                          </Colxx>) : null}
+                          </Colxx>
+                        ) : null}
                       </Row>
-
 
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Title</Label>
-                            <Field
-                              className="form-control"
-                              name="title"
-                              type="text"
-                            />
-                            {errors.title && touched.title ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.title}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="title" type="text" />
+                            {errors.title && touched.title ? <div className="invalid-feedback d-block">{errors.title}</div> : null}
                           </FormGroup>
                         </Colxx>
 
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Description</Label>
-                            <Field
-                              className="form-control"
-                              name="description"
-                              type="text"
-                            />
-                            {errors.description && touched.description ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.description}
-                              </div>
-                            ) : null}
+                            <Field className="form-control" name="description" type="text" />
+                            {errors.description && touched.description ? <div className="invalid-feedback d-block">{errors.description}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
 
-                      {this.state.offer_type != 1 ?
-                        (<div>
+                      {this.state.offer_type != 1 ? (
+                        <div>
                           <Row>
                             <Colxx xxs="12" sm="6">
                               <FormGroup className="form-group has-float-label">
@@ -447,10 +386,7 @@ if(res){
                                   className="form-control"
                                   value={values.business_category}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "business_category",
-                                      event.target.value
-                                    );
+                                    setFieldValue("business_category", event.target.value);
                                     setFieldValue("product_category", "");
                                     setFieldValue("product_subcategory", "");
                                     setFieldValue("product_inv_id", "");
@@ -465,12 +401,7 @@ if(res){
                                     );
                                   })}
                                 </select>
-                                {errors.business_category &&
-                                  touched.business_category ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.business_category}
-                                    </div>
-                                  ) : null}
+                                {errors.business_category && touched.business_category ? <div className="invalid-feedback d-block">{errors.business_category}</div> : null}
                               </FormGroup>
                             </Colxx>
 
@@ -482,16 +413,10 @@ if(res){
                                   className="form-control"
                                   value={values.product_category}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "product_category",
-                                      event.target.value
-                                    );
+                                    setFieldValue("product_category", event.target.value);
                                     setFieldValue("product_subcategory", "");
                                     setFieldValue("product_inv_id", "");
-                                    this.getSubCategories(
-                                      values.business_category,
-                                      event.target.value
-                                    );
+                                    this.getSubCategories(values.business_category, event.target.value);
                                   }}
                                 >
                                   {this.state.parentCatList.map((item, index) => {
@@ -502,12 +427,7 @@ if(res){
                                     );
                                   })}
                                 </select>
-                                {errors.product_category &&
-                                  touched.product_category ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.product_category}
-                                    </div>
-                                  ) : null}
+                                {errors.product_category && touched.product_category ? <div className="invalid-feedback d-block">{errors.product_category}</div> : null}
                               </FormGroup>
                             </Colxx>
                           </Row>
@@ -521,17 +441,9 @@ if(res){
                                   className="form-control"
                                   value={values.product_subcategory}
                                   onChange={(event) => {
-                                    setFieldValue(
-                                      "product_subcategory",
-                                      event.target.value
-                                    );
+                                    setFieldValue("product_subcategory", event.target.value);
                                     setFieldValue("product_inv_id", "");
-                                    this.getProducts(
-                                      values.business_category,
-                                      values.product_category,
-                                      event.target.value,
-                                      setFieldValue
-                                    );
+                                    this.getProducts(values.business_category, values.product_category, event.target.value, setFieldValue);
                                     setFieldValue("product_inv_id", "");
                                   }}
                                 >
@@ -543,19 +455,14 @@ if(res){
                                     );
                                   })}
                                 </select>
-                                {errors.product_subcategory &&
-                                  touched.product_subcategory ? (
-                                    <div className="invalid-feedback d-block">
-                                      {errors.product_subcategory}
-                                    </div>
-                                  ) : null}
+                                {errors.product_subcategory && touched.product_subcategory ? <div className="invalid-feedback d-block">{errors.product_subcategory}</div> : null}
                               </FormGroup>
                             </Colxx>
 
                             <Colxx xxs="12" sm="6">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Product</Label>
-                                
+
                                 <FormikReactSelect
                                   name="product_inv_id"
                                   id="product_inv_id"
@@ -565,11 +472,7 @@ if(res){
                                   onChange={setFieldValue}
                                   onBlur={setFieldTouched}
                                 />
-                                {errors.product_inv_id && touched.product_inv_id ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.product_inv_id}
-                                  </div>
-                                ) : null}
+                                {errors.product_inv_id && touched.product_inv_id ? <div className="invalid-feedback d-block">{errors.product_inv_id}</div> : null}
                                 {/* <select
                                   name="product_inv_id"
                                   className="form-control"
@@ -600,11 +503,11 @@ if(res){
                               </FormGroup>
                             </Colxx>
                           </Row>
-                        </div>) : null
-                      }
+                        </div>
+                      ) : null}
 
-                      {this.state.offer_type == 4 || this.state.offer_type == "" ?
-                        (<Row>
+                      {this.state.offer_type == 4 || this.state.offer_type == "" ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Card Type</Label>
@@ -613,21 +516,12 @@ if(res){
                                 className="form-control"
                                 value={values.card_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "card_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("card_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                                  <option value="Debit">Debit Card</option>,
-                                  <option value="Credit">Credit Card</option>
+                                <option value="">Select</option>,<option value="Debit">Debit Card</option>,<option value="Credit">Credit Card</option>
                               </select>
-                              {errors.card_type && touched.card_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.card_type}
-                                </div>
-                              ) : null}
+                              {errors.card_type && touched.card_type ? <div className="invalid-feedback d-block">{errors.card_type}</div> : null}
                             </FormGroup>
                           </Colxx>
 
@@ -639,28 +533,19 @@ if(res){
                                 className="form-control"
                                 value={values.bank_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "bank_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("bank_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                                  <option value="Debit">Hsbc</option>,
-                                  <option value="Credit">Icici</option>
+                                <option value="">Select</option>,<option value="Debit">Hsbc</option>,<option value="Credit">Icici</option>
                               </select>
-                              {errors.bank_type && touched.bank_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.bank_type}
-                                </div>
-                              ) : null}
+                              {errors.bank_type && touched.bank_type ? <div className="invalid-feedback d-block">{errors.bank_type}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
-                      {this.state.offer_type != 3 ?
-                        (<Row>
+                      {this.state.offer_type != 3 ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Amount Type</Label>
@@ -669,130 +554,67 @@ if(res){
                                 className="form-control"
                                 value={values.offer_amount_type}
                                 onChange={(event) => {
-                                  setFieldValue(
-                                    "offer_amount_type",
-                                    event.target.value
-                                  );
+                                  setFieldValue("offer_amount_type", event.target.value);
                                 }}
                               >
-                                <option value="">Select</option>,
-                                  <option value="1">Fixed</option>,
-                                  <option value="2">Percentage(%)</option>
+                                <option value="">Select</option>,<option value="1">Fixed</option>,<option value="2">Percentage(%)</option>
                               </select>
-                              {errors.offer_amount_type && touched.offer_amount_type ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_amount_type}
-                                </div>
-                              ) : null}
+                              {errors.offer_amount_type && touched.offer_amount_type ? <div className="invalid-feedback d-block">{errors.offer_amount_type}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="3">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Price</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_price"
-                                type="text"
-                              />
-                              {errors.offer_price && touched.offer_price ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_price}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_price" type="text" />
+                              {errors.offer_price && touched.offer_price ? <div className="invalid-feedback d-block">{errors.offer_price}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="3">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Amount</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_amount"
-                                type="text"
-                              />
-                              {errors.offer_amount && touched.offer_amount ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_amount}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_amount" type="text" />
+                              {errors.offer_amount && touched.offer_amount ? <div className="invalid-feedback d-block">{errors.offer_amount}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
-                      {this.state.offer_type == 3 || this.state.offer_type == "" ?
-                        (<Row>
+                      {this.state.offer_type == 3 || this.state.offer_type == "" ? (
+                        <Row>
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Price</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_price"
-                                type="text"
-                              />
-                              {errors.offer_price && touched.offer_price ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_price}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_price" type="text" />
+                              {errors.offer_price && touched.offer_price ? <div className="invalid-feedback d-block">{errors.offer_price}</div> : null}
                             </FormGroup>
                           </Colxx>
 
                           <Colxx xxs="12" sm="6">
                             <FormGroup className="form-group has-float-label">
                               <Label>Offer Quantity</Label>
-                              <Field
-                                className="form-control"
-                                name="offer_quantity"
-                                type="text"
-                              />
-                              {errors.offer_quantity && touched.offer_quantity ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.offer_quantity}
-                                </div>
-                              ) : null}
+                              <Field className="form-control" name="offer_quantity" type="text" />
+                              {errors.offer_quantity && touched.offer_quantity ? <div className="invalid-feedback d-block">{errors.offer_quantity}</div> : null}
                             </FormGroup>
                           </Colxx>
-                        </Row>) : null
-                      }
+                        </Row>
+                      ) : null}
 
                       <Row>
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
-                            <Label className="d-block">
-                              Start Date
-                              </Label>
-                            <FormikDatePicker
-                              name="startDate"
-                              value={values.startDate}
-                              onChange={setFieldValue}
-                              onBlur={setFieldTouched}
-                            />
-                            {errors.startDate && touched.startDate ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.startDate}
-                              </div>
-                            ) : null}
+                            <Label className="d-block">Start Date</Label>
+                            <FormikDatePicker name="startDate" value={values.startDate} onChange={setFieldValue} onBlur={setFieldTouched} minDate={new Date()} />
+                            {errors.startDate && touched.startDate ? <div className="invalid-feedback d-block">{errors.startDate}</div> : null}
                           </FormGroup>
                         </Colxx>
 
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
-                            <Label className="d-block">
-                              End Date
-                              </Label>
-                            <FormikDatePicker
-                              name="endDate"
-                              value={values.endDate}
-                              onChange={setFieldValue}
-                              onBlur={setFieldTouched}
-                            />
-                            {errors.endDate && touched.endDate ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.endDate}
-                              </div>
-                            ) : null}
+                            <Label className="d-block">End Date</Label>
+                            <FormikDatePicker name="endDate" value={values.endDate} onChange={setFieldValue} onBlur={setFieldTouched} minDate={new Date()} />
+                            {errors.endDate && touched.endDate ? <div className="invalid-feedback d-block">{errors.endDate}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>
@@ -807,17 +629,10 @@ if(res){
                               type="file"
                               value={this.state.image}
                               onChange={(event) => {
-                                setFieldValue(
-                                  "image",
-                                  event.currentTarget.files[0]
-                                );
+                                setFieldValue("image", event.currentTarget.files[0]);
                               }}
                             />
-                            {errors.image && touched.image ? (
-                              <div className="invalid-feedback d-block">
-                                {errors.image}
-                              </div>
-                            ) : null}
+                            {errors.image && touched.image ? <div className="invalid-feedback d-block">{errors.image}</div> : null}
                           </FormGroup>
                         </Colxx>
                       </Row>

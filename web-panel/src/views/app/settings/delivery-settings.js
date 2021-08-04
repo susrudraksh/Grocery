@@ -8,8 +8,9 @@ import { NotificationManager } from "../../../components/common/react-notificati
 import Http from "../../../helpers/Http";
 import ApiRoutes from "../../../helpers/ApiRoutes";
 import { getKM } from "../../../helpers/Utils";
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
 
-function App() {
+function App(props) {
   const [inputList, setInputList] = useState([
     {
       min_distance: "",
@@ -114,14 +115,15 @@ function App() {
           <CardBody>
             <Row>
               <Colxx xxs="12" sm="12">
-                <h6 className="mb-4">Delivery Settings</h6>
+                <Breadcrumb heading="heading.delivery-settings" match={props.match} />
+                {/* <h6 className="mb-4">Delivery Settings</h6> */}
                 {inputList.map((x, index) => {
                   return (
-                    <Formik validationSchema={CustomizeFormSchema} onSubmit={onSubmitCustomizeForm}>
+                    <Formik validationSchema={CustomizeFormSchema} onSubmit={onSubmitCustomizeForm} key={index}>
                       {({ handleInventorySubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
                         <Form className="av-tooltip tooltip-label-bottom">
                           <Row>
-                            <Colxx xxs="12" sm="2">
+                            <Colxx xxs="12" xs="2">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Min distance(KM)</Label>
                                 <select name="min_distance" className="form-control" id={"min_distance" + index} data-id={index} value={x.min_distance} onChange={(e) => handleInputChange(e, index)}>
@@ -136,7 +138,7 @@ function App() {
                               </FormGroup>
                             </Colxx>
 
-                            <Colxx xxs="12" sm="2">
+                            <Colxx xxs="12" xs="2">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Max distance(KM)</Label>
                                 <select name="max_distance" className="form-control" id={"max_distance" + index} data-id={index} value={x.max_distance} onChange={(e) => handleInputChange(e, index)}>
@@ -151,21 +153,21 @@ function App() {
                               </FormGroup>
                             </Colxx>
 
-                            <Colxx xxs="12" sm="2">
+                            <Colxx xxs="12" xs="2">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Delivery Fees</Label>
                                 <Field className="form-control" name="delivery_fees" type="text" value={x.delivery_fees} onChange={(e) => handleInputChange(e, index)} />
                               </FormGroup>
                             </Colxx>
 
-                            <Colxx xxs="12" sm="2">
+                            <Colxx xxs="12" xs="2">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Max Delivery Time</Label>
                                 <Field className="form-control" name="max_normal_delivery_time" type="text" value={x.max_normal_delivery_time} onChange={(e) => handleInputChange(e, index)} />
                               </FormGroup>
                             </Colxx>
 
-                            <Colxx xxs="12" sm="2">
+                            <Colxx xxs="12" xs="2">
                               <FormGroup className="form-group has-float-label">
                                 <Label>Max Special Delivery Time</Label>
                                 <Field
@@ -179,16 +181,20 @@ function App() {
                             </Colxx>
 
                             <div className="btn-box">
+                              {/* <Colxx xxs="12" xs="1"> */}
                               {inputList.length !== 1 && (
                                 <Button outline color="danger" type="submit" onClick={() => handleRemoveClick(index)}>
                                   Remove
                                 </Button>
                               )}{" "}
+                              {/* </Colxx>
+                            <Colxx xxs="12" xs="1"> */}
                               {inputList.length - 1 === index && (
                                 <Button outline color="primary" type="submit" onClick={handleAddClick}>
                                   Add
                                 </Button>
                               )}
+                              {/* </Colxx> */}
                             </div>
                           </Row>
                         </Form>

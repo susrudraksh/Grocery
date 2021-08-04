@@ -17,7 +17,7 @@ var priceRegExp = /^\d+(?:[.]\d+)*$/;
 const FormSchema = Yup.object().shape({
   contact_email: Yup.string().required("Please enter email contact_address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
   contact_address: Yup.string().required("Please enter an contact_address").max(100, "Too Long! Atmost 100 letters."),
-  admin_commission: Yup.string().required("Please enter an amount").matches(priceRegExp, "Invalid amount value").max(15, "Too Long! Atmost 15 letters."),
+  // admin_commission: Yup.string().required("Please enter an amount").matches(priceRegExp, "Invalid amount value").max(15, "Too Long! Atmost 15 letters."),
   normal_order_amount: Yup.number().typeError("Please enter valid amount").required("Please enter order amount"),
   normal_start_delivery_time: Yup.string().required("Please enter start time"),
   normal_end_delivery_time: Yup.string().required("Please enter end time"),
@@ -38,7 +38,7 @@ class Settings extends Component {
       setting_id: "",
       contact_email: "",
       contact_address: "",
-      admin_commission: "",
+      // admin_commission: "",
       premium_order_amount: "",
       premium_start_delivery_time: "",
       premium_end_delivery_time: "",
@@ -67,7 +67,7 @@ class Settings extends Component {
           setting_id: res.data._id,
           contact_email: res.data.contact_us_email,
           contact_address: res.data.office_address,
-          admin_commission: res.data.admin_commission,
+          // admin_commission: res.data.admin_commission,
           normal_order_amount: res.data.normal_order_amount,
           normal_start_delivery_time: res.data.normal_start_delivery_time,
           normal_end_delivery_time: res.data.normal_end_delivery_time,
@@ -94,7 +94,7 @@ class Settings extends Component {
     formData.append("setting_id", this.state.setting_id);
     formData.append("contact_us_email", inputValues.contact_email);
     formData.append("office_address", inputValues.contact_address);
-    formData.append("admin_commission", inputValues.admin_commission);
+    // formData.append("admin_commission", inputValues.admin_commission);
     formData.append("normal_order_amount", inputValues.normal_order_amount);
     formData.append("normal_start_delivery_time", inputValues.normal_start_delivery_time);
     formData.append("normal_end_delivery_time", inputValues.normal_end_delivery_time);
@@ -138,7 +138,7 @@ class Settings extends Component {
                   initialValues={{
                     contact_email: this.state.contact_email,
                     contact_address: this.state.contact_address,
-                    admin_commission: this.state.admin_commission,
+                    // admin_commission: this.state.admin_commission,
                     normal_order_amount: this.state.normal_order_amount,
                     normal_start_delivery_time: this.state.normal_start_delivery_time,
                     normal_end_delivery_time: this.state.normal_end_delivery_time,
@@ -291,13 +291,13 @@ class Settings extends Component {
                       </Row>
 
                       <Row>
-                        <Colxx xxs="12" sm="4">
+                        {/* <Colxx xxs="12" sm="4">
                           <FormGroup className="form-group has-float-label">
                             <Label>Admin Commission</Label>
                             <Field className="form-control" name="admin_commission" type="text" />
                             {errors.admin_commission && touched.admin_commission ? <div className="invalid-feedback d-block">{errors.admin_commission}</div> : null}
                           </FormGroup>
-                        </Colxx>
+                        </Colxx> */}
 
                         <Colxx xxs="12" sm="4">
                           <FormGroup className="form-group has-float-label">

@@ -70,8 +70,15 @@ class CustomersList extends Component {
     this.mouseTrap.unbind("command+d");
   }
 
-  handleSubmit = async (inputValues) => {
+  handleSubmit = async (inputValues, formOptions) => {
+    let startDate1 = new Date(inputValues.startDate);
+    let endDate1 = new Date(inputValues.endDate);
+    if (startDate1.getTime() > endDate1.getTime()) {
+      formOptions.setFieldError("startDate", "Start Date cannot be greater than end date");
+      return false;
+    }
     this.setState({ isLoading: true });
+
     let formData = new FormData();
     formData.append("startDate", moment(inputValues.startDate).format("YYYY-MM-DD"));
     formData.append("endDate", moment(inputValues.endDate).format("YYYY-MM-DD"));
