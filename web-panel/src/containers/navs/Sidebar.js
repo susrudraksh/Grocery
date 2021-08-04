@@ -209,30 +209,28 @@ class Sidebar extends Component {
   }
 
   modifyMenuItemsByPermissions() {
-    
     var menuItems = this.state.menuItems;
     var permittedModules = Object.keys(this.state.userPermissions);
 
     menuItems = menuItems.map((item) => {
       item.showItem = true;
       let hasPermission = false;
-   //   debugger
+      //   debugger
       if (Array.isArray(item.module_slug)) {
         item.module_slug.map((item1) => {
           if (this.state.userPermissions[item1] !== undefined) {
             hasPermission = true;
           }
         });
-      } 
-      
-     
+      }
+
       if (
         (this.state.userRole == 2 && item.check_permission && !Array.isArray(item.module_slug) && !this.state.userPermissions[item.module_slug]) ||
         (hasPermission && this.state.userPermissions[item.module_slug] && this.state.userPermissions[item.module_slug].indexOf(item.permission_type) == -1)
       ) {
         item.showItem = false;
       }
-      if(this.state.userRole == 2 &&  item.check_permission && Array.isArray(item.module_slug) && !hasPermission ){
+      if (this.state.userRole == 2 && item.check_permission && Array.isArray(item.module_slug) && !hasPermission) {
         item.showItem = false;
       }
       if (item.subs && item.subs.length > 0) {
@@ -255,7 +253,6 @@ class Sidebar extends Component {
           if (this.state.userPermissions[item1] !== undefined) {
             hasPermission = true;
           }
-          console.log("hasPermission");
         });
       }
 
@@ -330,6 +327,9 @@ class Sidebar extends Component {
 
   render() {
     const { selectedParentMenu, viewingParentMenu, collapsedMenus } = this.state;
+    const pathArray = window.location.pathname.split("/");
+    const pathArray1 = pathArray[0].concat(pathArray[1]);
+    console.log("props", pathArray1);
     return (
       <div className="sidebar">
         <div className="main-menu">
@@ -338,12 +338,14 @@ class Sidebar extends Component {
               <Nav vertical className="list-unstyled">
                 {this.state.menuItems &&
                   this.state.menuItems.map((item) => {
+                    console.log("item", item);
+                    //  console.log("selectedParentMenu", selectedParentMenu);
                     return (
                       item.showItem && (
                         <NavItem
                           key={item.id}
                           className={classnames({
-                            active: (selectedParentMenu === item.id && viewingParentMenu === "") || viewingParentMenu === item.id,
+                            active: this.props.location.pathname == item.to || (item.subs && item.subs.length > 0 && selectedParentMenu === item.id),
                           })}
                         >
                           {item.newWindow ? (

@@ -36,7 +36,6 @@ Table of Contents
 */
 
 module.exports = {
-
   "menu.dashboard": "Dashboard",
   "menu.subadmins": "Sub Admins",
   "menu.users": "Users",
@@ -54,7 +53,7 @@ module.exports = {
   "menu.about-us": "About Us",
   "menu.faqs": "FAQs",
   "menu.settings": "Settings",
-
+  "menu.normal-settings": "Settings",
 
   /* 01.General */
   "general.copyright": "Gogo React © 2018 All Rights Reserved.",
@@ -244,7 +243,8 @@ module.exports = {
   "pages.error-title": "Ooops... looks like an error occurred!",
   "pages.error-code": "Error code",
   "pages.go-back-home": "GO BACK HOME",
-  "pages.mailing-info": "Mailing templates use inline styling and table layout to be displayed well at various service providers. To provide better usability we include it as regular html with dangerouslySetInnerHTML.",
+  "pages.mailing-info":
+    "Mailing templates use inline styling and table layout to be displayed well at various service providers. To provide better usability we include it as regular html with dangerouslySetInnerHTML.",
   "pages.invoice-info": "Invoice template has an inline styled version for usage outside of the project as well as React version.",
   "pages.react-version": "React Version",
   "pages.inline-version": "Inline Styled Html Version",
@@ -278,14 +278,12 @@ module.exports = {
   "pages.prices.featurecomparison": "Feature Comparison",
   "pages.prices.pricecomparison": "Price Comparison",
 
-
   /* 06.Applications */
 
   /* 06.01.Chat */
   "chat.messages": "Messages",
   "chat.contacts": "Contacts",
   "chat.saysomething": "Say something..",
-
 
   /* 06.02.Survey */
   "survey.delete": "Delete",
@@ -350,10 +348,8 @@ module.exports = {
   "alert.dark-text": "This is a dark alert—check it out!",
   "alert.default": "Default Alert",
   "alert.dismissing": "Dismissing Alert",
-  "alert.dismissing-text":
-    "Holy guacamole! You should check in on some of those fields below.",
-  "alert.dismissing-without-animate-text":
-    "I am an alert and I can be dismissed without animating!",
+  "alert.dismissing-text": "Holy guacamole! You should check in on some of those fields below.",
+  "alert.dismissing-without-animate-text": "I am an alert and I can be dismissed without animating!",
 
   /* 07.02.Badges */
   "badge.sizes": "Sizes",
@@ -401,8 +397,7 @@ module.exports = {
   "button.info": "Info",
   "button.light": "Light",
   "button.dark": "Dark",
-  "button.states-text":
-    "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
+  "button.states-text": "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
   "button.click-here": "Click Here",
   "button.states-text-alternate":
     "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
@@ -514,7 +509,6 @@ module.exports = {
   "forms.lastname-message": "Please enter your last name!",
   "forms.name": "Name",
 
-
   /* 07.11.Form Components */
   "form-components.custom-inputs": "Custom Inputs",
   "form-components.checkboxes": "Checkboxes",
@@ -575,10 +569,8 @@ module.exports = {
 
   /* 07.14.Jumbotron */
   "jumbotron.hello-world": "Hello, world!",
-  "jumbotron.lead":
-    "This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.",
-  "jumbotron.lead-detail":
-    "It uses utility classes for typography and spacing to space content out within the larger container.",
+  "jumbotron.lead": "This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.",
+  "jumbotron.lead-detail": "It uses utility classes for typography and spacing to space content out within the larger container.",
   "jumbotron.learn-more": "Learn more",
 
   /* 07.15.Modal */
@@ -661,6 +653,5 @@ module.exports = {
   "wizard.next": "Next",
   "wizard.prev": "Back",
   "wizard.registered": "Your registration completed successfully!",
-  "wizard.async": "Async save for 3 seconds!"
-
+  "wizard.async": "Async save for 3 seconds!",
 };

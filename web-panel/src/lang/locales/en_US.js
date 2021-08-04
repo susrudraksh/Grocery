@@ -115,6 +115,7 @@ module.exports = {
   "menu.collection-report": "Collection Report",
   "menu.sale-report": "Sales Return Report",
   "menu.gst-report": "GST Report",
+  "menu.normal-settings": "Settings",
 
   /* Breadcrumb Headings */
   "heading.dashboard": "Dashboard",
@@ -176,6 +177,7 @@ module.exports = {
   "heading.settings": "Settings",
   "heading.add-offer": "Add Offer",
   "heading.edit-offer": "Edit Offer",
+  "heading.delivery-settings": "Delivery Settings",
 
   /* Dashboard */
   "dashboards.total-subadmins": "Total Sub Admins",
@@ -421,8 +423,7 @@ module.exports = {
   "pages.go-back-home": "GO BACK HOME",
   "pages.mailing-info":
     "Mailing templates use inline styling and table layout to be displayed well at various service providers. To provide better usability we include it as regular html with dangerouslySetInnerHTML.",
-  "pages.invoice-info":
-    "Invoice template has an inline styled version for usage outside of the project as well as React version.",
+  "pages.invoice-info": "Invoice template has an inline styled version for usage outside of the project as well as React version.",
   "pages.react-version": "React Version",
   "pages.inline-version": "Inline Styled Html Version",
   "pages.like": "Like",
@@ -525,10 +526,8 @@ module.exports = {
   "alert.dark-text": "This is a dark alert—check it out!",
   "alert.default": "Default Alert",
   "alert.dismissing": "Dismissing Alert",
-  "alert.dismissing-text":
-    "Holy guacamole! You should check in on some of those fields below.",
-  "alert.dismissing-without-animate-text":
-    "I am an alert and I can be dismissed without animating!",
+  "alert.dismissing-text": "Holy guacamole! You should check in on some of those fields below.",
+  "alert.dismissing-without-animate-text": "I am an alert and I can be dismissed without animating!",
 
   /* 07.02.Badges */
   "badge.sizes": "Sizes",
@@ -576,8 +575,7 @@ module.exports = {
   "button.info": "Info",
   "button.light": "Light",
   "button.dark": "Dark",
-  "button.states-text":
-    "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
+  "button.states-text": "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
   "button.click-here": "Click Here",
   "button.states-text-alternate":
     "This button shows a spinner for 2 seconds and an error icon for 3 seconds before switching to normal state. This states can be triggered by adding and removing classes.",
@@ -749,10 +747,8 @@ module.exports = {
 
   /* 07.14.Jumbotron */
   "jumbotron.hello-world": "Hello, world!",
-  "jumbotron.lead":
-    "This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.",
-  "jumbotron.lead-detail":
-    "It uses utility classes for typography and spacing to space content out within the larger container.",
+  "jumbotron.lead": "This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.",
+  "jumbotron.lead-detail": "It uses utility classes for typography and spacing to space content out within the larger container.",
   "jumbotron.learn-more": "Learn more",
 
   /* 07.15.Modal */

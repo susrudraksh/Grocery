@@ -64,7 +64,7 @@ module.exports = {
   "menu.categories": "Categorías",
   "menu.products": "Productos",
   "menu.orders": "Pedidos",
-  "menu.transactions":"tramitación",
+  "menu.transactions": "tramitación",
   "menu.earnings": "Ganancias",
   "menu.contents": "Contenido",
   "menu.privacy-policy": "Política de privacidad",
@@ -73,7 +73,8 @@ module.exports = {
   "menu.settings": "Configuraciones",
   "menu.profile": "Perfil",
   "menu.change-password": "Cambia la contraseña",
-  "menu.order-detail":"detalles del pedido",
+  "menu.order-detail": "detalles del pedido",
+  "menu.normal-settings": "Ajustes",
 
   /* Breadcrumb Headings */
   "heading.dashboard": "Tablero",
@@ -100,7 +101,6 @@ module.exports = {
   "heading.warehouses": "Almacenes",
   "heading.add-warehouse": "Agregar almacén",
   "heading.edit-warehouse": "Editar almacén",
-
 
   /* Dashboard */
   "dashboards.total-subadmins": "Total de subadministradores",
@@ -330,8 +330,7 @@ module.exports = {
   "pages.go-back-home": "REGRESAR A INICIO",
   "pages.mailing-info":
     "Las plantillas de correo utilizan el diseño en línea y el diseño de la tabla para mostrarse bien en varios proveedores de servicios. Para proporcionar una mejor usabilidad, lo incluimos como html regular con dangerouslySetInnerHTML.",
-  "pages.invoice-info":
-    "La plantilla de factura tiene una versión de estilo en línea para uso fuera del proyecto, así como la versión React.",
+  "pages.invoice-info": "La plantilla de factura tiene una versión de estilo en línea para uso fuera del proyecto, así como la versión React.",
   "pages.react-version": "React Versión",
   "pages.inline-version": "Estilo en Linea Html Versión",
   "pages.like": "Me gusta",
@@ -433,10 +432,8 @@ module.exports = {
   "alert.dark-text": "¡Esto es un dark alert—check fuera!",
   "alert.default": "Alerta por Defecto",
   "alert.dismissing": "Despido de Alerta",
-  "alert.dismissing-text":
-    "¡Santo guacamole! Debes revisar algunos de esos campos a continuación.",
-  "alert.dismissing-without-animate-text":
-    "¡Estoy alerta y me pueden despedir sin animarme!",
+  "alert.dismissing-text": "¡Santo guacamole! Debes revisar algunos de esos campos a continuación.",
+  "alert.dismissing-without-animate-text": "¡Estoy alerta y me pueden despedir sin animarme!",
 
   /* 07.02.Badges */
   "badge.sizes": "Tamaños",
@@ -656,10 +653,8 @@ module.exports = {
 
   /* 07.14.Jumbotron */
   "jumbotron.hello-world": "¡Hola Mundo!",
-  "jumbotron.lead":
-    "Esta es una unidad de héroe simple, un componente de estilo jumbotron simple para llamar la atención extra al contenido o información destacados.",
-  "jumbotron.lead-detail":
-    "Utiliza clases de utilidad para tipografía y espaciado para espaciar el contenido dentro del contenedor más grande.",
+  "jumbotron.lead": "Esta es una unidad de héroe simple, un componente de estilo jumbotron simple para llamar la atención extra al contenido o información destacados.",
+  "jumbotron.lead-detail": "Utiliza clases de utilidad para tipografía y espaciado para espaciar el contenido dentro del contenedor más grande.",
   "jumbotron.learn-more": "Aprende más",
 
   /* 07.15.Modal */

@@ -13,7 +13,8 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
-const lettersRegex = /^\S+$/;
+// const lettersRegex = /^\S+$/;
+const lettersRegex = /^[a-zA-Z0-9]*$/;
 
 const countryCodes = [
   { value: "", label: "Select" },
@@ -24,7 +25,8 @@ const countryCodes = [
 const FormSchema = Yup.object().shape({
   username: Yup.string()
     .required("Please enter user name")
-    .matches(lettersRegex, "Please input alphabet characters only")
+    .matches(lettersRegex, "Please input alphanumeric characters only")
+
     .min(2, "Too Short! Atleast 2 letters.")
     .max(50, "Too Long! Atmost 50 letters."),
   email: Yup.string().required("Please enter email address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),

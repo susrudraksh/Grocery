@@ -14,17 +14,9 @@ import ApiRoutes from "../../../helpers/ApiRoutes";
 var priceRegExp = /^\d+(?:[.]\d+)*$/;
 
 const FormSchema = Yup.object().shape({
-  contact_email: Yup.string()
-    .required("Please enter email contact_address")
-    .email("Invalid email format")
-    .max(50, "Too Long! Atmost 50 letters."),
-  contact_address: Yup.string()
-    .required("Please enter an contact_address")
-    .max(100, "Too Long! Atmost 100 letters."),
-  admin_commission: Yup.string()
-    .required("Please enter an amount")
-    .matches(priceRegExp, "Invalid amount value")
-    .max(15, "Too Long! Atmost 15 letters."),
+  contact_email: Yup.string().required("Please enter email contact_address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
+  contact_address: Yup.string().required("Please enter an contact_address").max(100, "Too Long! Atmost 100 letters."),
+  admin_commission: Yup.string().required("Please enter an amount").matches(priceRegExp, "Invalid amount value").max(15, "Too Long! Atmost 15 letters."),
 });
 
 class Settings extends Component {
@@ -118,170 +110,87 @@ class Settings extends Component {
                   validationSchema={FormSchema}
                   onSubmit={this.handleSubmit}
                 >
-                  {({
-                    handleSubmit,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    values,
-                    errors,
-                    touched,
-                    isSubmitting,
-                  }) => (
-                      <Form className="av-tooltip tooltip-label-bottom">
-                        <Row>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Normal Order Minimum Amount</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Normal Start Delivery Time</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Normal End Delivery Time</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Premium Order Minimum Amount</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Premium Start Delivery Time</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                          <Colxx xxs="12" sm="4">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Premium End Delivery Time</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Contact Email</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_email"
-                                type="text"
-                              />
-                              {errors.contact_email && touched.contact_email ? (
-                                <div className="invalid-feedback d-block">
-                                  {errors.contact_email}
-                                </div>
-                              ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Contact Address</Label>
-                              <Field
-                                className="form-control"
-                                name="contact_address"
-                                component="textarea"
-                              />
-                              {errors.contact_address &&
-                                touched.contact_address ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.contact_address}
-                                  </div>
-                                ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
-                        <Row>
-                          <Colxx xxs="12" sm="6">
-                            <FormGroup className="form-group has-float-label">
-                              <Label>Admin Commission</Label>
-                              <Field
-                                className="form-control"
-                                name="admin_commission"
-                                type="text"
-                              />
-                              {errors.admin_commission &&
-                                touched.admin_commission ? (
-                                  <div className="invalid-feedback d-block">
-                                    {errors.admin_commission}
-                                  </div>
-                                ) : null}
-                            </FormGroup>
-                          </Colxx>
-                        </Row>
+                  {({ handleSubmit, setFieldValue, setFieldTouched, handleChange, values, errors, touched, isSubmitting }) => (
+                    <Form className="av-tooltip tooltip-label-bottom">
+                      <Row>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Normal Order Minimum Amount</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Normal Start Delivery Time</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Normal End Delivery Time</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Premium Order Minimum Amount</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Premium Start Delivery Time</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                        <Colxx xxs="12" sm="4">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Premium End Delivery Time</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Contact Email</Label>
+                            <Field className="form-control" name="contact_email" type="text" />
+                            {errors.contact_email && touched.contact_email ? <div className="invalid-feedback d-block">{errors.contact_email}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Contact Address</Label>
+                            <Field className="form-control" name="contact_address" component="textarea" />
+                            {errors.contact_address && touched.contact_address ? <div className="invalid-feedback d-block">{errors.contact_address}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
+                      <Row>
+                        <Colxx xxs="12" sm="6">
+                          <FormGroup className="form-group has-float-label">
+                            <Label>Admin Commission</Label>
+                            <Field className="form-control" name="admin_commission" type="text" />
+                            {errors.admin_commission && touched.admin_commission ? <div className="invalid-feedback d-block">{errors.admin_commission}</div> : null}
+                          </FormGroup>
+                        </Colxx>
+                      </Row>
 
-                        <Button color="primary" type="submit">
-                          <IntlMessages id="button.save" />
-                        </Button>
-                      </Form>
-                    )}
+                      <Button color="primary" type="submit">
+                        <IntlMessages id="button.save" />
+                      </Button>
+                    </Form>
+                  )}
                 </Formik>
               </CardBody>
             </Card>

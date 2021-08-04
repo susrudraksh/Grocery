@@ -258,7 +258,7 @@ class EditOffer extends Component {
   //   }
   // };
 
-  handleSubmit = async (inputValues) => {
+  handleSubmit = async (inputValues, formOptions) => {
     var error = "";
     if (inputValues.offer_type == 2 || inputValues.offer_type == 3 || inputValues.offer_type == 4) {
       if (inputValues.business_category == "") {
@@ -304,6 +304,12 @@ class EditOffer extends Component {
       var productData = new Array();
     }
 
+    let startDate1 = new Date(inputValues.startDate);
+    let endDate1 = new Date(inputValues.endDate);
+    if (startDate1.getTime() > endDate1.getTime()) {
+      formOptions.setFieldError("startDate", "Start Date cannot be greater than end date");
+      return false;
+    }
     formData.append("offer_type", inputValues.offer_type);
     formData.append("coupon_code", inputValues.coupon_code);
 
@@ -664,7 +670,7 @@ class EditOffer extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label className="d-block">Start Date</Label>
-                            <FormikDatePicker name="startDate" value={moment(values.startDate)} onChange={setFieldValue} onBlur={setFieldTouched} />
+                            <FormikDatePicker name="startDate" value={moment(values.startDate)} onChange={setFieldValue} onBlur={setFieldTouched} minDate={new Date()} />
                             {errors.startDate && touched.startDate ? <div className="invalid-feedback d-block">{errors.startDate}</div> : null}
                           </FormGroup>
                         </Colxx>
@@ -672,7 +678,7 @@ class EditOffer extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label className="d-block">End Date</Label>
-                            <FormikDatePicker name="endDate" value={moment(values.endDate)} onChange={setFieldValue} onBlur={setFieldTouched} />
+                            <FormikDatePicker name="endDate" value={moment(values.endDate)} onChange={setFieldValue} onBlur={setFieldTouched} minDate={new Date()} />
                             {errors.endDate && touched.endDate ? <div className="invalid-feedback d-block">{errors.endDate}</div> : null}
                           </FormGroup>
                         </Colxx>
