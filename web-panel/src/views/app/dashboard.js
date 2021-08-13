@@ -87,7 +87,7 @@ class Dashboard extends Component {
           icon: "iconsminds-shopping-bag",
           value: 0,
           check_permission: true,
-          module_slug: "products",
+          module_slug: "product",
           permission_type: "list",
         },
         {
@@ -96,7 +96,7 @@ class Dashboard extends Component {
           icon: "iconsminds-tag-3",
           value: 0,
           check_permission: true,
-          module_slug: "brands",
+          module_slug: "brand",
           permission_type: "list",
         },
         {
@@ -105,7 +105,7 @@ class Dashboard extends Component {
           icon: "iconsminds-clothing-store",
           value: 0,
           check_permission: true,
-          module_slug: "warehouses",
+          module_slug: "warehouse",
           permission_type: "list",
         },
         {
@@ -114,7 +114,7 @@ class Dashboard extends Component {
           icon: "iconsminds-blackboard",
           value: 0,
           check_permission: true,
-          module_slug: "banners",
+          module_slug: "banner",
           permission_type: "list",
         },
       ],
@@ -217,10 +217,10 @@ class Dashboard extends Component {
           iconCardsData: iconCardsData,
         });
       } else {
-       // NotificationManager.error(res.message, "Error!", 3000);
+        // NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-     // NotificationManager.error("Server Error", "Error!", 3000);
+      // NotificationManager.error("Server Error", "Error!", 3000);
     }
 
     this.setState({ isLoading: true });
@@ -245,10 +245,10 @@ class Dashboard extends Component {
           isLoading: true,
         });
       } else {
-     //   NotificationManager.error(res.message, "Error!", 3000);
+        //   NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-     // NotificationManager.error("Server Error", "Error!", 3000);
+      // NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 
@@ -271,10 +271,10 @@ class Dashboard extends Component {
           isLoading: true,
         });
       } else {
-     //   NotificationManager.error(res.message, "Error!", 3000);
+        //   NotificationManager.error(res.message, "Error!", 3000);
       }
     } else {
-    //  NotificationManager.error("Server Error", "Error!", 3000);
+      //  NotificationManager.error("Server Error", "Error!", 3000);
     }
   };
 

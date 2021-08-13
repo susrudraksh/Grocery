@@ -220,7 +220,7 @@ const routesItems = [
     component: DriverTracking,
     check_permission: true,
     module_slug: "drivers",
-    permission_type: "edit",
+    permission_type: "list",
   },
 
   {
