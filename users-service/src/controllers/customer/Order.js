@@ -541,16 +541,107 @@ const OrderController = {
                 }
                 Response.send(req, res, 400, resMsg, { errors: errors });
             } else {
-
-                let cartData = await CartServices.findCartItems({ user_id: user_id }, { product_id: 1, business_category_id: 1, inventory_id: 1, quantity: 1, _id: 0 })
-                
+                let findcartbyaggregate = [
+                    {
+                        $match:{ user_id: ObjectID(user_id) }
+                    },
+                    {
+                        $lookup: {
+                            from: 'products',
+                            let: { "product_id": "$product_id" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$product_id"] } } },
+                            ],
+                            as: 'ProductData'
+                        }
+        
+                    },
+                    { $unwind: '$ProductData' },
+                    {
+                        $lookup: {
+                            from: 'product_inventories',
+                            let: { "inventory_id": "$inventory_id" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$inventory_id"] } } },
+                               // { $project: { 'inventory_name': 1, 'price': 1, 'product_quantity': 1,'min_inventory': 1, "is_discount": 1, "discounted_product_price": 1, "discount_type": 1, "discount_value": 1,"is_active":1,"is_deleted":1 } }
+                            ],
+                            as: 'ProductInventoryData'
+                        }
+        
+                    },
+                    { $unwind: '$ProductInventoryData' },
+                    {
+                        $lookup: {
+                            from: 'business_categories',
+                            let: { "id": "$business_category_id" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                                { $project: { "name": 1 ,"is_active":1,"is_deleted":1} }
+                            ],
+                            as: 'businessCategoryData'
+                        }
+        
+                    },
+                    { $unwind: "$businessCategoryData" },
+                    {
+                        $lookup: {
+                            from: 'categories',
+                            let: { "id": "$ProductData.category_id" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                                { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
+                            as: 'CategoryData'
+                        }
+        
+                    },
+                    { $unwind: "$CategoryData" },
+                    {
+                        $lookup: {
+                            from: 'categories',
+                            let: { "id": "$ProductData.sub_category_id" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+                                { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
+                            as: 'SubCategoryData'
+                        }
+        
+                    },
+                    { $unwind: "$SubCategoryData" },
+                    {
+                        $project: {
+                            quantity: "$quantity",
+                            product_id: "$ProductData",
+                            business_category_id:"$businessCategoryData._id",
+                            inventory_id: "$ProductInventoryData",
+                            availble:{
+                                $cond: { 
+                                    if: { 
+                                        $and:[
+                                            { $and:[ {$eq: [ "$ProductData.is_active", 1 ] },{$eq: [ "$ProductData.is_deleted", 0 ] }]},
+                                            { $and:[ {$eq: [ "$businessCategoryData.is_active", 1 ] },{$eq: [ "$businessCategoryData.is_deleted", 0 ] }]},
+                                            { $and:[ {$eq: [ "$CategoryData.is_active", 1 ] },{$eq: [ "$CategoryData.is_deleted", 0 ] }]},
+                                            { $and:[ {$eq: [ "$SubCategoryData.is_active", 1 ] },{$eq: [ "$SubCategoryData.is_deleted", 0 ] }]}
+                                            ]
+                                    },
+                                    then: 1, else: 0 }
+                            }
+                        }
+                    },
+                ]
+                let cartData = await CartServices.allRecord(findcartbyaggregate)
+                //let cartData = await CartServices.findCartItems({ user_id: user_id }, { product_id: 1, business_category_id: 1, inventory_id: 1, quantity: 1, _id: 0 })
+              
                 if (cartData && cartData.length > 0) {
                     let total_amount = 0;
                     let discount = discount_price;
                     let net_amount = 0
                     let counterof_inventory_notavailable = 0;
                     let counterof_cartitem = 0;
+                    let checkproduct_outofstock = 0;
                     cartData = await cartData.map((item) => {
+                        if(item.availble==0){
+                            checkproduct_outofstock = 1;
+                        }
                         if (item.quantity > item.inventory_id.product_quantity) {
                             counterof_inventory_notavailable++;
                         }
@@ -611,6 +702,17 @@ const OrderController = {
                             expected_start_date = new Date(expected_start_date.setDate(expected_start_date.getDate() + 1));
                             expected_end_date = new Date(expected_end_date.setDate(expected_end_date.getDate() + 1));
                         }
+                    }
+
+                    //check some product delete  or inactive
+                    
+                    if (checkproduct_outofstock > 0) {
+                        var errMessage = Messages.PRODUCT_NOT_AVAILABLE;
+                        if(user_order_id && user_order_id!=""){
+                            await CcavenuPayment.cancelPayment(user_order_id)
+                        }
+                        Response.send(req, res, 400, errMessage);
+                        return;
                     }
 
                     if (counterof_inventory_notavailable > 0) {

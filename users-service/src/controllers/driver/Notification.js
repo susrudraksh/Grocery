@@ -72,7 +72,8 @@ const NotificationController = {
             var login_user_id = Common.getUserdetailsBytoken(req.headers.authorization) || null;
             login_user_id = ObjectID(login_user_id);
             var findPattern = {
-                user_id: login_user_id
+                user_id: login_user_id,
+                is
             };
 
             var aggregatefilter = [

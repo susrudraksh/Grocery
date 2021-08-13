@@ -119,6 +119,8 @@ module.exports = {
 
 	// CART ITEMS
 	CARTITEM_ADD_SUCCESS: "Item Added to Cart Successfully.",
+	CARTITEM_ALREADY_ADDED: "Item  is already in Cart.",
+	CARTITEM_ADD_SUCCESS: "Item Added to Cart Successfully.",
 	CARTITEM_REMOVE_SUCCESS: "Cart item has removed successfully.",
 	CART_IS_EMPTY: "Cart is empty.",
 	CART_UPDATE_SUCCESS: "Cart has updated successfully.",

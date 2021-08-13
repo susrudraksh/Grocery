@@ -133,7 +133,7 @@ const NotificationServices = {
                 }
 
                 var Fcmmessage = {};
-                if(userInfo.device_type=="1"){
+                if(userInfo.device_type==1){
                     // var newdata = {
                     //     your_custom_data_key: 'your_custom_data_value',
                     //     custom_message_type:message_type,
@@ -200,6 +200,6 @@ const NotificationServices = {
     }
     
 }
-//NotificationServices.sendNotification('Athwas', 'test', "6052f3833a20d57e9738223b", 3, '', '', "", [2])
+//NotificationServices.sendNotification('Athwas', 'test', "610a615109ce306f00d5b148", 3, '', '', "", [2])
 //NotificationServices.createRecord({title:"Hello2",message:"Test message2",user_id:'5f730e04b8ca663ae84a36ce',user_type:3,sender_id:'5f18295dd364c8608604b992',sender_type:1,read_status:0,notification_type:1})
 module.exports = NotificationServices; 

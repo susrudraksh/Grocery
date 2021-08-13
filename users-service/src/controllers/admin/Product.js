@@ -1433,7 +1433,7 @@ const Products = {
 
                             var updateProduct = {
                                 images: existimages.concat(image_name),
-                                is_active: 1,
+                                //is_active: 1,
                             }
                             ProductServices.updateRecord({ _id: updateResult }, updateProduct).then(updatedProduct => {
                                 var successMsg = Messages.PRODUCT_UPDATE_SUCCESS;

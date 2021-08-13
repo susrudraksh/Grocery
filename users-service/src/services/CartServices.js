@@ -14,14 +14,14 @@ const CartServices = {
                     quantity : quantity
                 }
                 return await Carts.findOneAndUpdate({_id:cartData[0]._id},updaterecord, { new: true }).select('').then(updateCartData => {
-                    return updateCartData;
+                    return {updateCartData:updateCartData,recordUpdate:false};
                 }).catch((err)=>{
                     throw err;
                 })
             }else{
                Records.quantity = quantity;
                 return await Carts.create(Records).then(cartData=>{
-                    return cartData;
+                    return {updateCartData:cartData,recordUpdate:true};
                 }).catch((err)=>{
                     throw err;
                 })

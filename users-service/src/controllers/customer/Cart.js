@@ -59,11 +59,16 @@ const CartController = {
 
             CartServices.createOrUpdateRecord(CreateCart, quantity).then(async cartResult => {
 
-                var succMessage = Messages.CARTITEM_ADD_SUCCESS;
+                var succMessage = "";
+                if(cartResult.recordUpdate){
+                    succMessage = Messages.CARTITEM_ADD_SUCCESS;
+                }else{
+                    succMessage = Messages.CARTITEM_ALREADY_ADDED;
+                }
                 var cart_count = {
                     cart_count: await CartServices.getDataCount({user_id:login_user_id})
                 }
-                console.log(cartResult);
+                //console.log(cartResult);
                 Response.send(req, res, 200, succMessage,cart_count)
             }).catch(err => {
                 var errMessage = Validation.getErrorMessage(err);
@@ -177,7 +182,7 @@ const CartController = {
                 user_id: ObjectID(login_user_id)
             }
             CartServices.deleteRecord(CreateCart).then(async cartResult => {
-                console.log(cartResult);
+                //console.log(cartResult);
                 var cart_count = {
                     cart_count: await CartServices.getDataCount({user_id:login_user_id})
                 }
@@ -307,7 +312,7 @@ const CartController = {
                     let: { "inventory_id": "$inventory_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$inventory_id"] } } },
-                        { $project: { 'inventory_name': 1, 'price': 1, 'product_quantity': 1,'min_inventory': 1, "is_discount": 1, "discounted_product_price": 1, "discount_type": 1, "discount_value": 1 } }
+                        { $project: { 'inventory_name': 1, 'price': 1, 'product_quantity': 1,'min_inventory': 1, "is_discount": 1, "discounted_product_price": 1, "discount_type": 1, "discount_value": 1,"is_active":1,"is_deleted":1 } }
                     ],
                     as: 'ProductInventoryData'
                 }
@@ -320,7 +325,7 @@ const CartController = {
                     let: { "id": "$business_category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                        { $project: { "name": 1 } }
+                        { $project: { "name": 1 ,"is_active":1,"is_deleted":1} }
                     ],
                     as: 'businessCategoryData'
                 }
@@ -350,7 +355,7 @@ const CartController = {
                     let: { "id": "$ProductData.category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                        { $project: { 'name': 1 } }],
+                        { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
                     as: 'CategoryData'
                 }
 
@@ -362,7 +367,7 @@ const CartController = {
                     let: { "id": "$ProductData.sub_category_id" },
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                        { $project: { 'name': 1 } }],
+                        { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
                     as: 'SubCategoryData'
                 }
 
@@ -389,6 +394,18 @@ const CartController = {
                     discount_value: "$ProductInventoryData.discount_value",
                     offer_price: "$ProductInventoryData.discounted_product_price",
                     rating: "5",
+                    availble:{
+                        $cond: { 
+                            if: { 
+                                $and:[
+                                    { $and:[ {$eq: [ "$ProductData.is_active", 1 ] },{$eq: [ "$ProductData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$businessCategoryData.is_active", 1 ] },{$eq: [ "$businessCategoryData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$CategoryData.is_active", 1 ] },{$eq: [ "$CategoryData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$SubCategoryData.is_active", 1 ] },{$eq: [ "$SubCategoryData.is_deleted", 0 ] }]}
+                                    ]
+                            },
+                            then: 1, else: 0 }
+                    }
                 }
             },
             {
@@ -403,7 +420,7 @@ const CartController = {
         var sortPattern = { 'category_items.name': 1 };
         var page = parseInt(req.query.page_no) || 1;
         var limit = parseInt(req.query.limit) || 10;
-        console.log(aggregateFilter[0]['$match']['_id']);
+       // console.log(aggregateFilter[0]['$match']['_id']);
         CartServices.getAggregatePaginatedData(aggregateFilter, sortPattern, page, limit).then(cartResult => {
             var succMessage = Messages.CARTITEM_FETCH_SUCCESS;
             Response.send(req, res, 200, succMessage, cartResult)

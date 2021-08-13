@@ -59,6 +59,7 @@ const data = [
     to: "/app/product-categories",
     check_permission: true,
     module_slug: ["product_categories", "product_sub_category"],
+    module_routes: ["product_categories", "product_sub_category"],
     permission_type: "list",
     subs: [
       {

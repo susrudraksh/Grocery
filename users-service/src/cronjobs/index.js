@@ -103,19 +103,38 @@ module.exports = {
                             var productname = await ProductInventoryServices.oneRecord([{$match:{_id:ObjectID(productdata._id)}}]);
                          
                             var message =  "Product "+productname.inventory_name+" is restocked"
-                            var fcmmessage = {
-                                to: userInfo.device_token,
-                                collapse_key: '',
-                                data: {
-                                    your_custom_data_key: 'your_custom_data_value',
-                                    custom_message_type:2,
-                                    id:productdata._id
-                                },
-                                notification: {
-                                    title: 'Athwas',
-                                    body: message
-                                }
-                            };
+                            var fcmmessage = {};
+                            if(userInfo.device_type==1){
+                                fcmmessage = {
+                                    to: userInfo.device_token,
+                                    collapse_key: '',
+                                    data: {
+                                        your_custom_data_key: 'your_custom_data_value',
+                                        custom_message_type:2,
+                                        id:productdata._id,
+                                        title: 'Athwas',
+                                        body: message
+                                    },
+                                    // notification: {
+                                    //     title: 'Athwas',
+                                    //     body: message
+                                    // }
+                                };
+                            }else{
+                                fcmmessage = {
+                                    to: userInfo.device_token,
+                                    collapse_key: '',
+                                    data: {
+                                        your_custom_data_key: 'your_custom_data_value',
+                                        custom_message_type:2,
+                                        id:productdata._id
+                                    },
+                                    notification: {
+                                        title: 'Athwas',
+                                        body: message
+                                    }
+                                };
+                            }
                             PushNotification.sendForAndriodIos(fcmmessage);
                             var createNotification = {
                                 user_id: userdata.user_id,

@@ -1233,7 +1233,7 @@ getProductDetail: async (req, res) => {
                                 let: { "id": "$business_category_id" },
                                 pipeline: [
                                     { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                                    { $project: { "name": 1 } }
+                                    { $project: { "name": 1 ,"is_active":1,"is_deleted":1} }
                                 ],
                                 as: 'businessCategoryData'
                             }
@@ -1246,7 +1246,7 @@ getProductDetail: async (req, res) => {
                                 let: { "id": "$category_id" },
                                 pipeline: [
                                     { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                                    { $project: { 'name': 1 } }],
+                                    { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
                                 as: 'CategoryData'
                             }
 
@@ -1258,7 +1258,7 @@ getProductDetail: async (req, res) => {
                                 let: { "id": "$sub_category_id" },
                                 pipeline: [
                                     { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
-                                    { $project: { 'name': 1 } }],
+                                    { $project: { 'name': 1,"is_active":1,"is_deleted":1 } }],
                                 as: 'SubCategoryData'
                             }
 
@@ -1374,14 +1374,26 @@ getProductDetail: async (req, res) => {
                     customizations: '$ProductCustomizationData',
                     description: '$ProductsData.description',
                     is_favourite: { $size: "$ProductsData.favouriteDate" },
-                    brand: "test",
+                  //  brand: "test",
                     is_discount: "$is_discount",
                     discount_type: "$discount_type",
                     discount_value: "$discount_value",
                     offer_price: "$discounted_product_price",
                     rating: "$totalrating",
                     ratingCount : "$ratingCount",
-                    brand: '$BrandData'
+                    brand: '$BrandData',
+                    availble:{
+                        $cond: { 
+                            if: { 
+                                $and:[
+                                    { $and:[ {$eq: [ "$ProductsData.is_active", 1 ] },{$eq: [ "$ProductsData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$ProductsData.businessCategoryData.is_active", 1 ] },{$eq: [ "$ProductsData.businessCategoryData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$ProductsData.CategoryData.is_active", 1 ] },{$eq: [ "$ProductsData.CategoryData.is_deleted", 0 ] }]},
+                                    { $and:[ {$eq: [ "$ProductsData.SubCategoryData.is_active", 1 ] },{$eq: [ "$ProductsData.SubCategoryData.is_deleted", 0 ] }]}
+                                    ]
+                            },
+                            then: 1, else: 0 }
+                    }
                 }
             }
             // {$unwind: '$ProductCustomizationData'}
