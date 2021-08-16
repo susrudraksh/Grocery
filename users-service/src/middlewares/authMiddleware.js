@@ -75,7 +75,10 @@ module.exports ={
     
                     var decodedToken = Encryption.getJwtDecryption(authToken, config.jwtSecretKey);
                     var userPermissions = JSON.parse(decodedToken.user_permissions) || {};
-                    var spacialallowfeature = ["orders","setting"];
+                    console.log("route_module_name",route_module_name)
+                    console.log("er",userPermissions[route_module_name])
+                    console.log("er",userPermissions)
+                    var spacialallowfeature = ["orders","setting","report"];
                     var specialallow = false;
                     if(spacialallowfeature.includes(route_module_name) && userPermissions[route_module_name]){
                         specialallow = true;
