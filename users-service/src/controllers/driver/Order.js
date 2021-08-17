@@ -623,6 +623,7 @@ const OrderController = {
                     if (status == "Delivered") {
                         newtrackingstatus.order_status = 2;
                         newtrackingstatus.delivered_date = new Date().toISOString()
+                        NotificationServices.sendNotification('Athwas', 'Order #' + orderResult[0].order_id + ' is ' + status + ' successfully', config.adminid, 1, orderResult[0].user_id, 3, orderResult[0]._id, [1,3])
                     }
                     
 

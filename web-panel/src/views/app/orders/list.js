@@ -22,7 +22,7 @@ const FormSchema = Yup.object().shape({
   driver_id: Yup.string().required("Please select available driver"),
 });
 
-const newstatus = ["", "Assigned", "Completed", "Rejected", "Cancelled", "Cancelled/Rejected"];
+const newstatus = ["", "Assigned", "Completed", "Returned", "Cancelled", "Cancelled/Rejected"];
 
 class OrderList extends Component {
   constructor(props) {

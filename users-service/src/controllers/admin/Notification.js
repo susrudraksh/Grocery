@@ -111,7 +111,7 @@ const NotificationController = {
 
             var user_ids = JSON.parse(req.body.sent_to_users);
 
-            var title = "Test";
+            var title = "ATHWAS";
 
             var status = req.body.status;
 
@@ -174,7 +174,7 @@ const NotificationController = {
                                         custom_message_type:1
                                     },
                                     notification: {
-                                        title: 'Athewas Notification',
+                                        title: 'Athwas Notification',
                                         body: message
                                     }
                                 };
@@ -252,7 +252,7 @@ const NotificationController = {
 
                             notification: {
 
-                                title: 'Athewas Notification',
+                                title: 'Athwas Notification',
 
                                 body: message
 

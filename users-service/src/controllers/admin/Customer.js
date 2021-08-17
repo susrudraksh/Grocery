@@ -2,7 +2,7 @@
 
 
 const _ = require('lodash');
-const { UserServices } = require('../../services');
+const { UserServices,OrderServices } = require('../../services');
 const { Response, Messages, Validation, Encryption, Geocoder, DateTime, Media ,Redis} = require('../../helpers');
 const { find } = require('lodash');
 const {ObjectID} = require('mongodb');
@@ -81,7 +81,7 @@ const UsersController = {
             "data": {}
         }
     */
-   get_users: (req, res) => {
+   get_users: async(req, res) => {
 
     try {
 
@@ -91,11 +91,79 @@ const UsersController = {
         var status = req.query.status;
         var page = parseInt(req.query.page_no) || 1;
         var limit = parseInt(req.query.limit) || 10;
+        var daysLimit = parseInt(req.query.days_limit) || "" ;
+        var amountLimit = parseInt(req.query.amount_limit*1000) || 0;
+
+        var findOrderPattern ={};
+        var currentDate = new Date();
+        if(daysLimit!="" && daysLimit!=0){
+            currentDate.setMonth(currentDate.getMonth() - daysLimit);
+            findOrderPattern = { createdAt: { $gte: currentDate } }
+        }
+        var sortOrderPattern = { createdAt: -1 };
+        console.log("daysLimit",daysLimit)
+        console.log("amountLimit",amountLimit)
+        var userIdsArr = [];
+        let aggregateOrderCondition = [];
+        if(daysLimit!="" || amountLimit!=0){
+
+            if(daysLimit!=""){
+                aggregateOrderCondition = [
+                    { $match: findOrderPattern },
+                    {
+                        $group:{
+                            _id:"$user_id",
+                            net_amount:{$sum:"$net_amount"},
+                        }
+                    },
+                ];
+            }
+            if(amountLimit!=0){
+                aggregateOrderCondition = [
+                    { $match: findOrderPattern },
+                    {
+                        $group:{
+                            _id:"$user_id",
+                            net_amount:{$sum:"$net_amount"},
+                        }
+                    },
+                    {
+                        $redact: {
+                        $cond: {
+                            if: { $gte: [ "$net_amount", amountLimit ] },
+                            then: "$$KEEP",
+                            else: "$$PRUNE"
+                        }
+                        }
+                    }
+                ];
+            }
+            
+
+
+            
+            console.log(JSON.stringify(aggregateOrderCondition))
+            var orderData = await OrderServices.allRecord(aggregateOrderCondition);
+            console.log("orderData",orderData);
+            if (orderData) {
+                await orderData.map((user) => {
+                    userIdsArr.push(ObjectID(user._id));
+                });
+            }
+        }
+
+        
+        
 
         var findPattern = {
             is_deleted: 0,
             user_role: 3
         };
+        if(status==0){
+            findPattern._id = { $nin: userIdsArr };
+        }else{
+            findPattern._id = { $in: userIdsArr };
+        }
 
         if (keyword && keyword != "") {
             findPattern["$or"] = [
