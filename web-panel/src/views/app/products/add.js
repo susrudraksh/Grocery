@@ -18,6 +18,8 @@ import "react-quill/dist/quill.bubble.css";
 
 const quillModules = {
   toolbar: [
+    [{ header: "1" }, { header: "2" }],
+    [{ size: [] }],
     ["bold", "italic", "underline", "strike", "blockquote"],
     [
       {
@@ -62,13 +64,15 @@ const quillModules = {
       },
     ],
     [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-    //["link", "image"],
+    // ["link", "image"],
     ["clean"],
   ],
 };
 
 const quillFormats = [
   "header",
+  "font",
+  "size",
   "bold",
   "italic",
   "underline",
@@ -78,7 +82,7 @@ const quillFormats = [
   "bullet",
   "indent",
   "color",
-  // "link",
+  //"link",
   // "image",
 ];
 

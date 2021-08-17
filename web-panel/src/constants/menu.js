@@ -182,7 +182,7 @@ const data = [
     label: "menu.contents",
     to: "/app/contents",
     check_permission: true,
-    module_slug: "contents",
+    module_slug: ["contents"],
     permission_type: "edit",
     subs: [
       {
@@ -221,7 +221,7 @@ const data = [
     label: "menu.reports",
     to: "/app/reports",
     check_permission: true,
-    module_slug: "reports",
+    module_slug: ["reports"],
     permission_type: "list",
     subs: [
       {
@@ -252,7 +252,7 @@ const data = [
     label: "menu.settings",
     to: "/app/settings",
     check_permission: true,
-    module_slug: "setting",
+    module_slug: ["setting"],
     permission_type: "edit",
     subs: [
       {

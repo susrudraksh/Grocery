@@ -22,6 +22,11 @@ var amountOptions = [
   { value: "20", label: "20 K" },
   { value: "40", label: "40 K" },
 ];
+var activeOptions = [
+  { column: "", label: "Select" },
+  { column: "1", label: "Active" },
+  { column: "0", label: "Inactive" },
+];
 var orderStatus = [
   // { value: "", label: "Select" },
   { value: "", label: "All" },
@@ -40,6 +45,7 @@ class ListPageHeading extends Component {
       selectedDaysOption: daysOptions[0],
       selectedAmountOption: amountOptions[0],
       selectedOrderStatus: orderStatus[0],
+      selectedActiveStatus: activeOptions[0],
     };
   }
 
@@ -80,6 +86,7 @@ class ListPageHeading extends Component {
       pageSizes,
       selectedPageSize,
       selectedOrderOption,
+      selectedActiveStatus,
       searchKeyword,
       searchPlaceholder,
       filterFromDate,
@@ -94,6 +101,7 @@ class ListPageHeading extends Component {
       changeAmountStatus,
       changeOrderStatus,
       changePageSize,
+      changeActiveStatus,
       onResetFilters,
       onSearchFilters,
       totalItemCount,
@@ -101,12 +109,14 @@ class ListPageHeading extends Component {
       endIndex,
       daysStatus,
       amountStatus,
+      activeStatus,
     } = this.props;
 
     var newfilter = orderStatus.find((item) => item.value == filterStatus);
     var statusOptions1 = statusOptions.find((item) => item.column == filterStatus);
     var daysOptions1 = daysOptions.find((item) => item.value == daysStatus);
     var amountOptions1 = amountOptions.find((item) => item.value == amountStatus);
+    var activeOptions1 = activeOptions.find((item) => item.column == activeStatus);
 
     const { displayOptionsIsOpen } = this.state;
     return (
@@ -168,16 +178,23 @@ class ListPageHeading extends Component {
                         onFocus={this.showPopover}
                         onBlur={this.hidePopover}
                       />
-                      {displayOpts && (displayOpts.keyword || displayOpts.daysOptions || displayOpts.orderStatus || displayOpts.amountOptions || displayOpts.fromDate || displayOpts.toDate) && (
-                        <Button
-                          outline
-                          color="danger"
-                          className="mb-2 btn-xs search_btn"
-                          onClick={() => {
-                            onSearchFilters();
-                          }}
-                        ></Button>
-                      )}{" "}
+                      {displayOpts &&
+                        (displayOpts.keyword ||
+                          displayOpts.daysOptions ||
+                          displayOpts.orderStatus ||
+                          displayOpts.amountOptions ||
+                          displayOpts.activeOptions ||
+                          displayOpts.fromDate ||
+                          displayOpts.toDate) && (
+                          <Button
+                            outline
+                            color="danger"
+                            className="mb-2 btn-xs search_btn"
+                            onClick={() => {
+                              onSearchFilters();
+                            }}
+                          ></Button>
+                        )}{" "}
                       <Popover className="search-popover" placement="top" isOpen={this.state.popoverOpen} target={"search"}>
                         <PopoverBody>{searchPlaceholder}</PopoverBody>
                       </Popover>
@@ -233,6 +250,31 @@ class ListPageHeading extends Component {
                               onClick={() => {
                                 this.setState({ selectedAmountOption: amountOptions[index] });
                                 changeAmountStatus(status.value);
+                              }}
+                            >
+                              {status.label}
+                            </DropdownItem>
+                          );
+                        })}
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  )}
+
+                  {displayOpts && displayOpts.activeOptions && (
+                    <UncontrolledDropdown className="mr-1 float-md-left btn-group mb-1">
+                      <DropdownToggle caret color="outline-dark" size="xs">
+                        <IntlMessages id="pages.status" />
+                        {/* {selectedActiveStatus.label} */}
+                        {activeOptions1.label}
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        {activeOptions.map((status, index) => {
+                          return (
+                            <DropdownItem
+                              key={index}
+                              onClick={() => {
+                                this.setState({ selectedActiveStatus: activeOptions[index] });
+                                changeActiveStatus(status.column);
                               }}
                             >
                               {status.label}
@@ -302,6 +344,7 @@ class ListPageHeading extends Component {
                         this.setState({ selectedStatusOption: statusOptions[0] });
                         this.setState({ selectedAmountOption: amountOptions[0] });
                         this.setState({ selectedDaysOption: daysOptions[0] });
+                        this.setState({ selectedActiveStatus: activeOptions[0] });
                         onResetFilters();
                       }}
                     >

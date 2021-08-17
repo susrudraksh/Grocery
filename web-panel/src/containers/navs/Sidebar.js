@@ -327,11 +327,7 @@ class Sidebar extends Component {
 
   render() {
     const { selectedParentMenu, viewingParentMenu, collapsedMenus } = this.state;
-    const pathArray = window.location.pathname.split("/");
-    const pathArray1 = pathArray[2];
-    
-   
-    console.log("props", pathArray[2]);
+
     return (
       <div className="sidebar">
         <div className="main-menu">
@@ -341,19 +337,18 @@ class Sidebar extends Component {
                 {this.state.menuItems &&
                   this.state.menuItems.map((item) => {
                     var existssubmenu = false;
-                    if(Array.isArray(item.module_slug)){
-                        if(item.subs && item.subs.some((i)=>i.to==this.props.location.pathname)){
-                          existssubmenu = true;
-                        }
+                    if (Array.isArray(item.module_slug)) {
+                      if (item.subs && item.subs.some((i) => i.to == this.props.location.pathname)) {
+                        existssubmenu = true;
+                      }
                     }
-                    //console.log(!Array.isArray(item.module_slug), this.props.location.pathname ,item.module_slug, existssubmenu);
-                    //  console.log("selectedParentMenu", selectedParentMenu);
+
                     return (
                       item.showItem && (
                         <NavItem
                           key={item.id}
                           className={classnames({
-                            active: ( !Array.isArray(item.module_slug) && this.props.location.pathname == item.to) || existssubmenu,
+                            active: (!Array.isArray(item.module_slug) && this.props.location.pathname == item.to) || existssubmenu,
                           })}
                         >
                           {item.newWindow ? (
