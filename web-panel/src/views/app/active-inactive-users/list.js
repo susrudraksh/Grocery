@@ -29,10 +29,11 @@ class CustomersList extends Component {
         //toDate: true,
         //orderOptions: false,
 
-        statusOptions: true,
+        // statusOptions: true,
         daysOptions: true,
         amountOptions: true,
         pageSizes: true,
+        activeOptions: true,
       },
 
       // addNewItemRoute: "/app/add-customer",
@@ -63,6 +64,7 @@ class CustomersList extends Component {
       selectedItems: [],
       lastChecked: null,
       isLoading: false,
+      activeStatus: "",
     };
   }
 
@@ -95,7 +97,7 @@ class CustomersList extends Component {
       "&amount_limit=" +
       `${this.state.amountStatus}` +
       "&status=" +
-      `${this.state.filterStatus}` +
+      `${this.state.activeStatus}` +
       "&keyword=" +
       `${this.state.searchKeyword}`;
 
@@ -154,10 +156,10 @@ class CustomersList extends Component {
     }
   };
 
-  changeStatus = (value) => {
+  changeActiveStatus = (value) => {
     this.setState(
       {
-        filterStatus: value,
+        activeStatus: value,
         currentPage: 1,
       },
       () => this.dataListRender()
@@ -202,14 +204,18 @@ class CustomersList extends Component {
   };
 
   onResetFilters = () => {
-    this.setState({
-      selectedOrderOption: { column: "createdAt", label: "Created On" },
-      selectedPageSize: 10,
-      currentPage: 1,
-      filterStatus: "",
-      daysStatus: "",
-      amountStatus: "",
-    });
+    this.setState(
+      {
+        selectedOrderOption: { column: "createdAt", label: "Created On" },
+        selectedPageSize: 10,
+        currentPage: 1,
+        filterStatus: "",
+        daysStatus: "",
+        amountStatus: "",
+        activeStatus: "",
+      },
+      () => this.dataListRender()
+    );
   };
 
   // Methods for Actions
@@ -280,14 +286,14 @@ class CustomersList extends Component {
             searchPlaceholder={this.state.searchPlaceholder}
             filterFromDate={this.state.filterFromDate}
             filterToDate={this.state.filterToDate}
-            filterStatus={this.state.filterStatus}
+            // filterStatus={this.state.filterStatus}
             daysStatus={this.state.daysStatus}
             amountStatus={this.state.amountStatus}
             onSearchKey={this.onSearchKey}
             onChangeFromDate={this.onChangeFromDate}
             onChangeToDate={this.onChangeToDate}
             changeOrderBy={this.changeOrderBy}
-            changeStatus={this.changeStatus}
+            // changeStatus={this.changeStatus}
             changeDaysStatus={this.changeDaysStatus}
             changeAmountStatus={this.changeAmountStatus}
             changePageSize={this.changePageSize}
@@ -295,6 +301,8 @@ class CustomersList extends Component {
             totalItemCount={this.state.totalItemCount}
             startIndex={startIndex}
             endIndex={endIndex}
+            activeStatus={this.state.activeStatus}
+            changeActiveStatus={this.changeActiveStatus}
           />
 
           <Row>

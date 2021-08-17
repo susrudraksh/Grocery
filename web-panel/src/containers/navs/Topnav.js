@@ -1,25 +1,13 @@
 import React, { Component } from "react";
 import { injectIntl } from "react-intl";
 
-import {
-  UncontrolledDropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu,
-  Input,
-} from "reactstrap";
+import { UncontrolledDropdown, DropdownItem, DropdownToggle, DropdownMenu, Input } from "reactstrap";
 
 import { NavLink, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 //import IntlMessages from "../../helpers/IntlMessages";
-import {
-  setContainerClassnames,
-  clickOnMobileMenu,
-  logoutUser,
-  changeLocale,
-  updateNotificationCounter
-} from "../../redux/actions";
+import { setContainerClassnames, clickOnMobileMenu, logoutUser, changeLocale, updateNotificationCounter } from "../../redux/actions";
 
 import {
   menuHiddenBreakpoint,
@@ -70,10 +58,8 @@ class TopNav extends Component {
   isInFullScreen = () => {
     return (
       (document.fullscreenElement && document.fullscreenElement !== null) ||
-      (document.webkitFullscreenElement &&
-        document.webkitFullscreenElement !== null) ||
-      (document.mozFullScreenElement &&
-        document.mozFullScreenElement !== null) ||
+      (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+      (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
       (document.msFullscreenElement && document.msFullscreenElement !== null)
     );
   };
@@ -84,9 +70,7 @@ class TopNav extends Component {
       if (!e.target.classList.contains("search")) {
         if (e.target.parentElement.classList.contains("search")) {
           elem = e.target.parentElement;
-        } else if (
-          e.target.parentElement.parentElement.classList.contains("search")
-        ) {
+        } else if (e.target.parentElement.parentElement.classList.contains("search")) {
           elem = e.target.parentElement.parentElement;
         }
       }
@@ -114,21 +98,12 @@ class TopNav extends Component {
 
   handleDocumentClickSearch = (e) => {
     let isSearchClick = false;
-    if (
-      e.target &&
-      e.target.classList &&
-      (e.target.classList.contains("navbar") ||
-        e.target.classList.contains("simple-icon-magnifier"))
-    ) {
+    if (e.target && e.target.classList && (e.target.classList.contains("navbar") || e.target.classList.contains("simple-icon-magnifier"))) {
       isSearchClick = true;
       if (e.target.classList.contains("simple-icon-magnifier")) {
         this.search();
       }
-    } else if (
-      e.target.parentElement &&
-      e.target.parentElement.classList &&
-      e.target.parentElement.classList.contains("search")
-    ) {
+    } else if (e.target.parentElement && e.target.parentElement.classList && e.target.parentElement.classList.contains("search")) {
       isSearchClick = true;
     }
 
@@ -203,11 +178,7 @@ class TopNav extends Component {
       event.initEvent("resize", false, false);
       window.dispatchEvent(event);
     }, 350);
-    this.props.setContainerClassnames(
-      ++menuClickCount,
-      containerClassnames,
-      this.props.selectedMenuHasSubItems
-    );
+    this.props.setContainerClassnames(++menuClickCount, containerClassnames, this.props.selectedMenuHasSubItems);
   };
 
   mobileMenuButtonClick = (e, containerClassnames) => {
@@ -216,32 +187,16 @@ class TopNav extends Component {
   };
 
   render() {
-    const {
-      containerClassnames,
-      menuClickCount,
-      locale,
-      loginUser,
-      notification_count
-    } = this.props;
+    const { containerClassnames, menuClickCount, locale, loginUser, notification_count } = this.props;
 
     const { messages } = this.props.intl;
     return (
       <nav className="navbar fixed-top">
         <div className="d-flex align-items-center navbar-left">
-          <NavLink
-            to="#"
-            className="menu-button d-none d-md-block"
-            onClick={(e) =>
-              this.menuButtonClick(e, menuClickCount, containerClassnames)
-            }
-          >
+          <NavLink to="#" className="menu-button d-none d-md-block" onClick={(e) => this.menuButtonClick(e, menuClickCount, containerClassnames)}>
             <MenuIcon />
           </NavLink>
-          <NavLink
-            to="#"
-            className="menu-button-mobile d-xs-block d-sm-block d-md-none"
-            onClick={(e) => this.mobileMenuButtonClick(e, containerClassnames)}
-          >
+          <NavLink to="#" className="menu-button-mobile d-xs-block d-sm-block d-md-none" onClick={(e) => this.mobileMenuButtonClick(e, containerClassnames)}>
             <MobileMenuIcon />
           </NavLink>
 
@@ -288,7 +243,7 @@ class TopNav extends Component {
           </div> */}
         </div>
         <a className="navbar-logo" href="/">
-        <img alt="Profile" src="/assets/img/logo-black.png" />
+          <img alt="Profile" src="/assets/img/logo-black.png" />
           {/* <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" /> */}
         </a>
@@ -297,19 +252,16 @@ class TopNav extends Component {
           {/* {isDarkSwitchActive && <TopnavDarkSwitch />} */}
           {/* <TopnavNotifications /> */}
 
-          <DropdownToggle
-            className="header-icon notificationButton"
-            color="empty"
-          >
-            
-            <NavLink to="/app/notification-history"><i className="simple-icon-bell" /></NavLink>
+          <DropdownToggle className="header-icon notificationButton" color="empty">
+            <NavLink to="/app/notification-history">
+              <i className="simple-icon-bell" />
+            </NavLink>
             <span className="count">{notification_count}</span>
           </DropdownToggle>
 
           <div className="user d-inline-block">
             <UncontrolledDropdown className="dropdown-menu-right">
               <DropdownToggle className="p-0" color="empty">
-
                 <span className="name mr-1">{this.state.profile_name}</span>
 
                 <span>
@@ -317,16 +269,18 @@ class TopNav extends Component {
                 </span>
               </DropdownToggle>
               <DropdownMenu className="mt-3" right>
-                <DropdownItem>
-                  <NavLink to="/app/profile">Profile</NavLink>
+                <DropdownItem onClick={() => this.props.history.push("/app/profile")}>
+                  {/* <NavLink to="/app/profile"> */}
+                  Profile
+                  {/* </NavLink> */}
                 </DropdownItem>
-                <DropdownItem>
-                  <NavLink to="/app/change-password">Change Password</NavLink>
+                <DropdownItem onClick={() => this.props.history.push("/app/change-password")}>
+                  {/* <NavLink to="/app/change-password"> */}
+                  Change Password
+                  {/* </NavLink> */}
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem onClick={() => this.handleLogout()}>
-                  Sign out
-                </DropdownItem>
+                <DropdownItem onClick={() => this.handleLogout()}>Sign out</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </div>
@@ -336,7 +290,7 @@ class TopNav extends Component {
   }
 }
 
-const mapStateToProps = ({ menu, settings, authUser,globalstate }) => {
+const mapStateToProps = ({ menu, settings, authUser, globalstate }) => {
   const { containerClassnames, menuClickCount, selectedMenuHasSubItems } = menu;
   const { locale } = settings;
   const { user: loginUser } = authUser;

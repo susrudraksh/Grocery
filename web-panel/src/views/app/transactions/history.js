@@ -229,9 +229,9 @@ class TransactionList extends Component {
                             <td>{item.transition_id} </td>
                             <td>{item.userData.username} </td>
                             <td>{moment(item.createdAt).format("ll")} </td>
-                            <td>{item.reason}</td>
+                            <td style={{ textTransform: "capitalize" }}>{item.reason}</td>
                             <td>{item.amount}</td>
-                            <td>{item.payment_type}</td>
+                            <td>{item.payment_type ? item.payment_type : "-"}</td>
                             {/* <td> <Badge color={item.statusColor} pill>
                                 {item.status}
                               </Badge>

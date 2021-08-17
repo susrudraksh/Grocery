@@ -17,7 +17,7 @@ const FormSchema = Yup.object().shape({
   business_category: Yup.string().required("Please select a business category"),
   product_category: Yup.string().required("Please select a product category"),
   product_subcategory: Yup.string().required("Please select a sub category"),
-  // product_inv_id: Yup.string().required("Please select a product inventory"),
+  product_inv_id: Yup.string().required("Please select a product inventory"),
   title: Yup.string().required("Please enter deal of the day title").min(2, "Too Short! Atleast 2 letters.").max(50, "Too Long! Atmost 50 letters."),
   description: Yup.string().required("Please enter deal of the day description").min(2, "Too Short! Atleast 2 letters.").max(200, "Too Long! Atmost 200 letters."),
   image: Yup.mixed()
@@ -162,13 +162,14 @@ class AddDealOfDay extends Component {
     }
   };
 
-  handleSubmit = async (inputValues) => {
-    if (inputValues.product_inv_id == "") {
-      let error = "Please select a product inventory";
+  handleSubmit = async (inputValues, formOptions) => {
+    // if (inputValues.product_inv_id == "") {
+    //   let error = "Please select a product inventory";
 
-      NotificationManager.error(error, "Error!", 3000);
-      return false;
-    }
+    //   formOptions.setFieldError("product_inv_id", error);
+    //   // NotificationManager.error(error, "Error!", 3000);
+    //   return false;
+    // }
     var productData = new Array();
     inputValues.product_inv_id.map((data, index) => {
       productData.push(data.value);
@@ -305,7 +306,7 @@ class AddDealOfDay extends Component {
                         <Colxx xxs="12" sm="6">
                           <FormGroup className="form-group has-float-label">
                             <Label>Product Inventory</Label>
-                            {console.log(values.product_inv_id)}
+
                             <FormikReactSelect
                               name="product_inv_id"
                               id="product_inv_id"
