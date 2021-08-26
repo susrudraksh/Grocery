@@ -88,7 +88,7 @@ const UsersController = {
         var keyword = req.query.keyword || "";
         var start_date = req.query.start_date || "";
         var end_date = req.query.end_date || "";
-        var status = req.query.status;
+        var status = req.query.status ;
         var page = parseInt(req.query.page_no) || 1;
         var limit = parseInt(req.query.limit) || 10;
         var daysLimit = parseInt(req.query.days_limit) || "" ;
@@ -101,13 +101,11 @@ const UsersController = {
             findOrderPattern = { createdAt: { $gte: currentDate } }
         }
         var sortOrderPattern = { createdAt: -1 };
-        console.log("daysLimit",daysLimit)
-        console.log("amountLimit",amountLimit)
+        
         var userIdsArr = [];
         let aggregateOrderCondition = [];
         if(daysLimit!="" || amountLimit!=0){
-
-            if(daysLimit!=""){
+             if(daysLimit!=""){
                 aggregateOrderCondition = [
                     { $match: findOrderPattern },
                     {
@@ -142,28 +140,28 @@ const UsersController = {
 
 
             
-            console.log(JSON.stringify(aggregateOrderCondition))
+           
             var orderData = await OrderServices.allRecord(aggregateOrderCondition);
-            console.log("orderData",orderData);
+         
             if (orderData) {
                 await orderData.map((user) => {
-                    userIdsArr.push(ObjectID(user._id));
+               userIdsArr.push(ObjectID(user._id));
                 });
             }
         }
 
         
-        
+       
 
         var findPattern = {
             is_deleted: 0,
             user_role: 3
         };
-        if(status==0){
-            findPattern._id = { $nin: userIdsArr };
+        if(status==1){
+         if(userIdsArr && userIdsArr.length) {findPattern._id = { $in: userIdsArr }};
         }else{
-            findPattern._id = { $in: userIdsArr };
-        }
+            findPattern._id = { $nin: userIdsArr };
+                }    
 
         if (keyword && keyword != "") {
             findPattern["$or"] = [
@@ -734,7 +732,7 @@ const UsersController = {
 
                         if (status == 0) {
                             var key = userObjRes.user_role + "_" + userObjRes._id;
-                            // console.log(userObjRes);
+                            
                             Redis.hdel(["_auth_tokens", key], function (err, res) {
                                 if (err) console.log(err.toString())
                             });

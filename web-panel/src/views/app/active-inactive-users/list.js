@@ -64,7 +64,7 @@ class CustomersList extends Component {
       selectedItems: [],
       lastChecked: null,
       isLoading: false,
-      activeStatus: "",
+      activeStatus: 1,
     };
   }
 
@@ -157,9 +157,9 @@ class CustomersList extends Component {
   };
 
   changeActiveStatus = (value) => {
-    this.setState(
+     this.setState(
       {
-        activeStatus: value,
+       activeStatus: value,
         currentPage: 1,
       },
       () => this.dataListRender()
@@ -212,7 +212,7 @@ class CustomersList extends Component {
         filterStatus: "",
         daysStatus: "",
         amountStatus: "",
-        activeStatus: "",
+        activeStatus: 1,
       },
       () => this.dataListRender()
     );
@@ -304,7 +304,6 @@ class CustomersList extends Component {
             activeStatus={this.state.activeStatus}
             changeActiveStatus={this.changeActiveStatus}
           />
-
           <Row>
             <Colxx xxs="12">
               <Card className="mb-4">
