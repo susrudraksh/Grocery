@@ -3327,6 +3327,7 @@ getDiscountProduct: async (req, res) => {
                     is_discount: "$is_discount",
                     offer_price: "$discounted_product_price",
                     rating: "$totalrating",
+                    createdAt:1,
                 }
             },
         ];
