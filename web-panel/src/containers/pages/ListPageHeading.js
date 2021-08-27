@@ -23,7 +23,7 @@ var amountOptions = [
   { value: "40", label: "40 K" },
 ];
 var activeOptions = [
-  { column: "", label: "Select" },
+  // { column: "", label: "Select" },
   { column: "1", label: "Active" },
   { column: "0", label: "Inactive" },
 ];

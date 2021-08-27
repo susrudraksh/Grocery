@@ -221,7 +221,7 @@ const data = [
     label: "menu.reports",
     to: "/app/reports",
     check_permission: true,
-    module_slug: ["reports"],
+    module_slug: ["report"],
     permission_type: "list",
     subs: [
       {
