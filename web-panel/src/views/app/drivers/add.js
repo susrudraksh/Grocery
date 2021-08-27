@@ -14,6 +14,7 @@ const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 // const lettersRegex = /^\S+$/;
 const lettersRegex = /^[a-zA-Z0-9]*$/;
+const emailRegExp =  /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 
 const countryCodes = [
   { value: "", label: "Select" },
@@ -27,7 +28,7 @@ const FormSchema = Yup.object().shape({
     .matches(lettersRegex, "Please input alphanumeric characters only")
     .min(2, "Too Short! Atleast 2 letters.")
     .max(50, "Too Long! Atmost 50 letters."),
-  email: Yup.string().required("Please enter email address").email("Invalid email format").max(50, "Too Long! Atmost 50 letters."),
+  email: Yup.string().required("Please enter email address").matches(emailRegExp,"Invalid email format").max(50, "Too Long! Atmost 50 letters."),
   country_code: Yup.string().required("Please select country code"),
   phone: Yup.string().required("Please enter phone number").matches(phoneRegExp, "Phone number is not valid").min(7, "Too Short! Atleast 7 letters.").max(15, "Too Long! Atmost 15 letters."),
   password: Yup.string().required("Please enter a password").min(6, "Too Short! Atleast 6 letters.").max(20, "Too Long! Atmost 20 letters."),
