@@ -1036,7 +1036,7 @@ getProducts: async (req, res) => {
                         }
                     },
                     //   totalrating: { $avg: "$ratings.rating" },
-                    rating: { $toInt: { $avg: "$ratings.rating" } },
+                    rating:  { $toString: { $avg: "$ratings.rating" } },
                 }
             },
             {
