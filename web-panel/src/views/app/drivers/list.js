@@ -452,6 +452,7 @@ class DriversList extends Component {
                               <Button outline color="danger" size="xs" className="mb-2" title="Delete" onClick={(e) => this.onDeleteItem(item._id, index)}>
                                 <div className="glyph-icon simple-icon-trash"></div>
                               </Button>
+                              {" "}
                               <Link
                                 to={{
                                   pathname: `track-driver/${item._id}`,
@@ -461,8 +462,8 @@ class DriversList extends Component {
                                   },
                                 }}
                               >
-                                <Button outline color="info" size="xs" className="mb-2" title="Edit">
-                                  <div className="glyph-icon simple-icon-note"></div>
+                                <Button outline color="info" size="xs" className="mb-2" title="Track">
+                                  <div className="glyph-icon simple-icon-location-pin"></div>
                                 </Button>
                               </Link>{" "}
                             </td>

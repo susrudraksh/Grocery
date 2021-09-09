@@ -188,12 +188,12 @@ const data = [
       {
         icon: "simple-icon-book-open",
         label: "menu.about-us",
-        to: "/app/contents/about-us",
+        to: "/app/about-us",
       },
       {
         icon: "simple-icon-book-open",
         label: "menu.privacy-policy",
-        to: "/app/contents/privacy-policy",
+        to: "/app/privacy-policy",
       },
     ],
   },
@@ -227,22 +227,22 @@ const data = [
       {
         icon: "simple-icon-book-open",
         label: "menu.reports-sale",
-        to: "/app/settings/sale-report",
+        to: "/app/sale-report",
       },
       {
         icon: "simple-icon-book-open",
         label: "menu.reports-collection",
-        to: "/app/settings/collection-report",
+        to: "/app/collection-report",
       },
       {
         icon: "simple-icon-book-open",
         label: "menu.reports-reconcilation",
-        to: "/app/settings/reconcilation-report",
+        to: "/app/reconcilation-report",
       },
       {
         icon: "simple-icon-book-open",
         label: "menu.reports-gst",
-        to: "/app/settings/gst-report",
+        to: "/app/gst-report",
       },
     ],
   },
@@ -258,12 +258,12 @@ const data = [
       {
         icon: "simple-icon-book-open",
         label: "menu.settings",
-        to: "/app/settings/normal-settings",
+        to: "/app/normal-settings",
       },
       {
         icon: "simple-icon-book-open",
         label: "menu.delivery-settings",
-        to: "/app/settings/delivery-settings",
+        to: "/app/delivery-settings",
       },
     ],
   },

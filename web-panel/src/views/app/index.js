@@ -510,7 +510,7 @@ const routesItems = [
   },
 
   {
-    path: "/contents/about-us",
+    path: "/about-us",
     name: "",
     component: AboutUs,
     check_permission: true,
@@ -518,7 +518,7 @@ const routesItems = [
     permission_type: "edit",
   },
   {
-    path: "/contents/privacy-policy",
+    path: "/privacy-policy",
     name: "",
     component: PrivacyPolicy,
     check_permission: true,
@@ -552,7 +552,7 @@ const routesItems = [
   },
 
   {
-    path: "/settings/normal-settings",
+    path: "/normal-settings",
     name: "",
     component: Settings,
     check_permission: true,
@@ -561,7 +561,7 @@ const routesItems = [
   },
 
   {
-    path: "/settings/delivery-settings",
+    path: "/delivery-settings",
     name: "",
     component: DeliverySettings,
     check_permission: true,
@@ -588,7 +588,7 @@ const routesItems = [
   },
 
   {
-    path: "/settings/sale-report",
+    path: "/sale-report",
     name: "",
     component: SaleReport,
     check_permission: true,
@@ -596,7 +596,7 @@ const routesItems = [
     permission_type: "list",
   },
   {
-    path: "/settings/collection-report",
+    path: "/collection-report",
     name: "",
     component: CollectionReport,
     check_permission: true,
@@ -604,7 +604,7 @@ const routesItems = [
     permission_type: "list",
   },
   {
-    path: "/settings/reconcilation-report",
+    path: "/reconcilation-report",
     name: "",
     component: ReconcilationReport,
     check_permission: true,
@@ -612,7 +612,7 @@ const routesItems = [
     permission_type: "list",
   },
   {
-    path: "/settings/gst-report",
+    path: "/gst-report",
     name: "",
     component: GstReport,
     check_permission: true,
